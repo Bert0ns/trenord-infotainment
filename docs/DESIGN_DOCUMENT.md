@@ -91,3 +91,67 @@ When prompting an AI agent, you must provide the right context. Overloading it m
     *   The exact error trace.
 *   **For Team Alignment:**
     *   Keep maintaining an updating an `.instructions.md` or a `prompt.md` in the root of your project that contains your preferred code style (e.g., "Always use functional components, prefer arrow functions, use Expo Router for navigation, rely on Reanimated for animations"). Modern IDE AI tools will read this globally.
+
+---
+
+## 6. Feasibility Matrix & Delivery Plan
+
+This section translates brainstorming ideas into implementation-ready scope for the 2-month timeline.
+
+### 6.1 Feature Feasibility Matrix
+
+| Feature | Feasible in 2 Months | Data/Dependencies | Effort (Dev-Weeks) | Main Risks | Recommendation |
+| --- | --- | --- | --- | --- | --- |
+| Core Journey Dashboard (status, delays, ETA, crowding, progress) | Yes | Trenord Train API (`/train/{id}`), local UI state | 1.5 - 2.0 | API reliability and inconsistent payloads | Include in MVP |
+| Contextual Weather at ETA | Yes, with extra mapping layer | Weather API + station-to-coordinate mapping | 0.5 - 1.0 | Missing coordinates in train API | Stretch goal |
+| Dynamic Route Map | Partial | Train API + station coordinate dataset + map SDK | 1.0 - 1.5 | No route polyline in API | Use stop-based map in MVP; live interpolation as stretch |
+| Smart Feed + AI Summaries | Yes | News API + LLM API + local cache | 1.0 - 1.5 | Token cost, latency, content quality | Stretch goal |
+| Smart Connections near destination | Limited | Transit APIs (GTFS/GTFS-RT or provider APIs) | 1.0 - 2.0 | API availability/coverage by city | Prototype only for one city/area |
+| Anti-sickness Mode (sensor-driven UI mode) | Yes | Accelerometer/Gyroscope via Expo | 0.75 - 1.25 | False positives, UX tuning | Include in MVP |
+| Shake to Report | Yes | Shake detection + local form + optional backend stub | 0.5 - 0.75 | Accidental triggers | Include in MVP |
+| Location-aware POIs | Yes, simplified | GPS + POI dataset/API + local notification policy | 0.75 - 1.25 | Battery and background constraints | Stretch goal |
+| Journey Alerts (delay/platform/weather changes) | Yes | Polling + local/push notifications | 0.75 - 1.25 | Background execution limits | Include core alerts in MVP |
+| Arrival Alarm (5-minute warning) | Yes | Stop progression + notification scheduling | 0.25 - 0.5 | ETA drift if API stale | Include in MVP |
+| Partner Media Hub | Yes, simplified | Static catalog or partner feed metadata | 0.5 - 1.0 | Licensing/content availability | Demo with mock catalog |
+| Offline Mode Fallback | Yes | Local persistence (cached journey, summaries, selected content) | 0.75 - 1.25 | Cache invalidation | Include in MVP |
+| BLE Carriage Capacity Mapping | No (full version) | BLE scanning + peer signal model | 2.0+ | iOS/background BLE limits, privacy, low reliability | Replace with manual crowd reports |
+
+### 6.2 MVP vs Stretch Scope
+
+**MVP (must ship):**
+- Core Journey Dashboard
+- Arrival Alarm
+- Journey Alerts (delay-focused)
+- Anti-sickness Mode
+- Shake to Report
+- Offline Mode Fallback (basic cache)
+
+**Stretch (if schedule allows):**
+- Contextual Weather at ETA
+- Smart Feed + AI Summaries
+- Location-aware POIs
+- Smart Connections (single-city pilot)
+- Dynamic Route Map enhancements
+
+**Defer / reframe:**
+- BLE carriage capacity mapping (replace with manual crowd input and confidence indicator)
+
+### 6.3 API Gap Mitigations
+
+- **No station coordinates in train payload:** maintain a local station metadata table keyed by `station_id`.
+- **No route polyline:** render route as ordered stops and interpolate between station points.
+- **No multimodal connection data:** integrate one external transit provider first, behind an optional feature flag.
+- **Potential API instability:** keep mocked data providers and fallback UI states for demo reliability.
+
+### 6.4 Suggested Ownership Split (3 Developers)
+
+- **Developer A (Core Data + API):** data layer, caching, train status logic, ETA/progress computation.
+- **Developer B (Mobile UX + Sensors):** dashboard UI, anti-sickness mode, shake-to-report, notifications.
+- **Developer C (Enrichment + AI):** weather integration, smart feed summarization, POIs/connections prototype.
+
+### 6.5 Definition of Done (Per Feature)
+
+- Type-safe integration with `api/types.ts`.
+- Offline/error state handled and visible in UI.
+- At least one unit test for non-UI logic path.
+- Demo-ready behavior under mocked network failure.
