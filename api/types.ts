@@ -19,7 +19,7 @@ export interface TrainInfo {
   arr_time: string
   /** Destination station of the journey. */
   arr_station: Station
-  /** Hypothetical duration in format HH:MM:SS. */
+  /** Scheduled journey duration in format HH:MM:SS. */
   duration: string
   /** Segments describing the train and related journey data. */
   journey_list: JourneyList[]
@@ -113,7 +113,7 @@ export interface Train {
   actual_station: string
   /** MIR code of the current or actual station. */
   actual_station_mir: string
-  /** Number of stops from origin to destination, starting at 0. */
+  /** Last passed stop index for train progression. */
   pass_id: number
   /** Scheduled dates on which this train operates. */
   schedule: string[]
