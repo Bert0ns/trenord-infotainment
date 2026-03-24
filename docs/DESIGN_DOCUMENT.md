@@ -1,4 +1,4 @@
-# Trenord Infotainment: Design Document
+# Trenord Infotainment: Design Document (Exam-Focused)
 
 ## 1. Project Overview & Scope
 **Project Name:** Trenord Infotainment App
@@ -10,125 +10,301 @@
 **Platform:** iOS and Android (via Expo + React Native)
 
 ### 1.1 Value Proposition
-A smart, context-aware infotainment application designed to enhance the commuting experience on Trenord trains. It combining real-time journey data with personalized content, sensor-driven interactions, and AI-powered insights to provide a frictionless, more enjoyable ride.
+A smart, context-aware infotainment application designed to enhance the commuting experience on Trenord trains. It combines **real-time journey data** (delay, progress, crowding, stops) with **sensor-driven interactions** (shake/report, motion comfort) and **resilient offline behavior** for typical train connectivity issues.
+
+### 1.2 Exam/Project Constraints (Non‑Negotiable)
+- **2-month cap:** MVP must be ruthlessly scoped and demoable.
+- **Polished UI:** strong Look & Feel, responsive layout, explicit states (loading/offline/error/cancelled).
+- **Sensors required:** accelerometer/gyroscope, GPS, haptics (where appropriate).
+- **Testing:** high coverage for non-UI code (helpers, hooks, parsing, view-model logic).
+- **Demo reliability:** mocked providers + caching must allow a stable demo even when the Train API is flaky.
+
+### 1.3 Data Capabilities (Grounded in Provided API Docs)
+Confirmed external data capability:
+- **Trenord Train API:** `GET https://cloud.mp.trenord.it/train/{train_id}` returning an array of journey candidates (typically the first element is the active/next journey).
+
+Everything else (weather/news/AI) is optional stretch because it depends on additional APIs not described in the provided Trenord API material.
 
 ---
 
-## 2. Feature Specification (Brainstorming & Polished Ideas)
+## 2. Feature Specification
 
-### 2.1 Core Journey Dashboard (The "Home Page")
-The primary interface for the commuter, offering glanceable, relevant information dynamically based on the current trip context.
-*   **Journey Tracking:** Real-time train status, delays, crowding levels, percent progress, and ETA.
-*   **Contextual Weather:** Weather forecast for the destination *at the exact time of arrival*.
-*   **Dynamic Route Map:** Live map showing the current location along the route.
-*   **Smart Feed:** Curated news related to the destination or journey, summarized using AI for quick reading.
-*   *(New Idea)* **Smart Connections:** Upon approaching the destination, automatically suggest optimal transit connections (metro, buses, bike-sharing availability) based on live schedules.
+## 2.0 Onboard Unlock (Mandatory, Per Journey) + Locked Teaser
 
-### 2.2 Interactive & Sensor-Driven Features (The "Wow" Factor)
-Features designed to leverage modern smartphone sensors and UX patterns to demonstrate technical proficiency.
-*   **Accelerometer-based Anti-sickness Mode:** Detects train sway/movement using the accelerometer/gyroscope. The UI adapts by displaying a stabilizing visual horizon or switching to audio-first content to mitigate motion sickness during long reads.
-*   **"Shake to Report" System:** Uses shake detection to quickly open an issue reporting modal (e.g., "Air conditioning broken", "Car too crowded", "Dirty seats").
-*   **Location-Aware POIs:** As the train moves, push background points of interest or historical trivia about the areas being passed.
-*   *(New Idea)* **Crowd-sourced Carriage Capacity:** App utilizes Bluetooth Low Energy (BLE) scanning (or simple crowdsourced manual inputs) to map which specific carriages are the most empty, and shares this with users waiting at the next stations.
+### 2.0.1 Objective
+The infotainment service must be **available only onboard** and **unlock post check-in** (as described in the onboard scenario). Since we do not have official Trenord ticketing/account APIs in our provided context, the unlock will be implemented as an **exam-grade, demoable gate**:
+- **Per journey** (unlock applies only to one journey instance, not a global “logged-in” state).
+- Uses real app capabilities (camera scan, state machine, persistence, validation via Train API).
+- Explicitly documented as **mocked verification** where external services are not available.
 
-### 2.3 Media & Notifications
-*   **Journey Alerts:** Push notifications for critical changes (delays, platform changes, sudden weather shifts at destination).
-*   **Arrival Alarms:** Wake-up/prepare notifications when exactly 5 minutes away from the destination.
-*   **Partner Media Hub:** Integration with sponsored media (podcasts, music, audiobooks) specifically tailored to the journey's duration.
-*   *(New Idea)* **Offline Mode Fallback:** Since train routes often suffer from cellular dead zones, the app proactively caches the AI news summaries, current media, and ETA projections for offline viewing.
+### 2.0.2 Locked Mode (Read‑only Teaser)
+When locked, the app shows a polished teaser rather than an empty wall:
+- A **Preview Dashboard** rendered from static/mock data (clearly labeled “Preview”).
+- Explains what becomes available once unlocked.
+- CTA: **Unlock this journey** (leads to unlock flow).
+
+This supports the exam’s “Look & Feel” requirement and creates a smooth demo narrative:
+**Locked teaser → unlock → real dashboard → offline fallback**.
+
+### 2.0.3 Unlock is Per Journey (Definition)
+We define the journey key using fields present in Train API:
+- `train_id` (request parameter used to fetch the journey)
+- root journey `date` (`YYYYMMDD`)
+- `dep_station.station_id`, `arr_station.station_id`
+- `dep_time`, `arr_time`
+- cancellation status `cancelled`
+
+**Unlock scope rule:** unlocking binds to a specific journey candidate (typically index `0`).
+Unlock is invalidated when:
+- the app detects a different journey key (new date / different origin-destination / different train_id), or
+- the journey ends, or
+- user logs out / locks again.
+
+### 2.0.4 Unlock Options Considered (Only)
+We only consider:
+- **Ticket Scan**
+- **Login with mocked Trenord account**
+
+### 2.0.5 MVP Implementation Details
+We implement both methods, with deterministic fallback paths for demo reliability.
+
+**Ticket Scan flow (MVP):**
+1. Camera scan QR payload (demo schema), e.g.:
+   `trenord-demo://ticket?train_id=1900832&date=20240117&from=S01933&to=S01066`
+2. Fetch Train API: `GET /train/{train_id}`
+3. Choose candidate journey (index `0` by default) and validate:
+   - `date` matches
+   - origin/destination station_id match (if provided)
+   - if `cancelled=true`, do not unlock; show cancellation explanation
+4. On success: store `unlockedJourneyKey` and allow access to the full app.
+
+Fallback if camera permission denied: manual entry of the same code.
+
+**Mocked Login flow (MVP):**
+1. Login with demo credentials or “1-tap demo user”.
+2. Enter/select `train_id` (with “recent trains” list).
+3. Fetch Train API and unlock per journey key.
+4. Store a mock session token locally; implement logout.
+
+### 2.0.6 Definition of Done (Unlock)
+- Works on iOS and Android.
+- Locked teaser is polished and functional offline.
+- Unlock binds to a journey key and visibly indicates the unlocked journey (train + date + direction).
+- Unit tests cover:
+  - journey key creation/matching
+  - validation rules
+  - invalidation rules (journey end / journey mismatch)
+  - mocked session persistence
+
+---
+
+## 2.1 Core Journey Dashboard (The “Home Page”)
+Primary interface for the commuter: glanceable, relevant information driven by current trip context.
+
+### 2.1.1 What we show (MVP)
+From the **Train API** response:
+- **Delay:** use root `delay` when `delay_defined=true`; otherwise show “Delay not confirmed” and fall back to train-level delay if present.
+- **Cancellation:** if `cancelled=true`, show a clear cancelled state and suppress arrival alarm.
+- **Crowding:** `journey_list[0].train.crowding` (`percentage`, `level`, `source`).
+- **Current position hints:** `journey_list[0].train.actual_station`, `actual_station_mir`, `actual_time` (if `has_live_info=true`).
+- **Stops overview:** compact render from `pass_list[]` (do not render large `schedule` arrays).
+
+### 2.1.2 Derived values (must be unit-tested)
+- **Progress %:** computed from `train.pass_id` vs `pass_list.length` (guard for missing fields).
+- **Next stop:** derived from `pass_list` and `pass_id`.
+- **ETA:** based on schedule + confirmed delay; if live info is missing, mark as estimate/unknown.
+
+### 2.1.3 UX states (required)
+- Loading (first fetch)
+- Live (fresh API data)
+- Partial (no live info / missing fields)
+- Cancelled
+- Offline (cached snapshot + “last updated at” banner)
+
+---
+
+## 2.2 Interactive & Sensor-Driven Features (The “Wow” Factor)
+Features designed to leverage modern smartphone sensors and demonstrate technical proficiency.
+
+### 2.2.1 Motion Comfort Mode (Anti‑sickness, iOS-like, global)
+**Goal:** reduce nausea and cognitive load during travel **without changing screen context**.  
+This feature is **not a separate screen**. It is a **global UI adaptation layer** applied across all screens (Locked teaser, Unlock flow, Dashboard, Settings).
+
+**Activation (MVP):**
+- Primary: **manual toggle in Settings** (`Comfort Mode: On/Off`).
+- Persisted locally and applied app-wide on startup.
+- Sensor data is still collected to satisfy sensor requirements and for potential future “suggestion” UX, but MVP behavior remains user-controlled for predictability.
+
+**iOS-like behavior model (what changes globally when enabled):**
+1. **Reduce Motion**
+   - Disable/simplify non-essential animations and transitions (prefer opacity fades over translation/scale).
+   - Avoid looping decorative animations.
+2. **Reduce Transparency / Layer Complexity**
+   - Reduce/disable heavy glass/blur surfaces (Reduce Transparency equivalent).
+   - Continue following DESIGN.md “No-Line Rule”: separate content via tonal depth tokens rather than borders.
+3. **Increase Readability**
+   - Slightly increase typography scale for key metrics and labels (keep **Manrope** per DESIGN.md).
+   - Add whitespace between dense blocks; collapse secondary content where appropriate.
+
+**Design System Alignment (DESIGN.md: “Kinetic Precision”):**
+- Comfort Mode preserves the HUD-like aesthetic, but simplifies to more stable tonal surfaces.
+- No 1px borders; use `surface` / `surface-container-low` / `surface-container-high` layering.
+- Avoid harsh contrast and visual noise during motion; maintain `on-surface-variant` for secondary text.
+
+**Testing focus:**
+- Unit test “comfort policy” functions (e.g., mapping comfort mode → animation/blur/typography tokens).
+- Unit test motion-score math as pure functions (optional), without coupling it to the toggle.
+
+### 2.2.2 “Shake to Report” System (MVP)
+Uses shake detection to open an issue reporting modal:
+- categories: “Air conditioning”, “Too crowded”, “Dirty seats”, “Other”
+- optional text note
+- store locally; optionally export/share for demo
+- protect against accidental triggers via debounce + confirmation step
+
+### 2.2.3 Location-Aware POIs (Stretch)
+Foreground-only POIs/trivia while the app is open (battery-aware; avoid background tracking in MVP).
+
+### 2.2.4 BLE Carriage Capacity Mapping (Defer)
+Not MVP: iOS/background BLE constraints + privacy and reliability risk.
+
+---
+
+## 2.3 Media, Notifications & AI (Enrichment)
+
+### 2.3.1 Journey Alerts (MVP subset)
+- Local notifications for critical changes:
+  - delay change threshold
+  - cancellation changes
+  - (platform changes only if reliably present)
+
+**Constraint note:** “true push” needs backend. MVP uses foreground polling + local notifications; background delivery is best-effort only.
+
+### 2.3.2 Arrival Alarm (MVP)
+- Notify exactly 5 minutes before destination (best-effort based on ETA logic).
+- Reschedule if ETA changes significantly.
+
+### 2.3.3 AI Destination News Search + Summaries (Stretch)
+Provide an “AI-powered destination briefing” for the journey destination:
+- **Input context:** destination station name (`arr_station.station_ori_name`) and optionally the destination city/area if derivable.
+- **News retrieval:** query an external news/search API (or a curated feed) for recent articles related to the destination location.
+- **AI summarization:** produce a short, commuter-friendly summary (bullets) highlighting only actionable/relevant information (events, disruptions, major local news).
+- **Latency/cost controls:**
+  - strict timeouts and fallbacks (“News unavailable”)
+  - caching per destination for a limited time window
+  - optional “summarize on demand” button to avoid background token usage
+- **Offline behavior:** show cached summaries when network is unavailable.
+
+> Note: this depends on external services (news + AI) not included in the Trenord Train API, therefore it is treated as a Stretch feature. For demo reliability, we can ship with a mocked news provider and/or precomputed summaries for a small set of destinations.
+
+### 2.3.4 Offline Mode Fallback (MVP)
+Because trains have dead zones:
+- Cache the latest Train API snapshot + derived dashboard view model.
+- When offline:
+  - show cached dashboard + last updated timestamp
+  - disable actions that require network, but keep UI usable
+
+### 2.3.5 Partner Media Hub (Stretch)
+Demo with mock catalog only, no licensing complexity.
 
 ---
 
 ## 3. Technical Architecture & Constraints
 
 ### 3.1 Tech Stack
-*   **Framework:** React Native with Expo (cross-platform support out-of-the-box).
-*   **Navigation:** Expo Router for deep-linkable, file-based routing.
-*   **External APIs:** 
-    *   Trenord/Open Data APIs (Train schedules/status).
-    *   OpenWeather / Similar API (Weather).
-    *   OpenAI API / Local LLM (News summarization).
+- **Framework:** React Native with Expo
+- **Navigation:** Expo Router
+- **External APIs:**
+  - **Trenord Train API:** `GET https://cloud.mp.trenord.it/train/{train_id}`
+  - (Stretch) Weather API
+  - (Stretch) AI summarization API
+  - (Stretch) News/Search API for destination news retrieval
 
-### 3.2 Evaluation Criteria (Exam Requirements)
-*   **Responsive & Polished UI:** High focus on _Look & Feel_. Needs to handle diverse screen sizes gracefully.
-*   **Sensor Integration:** Accelerometer, Gyroscope, GPS, and Haptics are mandatory to fulfill technical complexity.
-*   **Testing:** High code coverage required for non-UI code (business logic, helpers, hooks). Use `Jest` + `React Native Testing Library`.
-*   **Deliverables:** This Design Document, a Real-Time Demo (on actual devices if possible), and a Technical Presentation.
+### 3.2 Architecture Outline (Exam-grade, testable)
+- **API layer:** fetch + strict parsing to typed DTOs
+- **Normalization:** convert raw API payload → stable internal models:
+  - `JourneySnapshot` (raw + timestamp)
+  - `JourneyViewModel` (derived fields for UI)
+- **State:** a single source of truth for:
+  - `UnlockState` (per journey)
+  - `ComfortMode` global toggle
+  - `JourneyState` (loading/live/offline/error)
+- **Caching:** local persistence for snapshots + settings + unlock/session state
+- **Mock providers:** deterministic demo mode for API failures and stretch integrations
+
+### 3.3 Evaluation Criteria (Exam Requirements)
+- Responsive & polished UI
+- Sensors: accelerometer, gyroscope, GPS, haptics
+- Testing: Jest + React Native Testing Library
+- Deliverables: design doc, real-time demo, technical presentation
 
 ---
 
 ## 4. Development Timeline (2 Months | 3 Developers)
+**Weeks 1–2: Architecture & PoC**
+- Expo setup, routing, CI checks
+- Typed Train API wrapper + mocked provider
+- Locked teaser UI + unlock state machine skeleton
+- Comfort Mode global toggle wiring (UI tokens + persistence)
 
-*   **Weeks 1-2: Architecture & PoC.** Setup Expo, CI/CD, routing. Create mocked API wrappers (crucial since external APIs like Trenord might be unreliable).
-*   **Weeks 3-4: Core UI & Data Binding.** Build the layout, Dashboard, connection to live data mappings.
-*   **Weeks 5-6: Sensors & AI.** Implement Anti-sickness mode, Shake-to-report, location tracking, and AI news summaries.
-*   **Week 7: Polish & Testing.** Write Jest tests. Refine animations (Reanimated), fix layout bugs, error handling for offline states.
-*   **Week 8: Pitch Prep.** Finalize the presentation, practice the live demo.
+**Weeks 3–4: Core UI & Data Binding**
+- Dashboard UI + view model (ETA/progress/next stop)
+- Offline caching + offline UX states
+- Mocked Login unlock end-to-end (journey-bound)
+
+**Weeks 5–6: Sensors + Ticket Scan + Notifications**
+- Shake detection + report modal + persistence
+- Motion comfort: global reduction policy applied across screens
+- Ticket Scan unlock (camera scan + parsing + journey validation)
+- Arrival alarm + delay alerts (local notifications)
+
+**Week 7: Polish & Testing**
+- Unit tests: journey matching, ETA/progress logic, caching, notification decisions, comfort policy
+- UI polish: accessibility, edge cases, cancelled journey state
+- Demo hardening: “API flaky” fallback
+
+**Week 8: Pitch Prep**
+- Demo script: locked teaser → unlock → live dashboard → shake report → offline mode
+- Presentation: architecture, tradeoffs, test strategy, constraints
 
 ---
 
 ## 5. Guide: Effectively Using AI Agents in Your Project
-
-As a team of 3 Master's students under a tight deadline, AI coding agents can drastically speed up velocity. Here is how to use them effectively:
-
-### 5.1 Best Practices for AI Interaction
-1.  **Isolate Tasks:** Don't ask an agent to "build the dashboard". Ask it to "Create a `WeatherWidget.tsx` component that takes an ETA and a coordinates prop, fetches data from the `useWeather` hook, and displays an animated icon."
-2.  **Define Contracts First:** Write your TypeScript interfaces/types (`api/types.ts`) first. Then, tell the AI: "Implement this function to match this exact interface."
-3.  **Use for Scaffolding & Boilerplate:** Let AI write your UI boilerplate (Tailwind classes/StyleSheets), navigation structure, and standard forms.
-4.  **Test Generation:** AI is excellent at writing repetitive Jest tests. Provide the business logic file and say: "Generate a Jest test suite for this file aiming for 100% path coverage, mocking the API calls."
-
-### 5.2 What Files to Provide (Context Strategy)
-When prompting an AI agent, you must provide the right context. Overloading it makes it confused; underloading it leads to hallucinations.
-
-*   **For New UI Components:**
-    *   `constants/theme.ts` (so it uses your app's exact color palette).
-    *   `components/ThemedText.tsx` and `components/ThemedView.tsx` (so it uses your base UI elements instead of raw generic React Native ones).
-*   **For Business Logic / Hooks:**
-    *   `api/types.ts` (to ensure strict typing).
-    *   The specific utility or mock data file you want it to process.
-*   **For Debugging Expo/Native issues:**
-    *   `package.json` (so it knows exactly which versions of Reanimated/Gesture Handler/Expo you are using).
-    *   The exact error trace.
-*   **For Team Alignment:**
-    *   Keep maintaining an updating an `.instructions.md` or a `prompt.md` in the root of your project that contains your preferred code style (e.g., "Always use functional components, prefer arrow functions, use Expo Router for navigation, rely on Reanimated for animations"). Modern IDE AI tools will read this globally.
+As a team of 3 Master's students under a tight deadline, AI coding agents can drastically speed up velocity. Use them for isolated tasks, strict interfaces, scaffolding, and test generation (keep the existing section and keep it updated).
 
 ---
 
 ## 6. Feasibility Matrix & Delivery Plan
 
-This section translates brainstorming ideas into implementation-ready scope for the 2-month timeline.
-
-### 6.1 Feature Feasibility Matrix
-
+### 6.1 Feature Feasibility Matrix (Updated)
 | Feature | Feasible in 2 Months | Data/Dependencies | Effort (Dev-Weeks) | Main Risks | Recommendation |
 | --- | --- | --- | --- | --- | --- |
-| Core Journey Dashboard (status, delays, ETA, crowding, progress) | Yes | Trenord Train API (`/train/{id}`), local UI state | 1.5 - 2.0 | API reliability and inconsistent payloads | Include in MVP |
-| Contextual Weather at ETA | Yes, with extra mapping layer | Weather API + station-to-coordinate mapping | 0.5 - 1.0 | Missing coordinates in train API | Stretch goal |
-| Dynamic Route Map | Partial | Train API + station coordinate dataset + map SDK | 1.0 - 1.5 | No route polyline in API | Use stop-based map in MVP; live interpolation as stretch |
-| Smart Feed + AI Summaries | Yes | News API + LLM API + local cache | 1.0 - 1.5 | Token cost, latency, content quality | Stretch goal |
-| Smart Connections near destination | Limited | Transit APIs (GTFS/GTFS-RT or provider APIs) | 1.0 - 2.0 | API availability/coverage by city | Prototype only for one city/area |
-| Anti-sickness Mode (sensor-driven UI mode) | Yes | Accelerometer/Gyroscope via Expo | 0.75 - 1.25 | False positives, UX tuning | Include in MVP |
-| Shake to Report | Yes | Shake detection + local form + optional backend stub | 0.5 - 0.75 | Accidental triggers | Include in MVP |
-| Location-aware POIs | Yes, simplified | GPS + POI dataset/API + local notification policy | 0.75 - 1.25 | Battery and background constraints | Stretch goal |
-| Journey Alerts (delay/platform/weather changes) | Yes | Polling + local/push notifications | 0.75 - 1.25 | Background execution limits | Include core alerts in MVP |
-| Arrival Alarm (5-minute warning) | Yes | Stop progression + notification scheduling | 0.25 - 0.5 | ETA drift if API stale | Include in MVP |
-| Partner Media Hub | Yes, simplified | Static catalog or partner feed metadata | 0.5 - 1.0 | Licensing/content availability | Demo with mock catalog |
-| Offline Mode Fallback | Yes | Local persistence (cached journey, summaries, selected content) | 0.75 - 1.25 | Cache invalidation | Include in MVP |
-| BLE Carriage Capacity Mapping | No (full version) | BLE scanning + peer signal model | 2.0+ | iOS/background BLE limits, privacy, low reliability | Replace with manual crowd reports |
+| **Onboard Unlock (per journey, ticket scan + mocked login) + locked teaser** | Yes | Camera + local storage + Train API validation | 1.0 - 1.5 | mocked ticket/login; permissions | **Include in MVP** |
+| Core Journey Dashboard (status, delays, ETA, crowding, progress) | Yes | Train API | 1.5 - 2.0 | API payload variability | Include in MVP |
+| Motion Comfort Mode (global, settings-toggle) | Yes | Sensors + UI token policy | 0.75 - 1.25 | UX tuning, consistency | Include in MVP |
+| Shake to Report | Yes | Shake detection + modal + persistence | 0.5 - 0.75 | accidental triggers | Include in MVP |
+| Journey Alerts | Yes (foreground reliable) | Polling + local notifications | 0.75 - 1.25 | background limits | Include core alerts |
+| Arrival Alarm (5-minute warning) | Yes | ETA computation + notifications | 0.25 - 0.5 | ETA drift | Include in MVP |
+| Offline Mode Fallback | Yes | local cache | 0.75 - 1.25 | invalidation | Include in MVP |
+| Contextual Weather at ETA | Yes | weather API + station coords table | 0.5 - 1.0 | missing coordinates | Stretch |
+| **AI destination news search + summaries** | Yes (prototype) | News/search API + LLM + cache | 1.0 - 1.5 | latency/cost, content quality | Stretch |
+| Location-aware POIs | Yes, simplified | GPS + POI dataset | 0.75 - 1.25 | battery | Stretch |
+| BLE Carriage Capacity Mapping | No | BLE scanning | 2.0+ | iOS limits/privacy | Defer |
 
 ### 6.2 MVP vs Stretch Scope
-
 **MVP (must ship):**
+- Onboard Unlock (per journey: ticket scan + mocked login)
+- Locked read-only teaser
 - Core Journey Dashboard
 - Arrival Alarm
-- Journey Alerts (delay-focused)
-- Anti-sickness Mode
+- Journey Alerts (delay-focused, foreground-reliable)
+- Motion Comfort Mode (global, settings toggle)
 - Shake to Report
 - Offline Mode Fallback (basic cache)
 
 **Stretch (if schedule allows):**
 - Contextual Weather at ETA
-- Smart Feed + AI Summaries
+- **AI destination news search + summaries**
 - Location-aware POIs
 - Smart Connections (single-city pilot)
 - Dynamic Route Map enhancements
@@ -137,21 +313,19 @@ This section translates brainstorming ideas into implementation-ready scope for 
 - BLE carriage capacity mapping (replace with manual crowd input and confidence indicator)
 
 ### 6.3 API Gap Mitigations
-
-- **No station coordinates in train payload:** maintain a local station metadata table keyed by `station_id`.
-- **No route polyline:** render route as ordered stops and interpolate between station points.
-- **No multimodal connection data:** integrate one external transit provider first, behind an optional feature flag.
-- **Potential API instability:** keep mocked data providers and fallback UI states for demo reliability.
+- Optional/missing fields: strict parsing + safe defaults.
+- No station coordinates: local station metadata table (only if weather/map require it).
+- API instability: mock provider + cached last-good snapshot for demos.
+- AI/news instability: strict timeouts + cached summaries + mocked providers for demo.
 
 ### 6.4 Suggested Ownership Split (3 Developers)
-
-- **Developer A (Core Data + API):** data layer, caching, train status logic, ETA/progress computation.
-- **Developer B (Mobile UX + Sensors):** dashboard UI, anti-sickness mode, shake-to-report, notifications.
-- **Developer C (Enrichment + AI):** weather integration, smart feed summarization, POIs/connections prototype.
+- **Developer A (Core Data + API):** API wrapper, parsing, view models, caching, unlock validation logic.
+- **Developer B (Mobile UX + Sensors):** dashboard UI, motion comfort policy integration, shake-to-report UX, haptics.
+- **Developer C (Notifications + Enrichment):** arrival alarm, delay alerts, offline UX states, AI/news prototype if time.
 
 ### 6.5 Definition of Done (Per Feature)
-
-- Type-safe integration with `api/types.ts`.
-- Offline/error state handled and visible in UI.
-- At least one unit test for non-UI logic path.
-- Demo-ready behavior under mocked network failure.
+- Type-safe integration with internal models (`api/types.ts` or equivalent)
+- Offline/error state handled and visible in UI
+- At least one unit test for each core business logic path
+- Demo-ready behavior under mocked network failure
+- For unlock: journey-bound, deterministic, and clearly communicated to the user
