@@ -27,7 +27,9 @@ Build a reliable, polished onboard app that improves commuting with:
 ### 1.4 Confirmed data source
 
 - Trenord Train API: `GET https://cloud.mp.trenord.it/train/{train_id}`
-- Other integrations (weather/news/AI) are stretch and optional
+- Other integrations:
+    - weather
+    - AI summarized news on the destination location
 
 ---
 
@@ -71,11 +73,6 @@ Core dashboard:
 
 Sensors and interaction:
 
-- global Comfort Mode toggle in settings (persisted)
-- Comfort Mode policy:
-  - reduce motion
-  - reduce transparency/layer complexity
-  - increase readability for key text
 - Shake to Report modal with debounce + confirmation
 
 Notifications:
@@ -94,10 +91,6 @@ Offline fallback:
 - contextual weather at ETA
 - AI destination news search + summaries
 - location-aware POIs (foreground only)
-
-Deferred:
-
-- BLE carriage capacity mapping (platform/privacy risk)
 
 ---
 
@@ -152,7 +145,6 @@ Guardrails:
 | Weather at ETA                               | Stretch | medium (station coordinates)   | optional |
 | AI destination news summaries                | Stretch | high (latency/cost/quality)    | optional |
 | Location-aware POIs                          | Stretch | medium (battery/noise)         | optional |
-| BLE carriage mapping                         | Defer   | high (iOS/privacy constraints) | defer    |
 
 ### 6.2 Ownership split
 
