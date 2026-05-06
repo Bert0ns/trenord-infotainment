@@ -12,7 +12,7 @@ Dashboard of sorts with relevant info:
   - Weather changes at the destination
   - News related to the destination
   - About to arrive at the destination
-- Shake to report an issue (e.g. train is too crowded, etc.)
+- Shake to report an issue (e.g. train is too crowded, bugs in the app, etc.)
 - Accelerometer-based anti-sickness mode (e.g. for long train rides)
 - Sponsored/partner media access (e.g. music, podcasts, etc.) during the journey
 - Points of interest near the destination, connections to other lines or services
