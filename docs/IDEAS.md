@@ -38,6 +38,7 @@ Dashboard with relevant info:
 
 ## Settings page
 - Shake to report button
+- Select Dark / White theme
 - Notifications management
   - Notifications related to jurney progress changes
     - Train delays, cancellations, etc.

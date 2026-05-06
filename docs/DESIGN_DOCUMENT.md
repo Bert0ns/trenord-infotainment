@@ -13,84 +13,80 @@
 Build a reliable, polished onboard app that improves commuting with:
 
 - real-time journey information (delay, progress, crowding, stops)
-- sensor-based interaction (comfort mode, shake report)
+- advanced integrations (weather, AI news, media)
+- sensor-based interaction (anti-sickness mode, shake to report)
+- location tracking (GPS map with railways)
 - resilient offline behavior for weak train connectivity
 
 ### 1.3 Non-negotiable constraints
 
 - MVP must be demoable in 2 months
-- UI must look polished and clearly handle loading/offline/error/cancelled states
-- Sensors must be used: accelerometer/gyroscope, GPS, haptics where useful
-- Non-UI logic must be unit tested (parsing, helpers, view-model rules)
-- Demo must remain stable if the Train API is slow/unavailable (mocking + cache)
+- Responsive design and Premium Look & Feel ✨
+- Sensors must be used: accelerometer (anti-sickness), GPS (map tracking), shake detection (reporting)
+- Non-UI logic must be unit tested
+- Support both Italian and English (localization)
+- Demo must remain stable if APIs are unavailable (mocking + cache)
 
-### 1.4 Confirmed data source
+### 1.4 Confirmed data source and integrations
 
 - Trenord Train API: `GET https://cloud.mp.trenord.it/train/{train_id}`
-- Other integrations:
-    - weather
-    - AI summarized news on the destination location
+- Weather APIs (destination weather, air quality, UV)
+- AI Services (destination news summarization)
+- Google Maps (real-time position tracking)
+- Media partners (podcasts, films)
 
 ---
 
-## 2. Product Scope
+## 2. Product Scope (Pages & Features)
 
-### 2.1 Access model (mandatory)
+### 2.1 Locked Page
+The default screen upon opening the app without an active journey.
+- **Features:** 
+  - Access to Settings.
+  - Login by manual insertion of the ticket code and selecting the destination station.
+  - Once logged in, grants access to the full application starting from the Home Page.
 
-The app is locked by default and unlocks per journey.
+### 2.2 Home Page (Dashboard)
+The main overview of the current journey.
+- **Features:**
+  - Train status (delays, crowding levels, etc.).
+  - ETA and journey progress percentage.
+  - Destination weather explicitly at the time of arrival.
+  - AI-summarized news related to the destination.
 
-Locked mode requirements:
+### 2.3 Journey Page
+Detailed tracking of the trip.
+- **Features:**
+  - Detailed timeline of all train stops.
+  - Embedded Google Maps showing the user's real-time position with the railway path highlighted.
 
-- show a read-only preview dashboard (clearly labeled Preview)
-- explain full features
-- provide CTA: Unlock this journey
+### 2.4 Journey Destination Page
+Information tailored to the arrival city/station.
+- **Features:**
+  - Relevant AI-summarized destination news.
+  - Points of Interest (POIs) with a button for direct navigation/directions.
+  - Public transport connections and local services.
+  - Environmental overview: weather state, air quality, UV index.
 
-Unlock methods (MVP):
+### 2.5 Media Page
+Entertainment options exclusively unlocked during the journey.
+- **Features:**
+  - Sponsored or partner media access.
+  - Movies, podcasts, music to enjoy during the ride.
 
-1. Ticket scan (QR) with manual code fallback
-2. Mocked login + train selection
+### 2.6 Shake to Report Page
+A global interrupter / modal triggered by shaking the mobile device.
+- **Features:**
+  - Lets users rapidly report an issue: Train is too crowded, air conditioning broken, dirty seats, app bugs, etc.
 
-Validation rules:
-
-- fetch `GET /train/{train_id}`
-
-Definition of done:
-
-- works on iOS and Android
-- unlock is clearly bound to one journey and visible in UI
-- locked teaser works offline
-- tests cover key generation/matching, validation, invalidation, persistence
-
-### 2.2 MVP features
-
-Core dashboard:
-
-- delay and cancellation status
-- crowding info
-- live hints: actual station/time when available
-- compact stop list from `pass_list`
-- derived values (unit tested): progress %, next stop, ETA
-
-Sensors and interaction:
-
-- Shake to Report modal with debounce + confirmation
-
-Notifications:
-
-- delay change alerts (local notifications)
-- cancellation alerts
-- arrival alarm 5 minutes before destination (best effort, rescheduled on ETA shifts)
-
-Offline fallback:
-
-- cache latest snapshot + derived view model
-- keep app usable while disabling network-only actions
-
-### 2.3 Stretch features
-
-- contextual weather at ETA
-- AI destination news search + summaries
-- location-aware POIs (foreground only)
+### 2.7 Settings Page
+General app configurations accessible even from the Locked Page.
+- **Features:**
+  - Alternative button to trigger "Shake to report".
+  - Button to select Dark, White or System color theme
+  - Notification management (journey progress changes, train delays/cancellations, arrival alarms, weather shifts).
+  - Language management (Italian and English).
+  - Toggle Accelerometer-based anti-sickness mode (IOS style, applying visual mitigations for long train rides).
 
 ---
 
@@ -132,30 +128,10 @@ Guardrails:
 
 ## 6. Feasibility, Ownership, and Done Criteria
 
-### 6.1 Scope decision matrix
-
-| Feature                                      | Scope   | Risk                           | Decision |
-| -------------------------------------------- | ------- | ------------------------------ | -------- |
-| Per-journey unlock + locked teaser           | MVP     | medium (permissions/mock auth) | ship     |
-| Core dashboard (delay/ETA/crowding/progress) | MVP     | medium (payload variability)   | ship     |
-| Comfort Mode (global)                        | MVP     | low/medium (UX consistency)    | ship     |
-| Shake to Report                              | MVP     | low (false triggers)           | ship     |
-| Journey alerts + arrival alarm               | MVP     | medium (background limits)     | ship     |
-| Offline fallback cache                       | MVP     | medium (cache invalidation)    | ship     |
-| Weather at ETA                               | Stretch | medium (station coordinates)   | optional |
-| AI destination news summaries                | Stretch | high (latency/cost/quality)    | optional |
-| Location-aware POIs                          | Stretch | medium (battery/noise)         | optional |
-
-### 6.2 Ownership split
-
-- Developer A: API wrapper, parsing, view models, unlock validation, caching
-- Developer B: UI implementation, comfort mode policy, shake UX, haptics
-- Developer C: notifications, alarm scheduling, offline UX, stretch integrations
-
-### 6.3 Definition of done (per feature)
+### 6.1 Definition of done (per feature)
 
 - type-safe integration with internal models
 - visible offline/error/loading handling
 - at least one unit test for core business logic path
 - demo-ready fallback under network/API instability
-- for unlock: deterministic, journey-bound behavior clearly communicated in UI
+- responsive design across devices
