@@ -33,7 +33,6 @@ npm run reset-project
 
 This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
 
-
 ## Join the community
 
 Join our community of developers creating universal apps.
@@ -97,3 +96,22 @@ Check that the emulator is connected:
 ```bash
 "$ANDROID_HOME/platform-tools/adb" devices
 ```
+
+## Updating dependencies
+
+Use pnpm for installs and updates in this repo.
+
+Update regular dependencies within existing version ranges:
+
+```bash
+pnpm update
+```
+
+Check and align Expo-related packages to the current SDK:
+
+```bash
+pnpm dlx expo install --check
+pnpm dlx expo install --fix --pnpm
+```
+
+When upgrading the Expo SDK itself, follow the Expo SDK upgrade guide and then re-run the Expo alignment command above.
