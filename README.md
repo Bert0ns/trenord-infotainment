@@ -25,6 +25,18 @@ In the output, you'll find options to open the app in a
 
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
+## Testing
+
+Unit tests use Jest with React Native Testing Library. Test files live under [__tests__](__tests__) and follow the `*.test.tsx` naming convention.
+
+Run the test suite:
+
+```bash
+pnpm test
+```
+
+Jest runs in watch mode by default; press `q` to quit or use `pnpm test -- --watchAll=false` for a single run.
+
 ## Get a fresh project
 
 When you're ready, run:
