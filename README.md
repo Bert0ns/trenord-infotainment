@@ -13,7 +13,7 @@ Preferred package manager: pnpm.
 2. Start the app
 
    ```bash
-   pnpm dlx expo start
+   pnpm start
    ```
 
 In the output, you'll find options to open the app in a
