@@ -72,7 +72,7 @@ export function SheetContainer({
 const styles = StyleSheet.create({
   scrim: {
     flex: 1,
-    backgroundColor: "#7F7F7F",
+    backgroundColor: "transparent",
   },
   safeArea: {
     flex: 1,
