@@ -12,9 +12,9 @@ import {
     SectionTitle,
     SheetContainer,
     issueOptions,
-} from "@/components/shake-to-report";
+} from "@/components/report-issue-components";
 
-export default function ShakeToReportPage() {
+export default function ReportIssuePage() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const [selectedIssues, setSelectedIssues] = useState<Set<string>>(
@@ -39,7 +39,7 @@ export default function ShakeToReportPage() {
   };
 
   return (
-    <SheetContainer bottomInset={insets.bottom}>
+    <SheetContainer bottomInset={insets.bottom} onClose={() => router.back()}>
       <ReportHeader title="Report an Issue" onClose={() => router.back()} />
 
       <ScrollView
