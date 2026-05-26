@@ -74,6 +74,8 @@ export ANDROID_SDK_ROOT=$ANDROID_HOME
 export PATH=$PATH:$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:$ANDROID_HOME/cmdline-tools/latest/bin
 ```
 
+You can also add the to ~/.bashrc for a permanent export
+
 ### What was fixed
 
 Expo failed with:

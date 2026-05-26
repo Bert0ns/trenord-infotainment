@@ -1,22 +1,24 @@
 import { useRouter } from "expo-router";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef } from "react";
 import { ScrollView, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import {
-    ActionButtons,
-    DetailsInput,
-    IssueGrid,
-    IssueOptionCard,
-    ReportHeader,
-    SectionTitle,
-    SheetContainer,
-    issueOptions,
-} from "@/components/shake-to-report";
+  ActionButtons,
+  DetailsInput,
+  IssueGrid,
+  IssueOptionCard,
+  ReportHeader,
+  SectionTitle,
+  SheetContainer,
+  type SheetHandle,
+  issueOptions,
+} from "@/components/report-issue-components";
 
-export default function ShakeToReportPage() {
+export default function ReportIssuePage() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const sheetRef = useRef<SheetHandle | null>(null);
   const [selectedIssues, setSelectedIssues] = useState<Set<string>>(
     () => new Set(["other-issue"]),
   );
@@ -38,9 +40,17 @@ export default function ShakeToReportPage() {
     });
   };
 
+  const requestClose = () => {
+    if (sheetRef.current?.close) {
+      sheetRef.current.close();
+    } else {
+      router.back();
+    }
+  };
+
   return (
-    <SheetContainer bottomInset={insets.bottom}>
-      <ReportHeader title="Report an Issue" onClose={() => router.back()} />
+    <SheetContainer ref={sheetRef} bottomInset={insets.bottom} onClose={() => router.back()}>
+      <ReportHeader title="Report an Issue" onClose={requestClose} />
 
       <ScrollView
         contentContainerStyle={styles.content}
@@ -63,7 +73,7 @@ export default function ShakeToReportPage() {
         <SectionTitle>Additional details (Optional)</SectionTitle>
         <DetailsInput value={details} onChange={setDetails} />
 
-        <ActionButtons onSubmit={() => {}} onCancel={() => router.back()} />
+        <ActionButtons onSubmit={() => {}} onCancel={requestClose} />
       </ScrollView>
     </SheetContainer>
   );
