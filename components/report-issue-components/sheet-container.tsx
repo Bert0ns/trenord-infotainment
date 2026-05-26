@@ -1,11 +1,12 @@
-import { type ReactNode } from "react";
-import { StyleSheet, View } from "react-native";
+import React, { type ReactNode, useImperativeHandle } from "react";
+import { StyleSheet, View, Dimensions } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
+  withTiming,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -18,14 +19,30 @@ type SheetContainerProps = {
 const CLOSE_DISTANCE = 140;
 const CLOSE_VELOCITY = 900;
 
-export function SheetContainer({
-  bottomInset,
-  onClose,
-  children,
-}: SheetContainerProps) {
-  const translateY = useSharedValue(0);
+const WINDOW_HEIGHT = Dimensions.get("window").height;
 
-  const dragGesture = Gesture.Pan()
+export type SheetHandle = {
+  close: () => void;
+};
+
+export const SheetContainer = React.forwardRef<SheetHandle, SheetContainerProps>(
+  function SheetContainer({ bottomInset, onClose, children }, ref) {
+    const translateY = useSharedValue(0);
+    const isClosing = useSharedValue(false);
+
+    useImperativeHandle(ref, () => ({
+      close: () => {
+        if (isClosing.value) return;
+        isClosing.value = true;
+        translateY.value = withTiming(WINDOW_HEIGHT, { duration: 350 }, (finished) => {
+          if (finished) {
+            runOnJS(onClose)();
+          }
+        });
+      },
+    }));
+
+    const dragGesture = Gesture.Pan()
     .activeOffsetY(10)
     .onChange((event) => {
       if (event.translationY > 0) {
@@ -36,38 +53,44 @@ export function SheetContainer({
       const shouldClose =
         event.translationY > CLOSE_DISTANCE || event.velocityY > CLOSE_VELOCITY;
 
-      if (shouldClose) {
-        runOnJS(onClose)();
+      if (shouldClose && !isClosing.value) {
+        isClosing.value = true;
+        translateY.value = withTiming(WINDOW_HEIGHT, { duration: 350 }, (finished) => {
+          if (finished) {
+            runOnJS(onClose)();
+          }
+        });
       } else {
         translateY.value = withSpring(0, { damping: 22, stiffness: 220 });
       }
     });
 
-  const sheetStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: translateY.value }],
-  }));
+    const sheetStyle = useAnimatedStyle(() => ({
+      transform: [{ translateY: translateY.value }],
+    }));
 
-  return (
-    <View style={styles.scrim}>
-      <SafeAreaView style={styles.safeArea} edges={["left", "right", "bottom"]}>
-        <Animated.View
-          style={[
-            styles.sheet,
-            { paddingBottom: Math.max(bottomInset, 16) },
-            sheetStyle,
-          ]}
-        >
-          <GestureDetector gesture={dragGesture}>
-            <View style={styles.dragRegion}>
-              <View style={styles.handle} />
-            </View>
-          </GestureDetector>
-          {children}
-        </Animated.View>
-      </SafeAreaView>
-    </View>
-  );
-}
+    return (
+      <View style={styles.scrim}>
+        <SafeAreaView style={styles.safeArea} edges={["left", "right", "bottom"]}>
+          <Animated.View
+            style={[
+              styles.sheet,
+              { paddingBottom: Math.max(bottomInset, 16) },
+              sheetStyle,
+            ]}
+          >
+            <GestureDetector gesture={dragGesture}>
+              <View style={styles.dragRegion}>
+                <View style={styles.handle} />
+              </View>
+            </GestureDetector>
+            {children}
+          </Animated.View>
+        </SafeAreaView>
+      </View>
+    );
+  },
+);
 
 const styles = StyleSheet.create({
   scrim: {
