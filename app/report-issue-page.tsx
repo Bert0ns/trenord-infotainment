@@ -73,7 +73,13 @@ export default function ReportIssuePage() {
         <SectionTitle>Additional details (Optional)</SectionTitle>
         <DetailsInput value={details} onChange={setDetails} />
 
-        <ActionButtons onSubmit={() => {}} onCancel={requestClose} />
+        <ActionButtons
+          onSubmit={() => {
+            alert("Report submitted successfully!");
+            requestClose();
+          }}
+          onCancel={requestClose}
+        />
       </ScrollView>
     </SheetContainer>
   );

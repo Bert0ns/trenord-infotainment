@@ -35,16 +35,19 @@ export const SheetContainer = React.forwardRef<SheetHandle, SheetContainerProps>
     const translateY = useSharedValue(0);
     const isClosing = useSharedValue(false);
 
+    const executeClose = () => {
+      "worklet";
+      if (isClosing.value) return;
+      isClosing.value = true;
+      translateY.value = withTiming(WINDOW_HEIGHT, { duration: POP_DOWN_DURATION_MS }, (finished) => {
+        if (finished) {
+          runOnJS(onClose)();
+        }
+      });
+    };
+
     useImperativeHandle(ref, () => ({
-      close: () => {
-        if (isClosing.value) return;
-        isClosing.value = true;
-        translateY.value = withTiming(WINDOW_HEIGHT, { duration: POP_DOWN_DURATION_MS }, (finished) => {
-          if (finished) {
-            runOnJS(onClose)();
-          }
-        });
-      },
+      close: executeClose,
     }));
 
     const dragGesture = Gesture.Pan()
@@ -58,13 +61,8 @@ export const SheetContainer = React.forwardRef<SheetHandle, SheetContainerProps>
       const shouldClose =
         event.translationY > CLOSE_DISTANCE || event.velocityY > CLOSE_VELOCITY;
 
-      if (shouldClose && !isClosing.value) {
-        isClosing.value = true;
-        translateY.value = withTiming(WINDOW_HEIGHT, { duration: POP_DOWN_DURATION_MS }, (finished) => {
-          if (finished) {
-            runOnJS(onClose)();
-          }
-        });
+      if (shouldClose) {
+        executeClose();
       } else {
         translateY.value = withSpring(0, SPRING_CONFIG);
       }
