@@ -1,4 +1,3 @@
-import { useColorScheme } from "@/hooks/use-color-scheme";
 import { Inter_700Bold, useFonts } from "@expo-google-fonts/inter";
 import { Tabs } from "expo-router";
 import React from "react";
@@ -6,7 +5,6 @@ import { Text, View } from "react-native";
 import CustomTabBar from "../../components/tabBar";
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
   const [fontsLoaded] = useFonts({
     Inter_700Bold,
   });

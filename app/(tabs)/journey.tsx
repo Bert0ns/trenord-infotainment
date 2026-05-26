@@ -23,13 +23,8 @@ export default function TabTwoScreen() {
       }
     >
       <ThemedView style={styles.titleContainer}>
-        <ThemedText
-          type="title"
-          style={{
-            fontFamily: Fonts.rounded,
-          }}
-        >
-          Journey-version-0.0
+        <ThemedText type="title" style={styles.titleText}>
+          Journey
         </ThemedText>
       </ThemedView>
       <ThemedText>
@@ -122,5 +117,8 @@ const styles = StyleSheet.create({
   titleContainer: {
     flexDirection: "row",
     gap: 8,
+  },
+  titleText: {
+    fontFamily: Fonts.rounded,
   },
 });
