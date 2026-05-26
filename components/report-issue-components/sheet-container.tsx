@@ -34,7 +34,7 @@ export const SheetContainer = React.forwardRef<SheetHandle, SheetContainerProps>
       close: () => {
         if (isClosing.value) return;
         isClosing.value = true;
-        translateY.value = withTiming(WINDOW_HEIGHT, { duration: 350 }, (finished) => {
+        translateY.value = withTiming(WINDOW_HEIGHT, { duration: 200 }, (finished) => {
           if (finished) {
             runOnJS(onClose)();
           }
@@ -55,7 +55,7 @@ export const SheetContainer = React.forwardRef<SheetHandle, SheetContainerProps>
 
       if (shouldClose && !isClosing.value) {
         isClosing.value = true;
-        translateY.value = withTiming(WINDOW_HEIGHT, { duration: 350 }, (finished) => {
+        translateY.value = withTiming(WINDOW_HEIGHT, { duration: 200 }, (finished) => {
           if (finished) {
             runOnJS(onClose)();
           }
