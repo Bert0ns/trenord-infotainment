@@ -1,5 +1,5 @@
 import React, { type ReactNode, useImperativeHandle } from "react";
-import { StyleSheet, View, Dimensions } from "react-native";
+import { Dimensions, StyleSheet, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   runOnJS,
@@ -30,27 +30,33 @@ export type SheetHandle = {
   close: () => void;
 };
 
-export const SheetContainer = React.forwardRef<SheetHandle, SheetContainerProps>(
-  function SheetContainer({ bottomInset, onClose, children }, ref) {
-    const translateY = useSharedValue(0);
-    const isClosing = useSharedValue(false);
+export const SheetContainer = React.forwardRef<
+  SheetHandle,
+  SheetContainerProps
+>(function SheetContainer({ bottomInset, onClose, children }, ref) {
+  const translateY = useSharedValue(0);
+  const isClosing = useSharedValue(false);
 
-    const executeClose = () => {
-      "worklet";
-      if (isClosing.value) return;
-      isClosing.value = true;
-      translateY.value = withTiming(WINDOW_HEIGHT, { duration: POP_DOWN_DURATION_MS }, (finished) => {
+  const executeClose = () => {
+    "worklet";
+    if (isClosing.value) return;
+    isClosing.value = true;
+    translateY.value = withTiming(
+      WINDOW_HEIGHT,
+      { duration: POP_DOWN_DURATION_MS },
+      (finished) => {
         if (finished) {
           runOnJS(onClose)();
         }
-      });
-    };
+      },
+    );
+  };
 
-    useImperativeHandle(ref, () => ({
-      close: executeClose,
-    }));
+  useImperativeHandle(ref, () => ({
+    close: executeClose,
+  }));
 
-    const dragGesture = Gesture.Pan()
+  const dragGesture = Gesture.Pan()
     .activeOffsetY(10)
     .onChange((event) => {
       if (event.translationY > 0) {
@@ -68,32 +74,31 @@ export const SheetContainer = React.forwardRef<SheetHandle, SheetContainerProps>
       }
     });
 
-    const sheetStyle = useAnimatedStyle(() => ({
-      transform: [{ translateY: translateY.value }],
-    }));
+  const sheetStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: translateY.value }],
+  }));
 
-    return (
-      <View style={styles.scrim}>
-        <SafeAreaView style={styles.safeArea} edges={["left", "right", "bottom"]}>
-          <Animated.View
-            style={[
-              styles.sheet,
-              { paddingBottom: Math.max(bottomInset, DEFAULT_PADDING_BOTTOM) },
-              sheetStyle,
-            ]}
-          >
-            <GestureDetector gesture={dragGesture}>
-              <View style={styles.dragRegion}>
-                <View style={styles.handle} />
-              </View>
-            </GestureDetector>
-            {children}
-          </Animated.View>
-        </SafeAreaView>
-      </View>
-    );
-  },
-);
+  return (
+    <View style={styles.scrim}>
+      <SafeAreaView style={styles.safeArea} edges={["left", "right", "bottom"]}>
+        <Animated.View
+          style={[
+            styles.sheet,
+            { paddingBottom: Math.max(bottomInset, DEFAULT_PADDING_BOTTOM) },
+            sheetStyle,
+          ]}
+        >
+          <GestureDetector gesture={dragGesture}>
+            <View style={styles.dragRegion}>
+              <View style={styles.handle} />
+            </View>
+          </GestureDetector>
+          {children}
+        </Animated.View>
+      </SafeAreaView>
+    </View>
+  );
+});
 
 const styles = StyleSheet.create({
   scrim: {
@@ -117,11 +122,11 @@ const styles = StyleSheet.create({
     elevation: 12,
   },
   dragRegion: {
-    marginTop: -50,
+    marginTop: -WINDOW_HEIGHT,
     marginLeft: -20,
     marginRight: -20,
     marginBottom: -50,
-    paddingTop: 34,
+    paddingTop: WINDOW_HEIGHT - 16,
     paddingBottom: 34,
     //backgroundColor: "rgba(255, 99, 71, 0.2)", // Uncomment this if you want to see the drag region hitbox clearly during development
   },
