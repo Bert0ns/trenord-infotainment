@@ -19,6 +19,11 @@ type SheetContainerProps = {
 const CLOSE_DISTANCE = 140;
 const CLOSE_VELOCITY = 900;
 
+// Animation & layout constants
+const POP_DOWN_DURATION_MS = 200;
+const SPRING_CONFIG = { damping: 22, stiffness: 220 };
+const DEFAULT_PADDING_BOTTOM = 16;
+
 const WINDOW_HEIGHT = Dimensions.get("window").height;
 
 export type SheetHandle = {
@@ -34,7 +39,7 @@ export const SheetContainer = React.forwardRef<SheetHandle, SheetContainerProps>
       close: () => {
         if (isClosing.value) return;
         isClosing.value = true;
-        translateY.value = withTiming(WINDOW_HEIGHT, { duration: 200 }, (finished) => {
+        translateY.value = withTiming(WINDOW_HEIGHT, { duration: POP_DOWN_DURATION_MS }, (finished) => {
           if (finished) {
             runOnJS(onClose)();
           }
@@ -55,13 +60,13 @@ export const SheetContainer = React.forwardRef<SheetHandle, SheetContainerProps>
 
       if (shouldClose && !isClosing.value) {
         isClosing.value = true;
-        translateY.value = withTiming(WINDOW_HEIGHT, { duration: 200 }, (finished) => {
+        translateY.value = withTiming(WINDOW_HEIGHT, { duration: POP_DOWN_DURATION_MS }, (finished) => {
           if (finished) {
             runOnJS(onClose)();
           }
         });
       } else {
-        translateY.value = withSpring(0, { damping: 22, stiffness: 220 });
+        translateY.value = withSpring(0, SPRING_CONFIG);
       }
     });
 
@@ -75,7 +80,7 @@ export const SheetContainer = React.forwardRef<SheetHandle, SheetContainerProps>
           <Animated.View
             style={[
               styles.sheet,
-              { paddingBottom: Math.max(bottomInset, 16) },
+              { paddingBottom: Math.max(bottomInset, DEFAULT_PADDING_BOTTOM) },
               sheetStyle,
             ]}
           >
