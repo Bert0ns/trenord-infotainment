@@ -117,8 +117,12 @@ const styles = StyleSheet.create({
     elevation: 12,
   },
   dragRegion: {
-    paddingTop: 4,
-    paddingBottom: 10,
+    marginTop: -50,
+    marginLeft: -20,
+    marginRight: -20,
+    marginBottom: -50,
+    paddingTop: 34,
+    paddingBottom: 34,
     //backgroundColor: "rgba(255, 99, 71, 0.2)", // Uncomment this if you want to see the drag region hitbox clearly during development
   },
   handle: {
@@ -127,6 +131,7 @@ const styles = StyleSheet.create({
     height: 6,
     borderRadius: 999,
     backgroundColor: "#D6DED9",
-    marginBottom: 14,
+    marginBottom: 0,
+    marginTop: 24,
   },
 });
