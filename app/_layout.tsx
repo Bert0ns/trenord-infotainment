@@ -74,7 +74,7 @@ export default function RootLayout() {
             name="report-issue-page"
             options={{
               presentation: "transparentModal",
-              animation: "slide_from_bottom",
+              animation: "none",
               headerShown: false,
             }}
           />
