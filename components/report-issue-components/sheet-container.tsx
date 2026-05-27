@@ -1,4 +1,4 @@
-import React, { type ReactNode, useImperativeHandle } from "react";
+import React, { type ReactNode, useEffect, useImperativeHandle } from "react";
 import { Dimensions, StyleSheet, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
@@ -21,7 +21,7 @@ const CLOSE_VELOCITY = 900;
 
 // Animation & layout constants
 const POP_DOWN_DURATION_MS = 200;
-const SPRING_CONFIG = { damping: 22, stiffness: 220 };
+const SPRING_CONFIG = { damping: 60, stiffness: 700 };
 const DEFAULT_PADDING_BOTTOM = 16;
 
 const WINDOW_HEIGHT = Dimensions.get("window").height;
@@ -34,8 +34,12 @@ export const SheetContainer = React.forwardRef<
   SheetHandle,
   SheetContainerProps
 >(function SheetContainer({ bottomInset, onClose, children }, ref) {
-  const translateY = useSharedValue(0);
+  const translateY = useSharedValue(WINDOW_HEIGHT);
   const isClosing = useSharedValue(false);
+
+  useEffect(() => {
+    translateY.value = withSpring(0, SPRING_CONFIG);
+  }, [translateY]);
 
   const executeClose = () => {
     "worklet";
@@ -94,6 +98,7 @@ export const SheetContainer = React.forwardRef<
             </View>
           </GestureDetector>
           {children}
+          <View style={styles.bottomExtension} />
         </Animated.View>
       </SafeAreaView>
     </View>
@@ -138,5 +143,15 @@ const styles = StyleSheet.create({
     backgroundColor: "#D6DED9",
     marginBottom: 0,
     marginTop: 24,
+  },
+  bottomExtension: {
+    position: "absolute",
+    top: "100%",
+    marginTop: -2, // Pull the extension up slightly to cover the sub-pixel rendering gap
+    left: 0,
+    right: 0,
+    height: WINDOW_HEIGHT,
+    backgroundColor: "#F3F5F4",
+    borderWidth: 0,
   },
 });
