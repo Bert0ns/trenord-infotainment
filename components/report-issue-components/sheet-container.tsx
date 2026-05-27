@@ -94,6 +94,7 @@ export const SheetContainer = React.forwardRef<
             </View>
           </GestureDetector>
           {children}
+          <View style={styles.bottomExtension} />
         </Animated.View>
       </SafeAreaView>
     </View>
@@ -138,5 +139,15 @@ const styles = StyleSheet.create({
     backgroundColor: "#D6DED9",
     marginBottom: 0,
     marginTop: 24,
+  },
+  bottomExtension: {
+    position: "absolute",
+    top: "100%",
+    marginTop: -2, // Pull the extension up slightly to cover the sub-pixel rendering gap
+    left: 0,
+    right: 0,
+    height: WINDOW_HEIGHT,
+    backgroundColor: "#F3F5F4",
+    borderWidth: 0,
   },
 });
