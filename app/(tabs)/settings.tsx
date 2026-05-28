@@ -124,14 +124,7 @@ export default function TabTwoScreen() {
     </ScrollView>
   );
 }
-/**<TouchableOpacity style={styles.dropdown}>
-          <Text style={styles.dropdownText}>English (UK)</Text>
-          <MaterialIcons
-            name="keyboard-arrow-down"
-            size={24}
-            color={THEME.colors.onSurfaceVariant}
-          />
-        </TouchableOpacity>**/
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

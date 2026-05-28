@@ -1,126 +1,116 @@
-import { Image } from "expo-image";
-import { Platform, StyleSheet } from "react-native";
+import { THEME } from "@/constants/theme";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 
-import { ExternalLink } from "@/components/external-link";
-import ParallaxScrollView from "@/components/parallax-scroll-view";
-import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
-import { Collapsible } from "@/components/ui/collapsible";
-import { IconSymbol } from "@/components/ui/icon-symbol";
-import { Fonts } from "@/constants/theme";
 
 export default function TabTwoScreen() {
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: "#D0D0D0", dark: "#353636" }}
-      headerImage={
-        <IconSymbol
-          size={310}
-          color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
-        />
-      }
-    >
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText
-          type="title"
-          style={{
-            fontFamily: Fonts.rounded,
-          }}
-        >
-          Media-version-0.0
-        </ThemedText>
-      </ThemedView>
-      <ThemedText>
-        This app includes example code to help you get started.
-      </ThemedText>
-      <Collapsible title="File-based routing">
-        <ThemedText>
-          This app has two screens:{" "}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText>{" "}
-          and{" "}
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
-        </ThemedText>
-        <ThemedText>
-          The layout file in{" "}
-          <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{" "}
-          sets up the tab navigator.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the
-          web version, press <ThemedText type="defaultSemiBold">w</ThemedText>{" "}
-          in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Images">
-        <ThemedText>
-          For static images, you can use the{" "}
-          <ThemedText type="defaultSemiBold">@2x</ThemedText> and{" "}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to
-          provide files for different screen densities
-        </ThemedText>
-        <Image
-          source={require("@/assets/images/react-logo.png")}
-          style={{ width: 100, height: 100, alignSelf: "center" }}
-        />
-        <ExternalLink href="https://reactnative.dev/docs/images">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Light and dark mode components">
-        <ThemedText>
-          This template has light and dark mode support. The{" "}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook
-          lets you inspect what the user&apos;s current color scheme is, and so
-          you can adjust UI colors accordingly.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Animations">
-        <ThemedText>
-          This template includes an example of an animated component. The{" "}
-          <ThemedText type="defaultSemiBold">
-            components/HelloWave.tsx
-          </ThemedText>{" "}
-          component uses the powerful{" "}
-          <ThemedText type="defaultSemiBold" style={{ fontFamily: Fonts.mono }}>
-            react-native-reanimated
-          </ThemedText>{" "}
-          library to create a waving hand animation.
-        </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The{" "}
-              <ThemedText type="defaultSemiBold">
-                components/ParallaxScrollView.tsx
-              </ThemedText>{" "}
-              component provides a parallax effect for the header image.
-            </ThemedText>
-          ),
-        })}
-      </Collapsible>
-    </ParallaxScrollView>
+    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+      <View style={styles.pageHeader}>
+        <Text style={styles.pageTitle}>Featured Entertainment</Text>
+        <Text style={styles.pageSubtitle}>Films, Documentaries, Podcasts.</Text>
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  headerImage: {
-    color: "#808080",
-    bottom: -90,
-    left: -35,
-    position: "absolute",
+  container: {
+    flex: 1,
+    backgroundColor: THEME.colors.surface,
   },
-  titleContainer: {
+  content: {
+    padding: THEME.spacing.md,
+    paddingBottom: 100, // Spazio extra per non sovrapporsi alla tua bottom nav bar
+  },
+  pageHeader: {
+    marginBottom: THEME.spacing.lg,
+  },
+  pageTitle: {
+    fontSize: 32,
+    fontWeight: "800",
+    color: THEME.colors.primary,
+    marginBottom: THEME.spacing.sm,
+  },
+  pageSubtitle: {
+    fontSize: 16,
+    color: THEME.colors.onSurfaceVariant,
+    lineHeight: 22,
+  },
+  themeRow: {
     flexDirection: "row",
-    gap: 8,
+    justifyContent: "space-between",
+    gap: THEME.spacing.sm,
+  },
+  themeBox: {
+    flex: 1,
+    alignItems: "center",
+    paddingVertical: THEME.spacing.md,
+    borderWidth: 1,
+    borderColor: THEME.colors.outline,
+    borderRadius: THEME.borderRadius.mdLg,
+    backgroundColor: THEME.colors.surface,
+  },
+  themeBoxActive: {
+    borderColor: THEME.colors.primary,
+    backgroundColor: THEME.colors.primaryContainer,
+  },
+  themeBoxText: {
+    marginTop: THEME.spacing.sm,
+    fontSize: 14,
+    color: THEME.colors.onSurfaceVariant,
+  },
+  themeBoxTextActive: {
+    color: THEME.colors.primary,
+    fontWeight: "600",
+  },
+  dropdown: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: THEME.colors.outline,
+    borderRadius: THEME.borderRadius.mdLg,
+    padding: THEME.spacing.md,
+    backgroundColor: THEME.colors.surface,
+  },
+  dropdownText: {
+    fontSize: 16,
+    color: THEME.colors.onSurface,
+  },
+  footer: {
+    marginTop: THEME.spacing.md,
+    alignItems: "center",
+  },
+  reportButton: {
+    backgroundColor: THEME.colors.error,
+    width: "100%",
+    paddingVertical: 14,
+    borderRadius: THEME.borderRadius.xl,
+    alignItems: "center",
+    marginBottom: THEME.spacing.lg,
+  },
+  reportButtonText: {
+    color: "#ffffff",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  versionText: {
+    fontSize: 13,
+    color: THEME.colors.onSurfaceVariant,
+    marginBottom: THEME.spacing.sm,
+  },
+  linksRow: {
+    flexDirection: "row",
+    gap: 16,
+  },
+  link: {
+    fontSize: 13,
+    color: THEME.colors.primary,
+  },
+  card: {
+    backgroundColor: THEME.colors.surfaceVariant,
+    borderRadius: THEME.borderRadius.xl,
+    padding: THEME.spacing.md,
+    marginBottom: THEME.spacing.md,
   },
 });

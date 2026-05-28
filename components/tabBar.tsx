@@ -1,29 +1,9 @@
+import { THEME } from "@/constants/theme";
 import { MaterialIcons } from "@expo/vector-icons";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { BlurView } from "expo-blur";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-
-// sistemare il tema così, da poterlo importare da theme invece di doverlo riscrivere qui
-const THEME = {
-  colors: {
-    primary: "#004a2b", // text-primary
-    onSurfaceVariant: "#3f4942", // text-on-surface-variant
-    // surface: '#f9f9fe', 70%
-    surface70: "rgba(249, 249, 254, 0.7)",
-    // outline-variant: '#bec9bf', 20%
-    outlineVariant20: "rgba(190, 201, 191, 0.1)",
-  },
-  borderRadius: {
-    xl: 20, // '0.75rem' in pixel (1rem = 16px)
-  },
-  typography: {
-    fontSize: 12,
-    lineHeight: 16,
-    letterSpacing: 0.6, // 0.05em di 12px
-    fontFamily: "Inter_700Bold",
-  },
-};
 
 export default function CustomTabBar({
   state,
@@ -36,11 +16,7 @@ export default function CustomTabBar({
     <BlurView
       intensity={80}
       tint="light" // we can use "light" or "dark" or "default"
-      style={[
-        styles.container,
-        /*Aggiungiamo il padding bottom dinamico in base al dispositivo
-        { paddingBottom: Platform.OS === 'ios' ? insets.bottom : 16 }*/
-      ]}
+      style={[styles.container]}
     >
       <View style={styles.content}>
         {state.routes.map((route, index) => {
@@ -88,7 +64,6 @@ export default function CustomTabBar({
               accessibilityRole="button"
               accessibilityState={isFocused ? { selected: true } : {}}
               onPress={onPress}
-              // Simuliamo l'effetto hover/active:scale-90 di Tailwind
               style={({ pressed }) => [
                 styles.tabItem,
                 pressed && { transform: [{ scale: 0.9 }] },
