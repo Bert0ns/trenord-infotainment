@@ -11,7 +11,8 @@ const tintColorDark = "#fff";
 export const THEME = {
   colors: {
     primary: "#004a2b", // Verde scuro Trenord
-    primaryContainer: "#d2eedb", // Verde chiaro per sfondi attivi
+    //primaryContainer: "#d2eedb", // Verde chiaro per sfondi attivi
+    primaryContainer: "rgba(0, 100, 60, 0.2)", // Verde più scuro per hover/active
     surface: "#ffffff", // Sfondo pagina
     surfaceVariant: "#f3f3f8", // Sfondo delle card grigio chiaro
     onSurface: "#1a1c1f", // Testo principale

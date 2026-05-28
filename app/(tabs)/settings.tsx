@@ -1,3 +1,4 @@
+import DropDownSelector from "@/components/dropDownSelector";
 import SectionCard from "@/components/settings-componenents/sectionCard";
 import SettingSwitch from "@/components/settings-componenents/settingSwitch";
 import { THEME } from "@/constants/theme";
@@ -17,11 +18,13 @@ export default function TabTwoScreen() {
 
   // add globals states
   const [theme, setTheme] = useState("Light");
-  //const [language, setLanguage] = useState("en");
   const [antiSickness, setAntiSickness] = useState(false);
   const [journeyProgress, setJourneyProgress] = useState(true);
   const [delayAlerts, setDelayAlerts] = useState(true);
   const [weatherAlerts, setWeatherAlerts] = useState(false);
+  const [language, setLanguage] = useState("English (UK)");
+
+  const languages = ["English (UK)", "Italiano"];
 
   const ThemeOption = ({
     title,
@@ -78,14 +81,12 @@ export default function TabTwoScreen() {
       </SectionCard>
 
       <SectionCard iconName="language" title="Language">
-        <TouchableOpacity style={styles.dropdown}>
-          <Text style={styles.dropdownText}>English (UK)</Text>
-          <MaterialIcons
-            name="keyboard-arrow-down"
-            size={24}
-            color={THEME.colors.onSurfaceVariant}
-          />
-        </TouchableOpacity>
+        <DropDownSelector
+          options={languages}
+          selectedValue={language}
+          onSelect={setLanguage}
+          placeholder="Select language"
+        />
       </SectionCard>
 
       <SectionCard iconName="notifications" title="Notifications">
@@ -123,7 +124,14 @@ export default function TabTwoScreen() {
     </ScrollView>
   );
 }
-
+/**<TouchableOpacity style={styles.dropdown}>
+          <Text style={styles.dropdownText}>English (UK)</Text>
+          <MaterialIcons
+            name="keyboard-arrow-down"
+            size={24}
+            color={THEME.colors.onSurfaceVariant}
+          />
+        </TouchableOpacity>**/
 const styles = StyleSheet.create({
   container: {
     flex: 1,
