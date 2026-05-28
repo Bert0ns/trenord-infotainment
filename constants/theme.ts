@@ -18,6 +18,8 @@ export const THEME = {
     onSurfaceVariant: "#3f4942", // Testo secondario/descrizioni
     outline: "#bec9bf", // Bordi
     error: "#ba1a1a", // Rosso per bottone Report
+    surface70: "rgba(249, 249, 254, 0.7)", // Sfondo trasparente per la bottom nav bar
+    outlineVariant20: "rgba(190, 201, 191, 0.1)", // Bordi trasparenti per la bottom nav bar
   },
   spacing: {
     sm: 8,
@@ -27,7 +29,16 @@ export const THEME = {
   },
   borderRadius: {
     md: 8,
+    mdLg: 12,
     lg: 16,
+    xl: 20, // da capire
+  },
+  typography: {
+    // usato solo per la bottom nav bar
+    fontSize: 12,
+    lineHeight: 16,
+    letterSpacing: 0.6, // 0.05em di 12px
+    fontFamily: "Inter_700Bold",
   },
 };
 

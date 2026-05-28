@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 22,
-    fontWeight: "bold",
+    fontWeight: "800",
     color: THEME.colors.primary,
     letterSpacing: 1,
   },

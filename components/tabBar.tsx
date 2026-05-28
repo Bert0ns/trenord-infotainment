@@ -4,6 +4,7 @@ import { BlurView } from "expo-blur";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
+// sistemare il tema così, da poterlo importare da theme invece di doverlo riscrivere qui
 const THEME = {
   colors: {
     primary: "#004a2b", // text-primary
