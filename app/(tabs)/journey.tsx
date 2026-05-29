@@ -9,7 +9,7 @@ export default function JourneyScreen() {
         <Text style={styles.pageTitle}>Lecco - R 2564</Text>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
           <MaterialIcons
-            name="watch-later"
+            name="access-time"
             size={16}
             color={THEME.colors.onSurfaceVariant}
           />

@@ -4,7 +4,7 @@
     "slug": "trenord-infotainment",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/trenord-icon.png",
     "scheme": "trenordinfotainment",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
