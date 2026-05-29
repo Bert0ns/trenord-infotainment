@@ -2,7 +2,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { THEME } from "@/constants/theme";
 
-export default function TabTwoScreen() {
+export default function JourneyScreen() {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.pageHeader}>

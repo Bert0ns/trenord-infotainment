@@ -2,7 +2,7 @@ import { THEME } from "@/constants/theme";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 
-export default function TabTwoScreen() {
+export default function MediaScreen() {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.pageHeader}>
