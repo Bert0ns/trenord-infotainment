@@ -4,7 +4,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { THEME } from "../constants/theme";
 
-export default function header() {
+export default function Header() {
   const insets = useSafeAreaInsets();
 
   return (
@@ -18,7 +18,7 @@ export default function header() {
           />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>TRENORD</Text>
-        <View style={{ width: 24 }} /> {/* Placeholder */}
+        <View style={{ width: 24 }}>{/* Placeholder for centering */}</View>
       </View>
     </View>
   );

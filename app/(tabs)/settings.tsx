@@ -1,4 +1,4 @@
-import DropDownSelector from "@/components/dropDownSelector";
+import DropDownSelector from "@/components/ui/dropDownSelector";
 import SectionCard from "@/components/settings-componenents/sectionCard";
 import SettingSwitch from "@/components/settings-componenents/settingSwitch";
 import { THEME } from "@/constants/theme";
