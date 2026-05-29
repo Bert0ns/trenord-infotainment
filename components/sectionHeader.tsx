@@ -6,6 +6,7 @@ import { THEME } from "../constants/theme";
 interface SectionHeaderProps {
   title: string;
   type?: "journey" | "media" | "home";
+  isFirst?: boolean;
   icon?: keyof typeof MaterialIcons.glyphMap;
 }
 
@@ -13,9 +14,10 @@ export default function SectionHeader({
   title,
   type,
   icon,
+  isFirst,
 }: SectionHeaderProps) {
   return (
-    <View style={styles.container}>
+    <View style={isFirst ? styles.firstContainer : styles.container}>
       {type === "home" ? (
         <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
           <MaterialIcons
@@ -43,6 +45,13 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "baseline",
     marginTop: THEME.spacing.lg,
+    marginBottom: THEME.spacing.md,
+  },
+  firstContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "baseline",
+    marginTop: 0,
     marginBottom: THEME.spacing.md,
   },
   title: {

@@ -1,4 +1,5 @@
 import { MaterialIcons } from "@expo/vector-icons";
+import { Image } from "expo-image";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -17,8 +18,15 @@ export default function header() {
             color={THEME.colors.primary}
           />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>TRENORD</Text>
-        <View style={{ width: 24 }} /> {/* Placeholder */}
+        <View style={styles.centerContent}>
+          <Image
+            source={require("../assets/images/trenord-icon.png")}
+            style={styles.logo}
+            contentFit="contain"
+          />
+          <Text style={styles.headerTitle}>TRENORD</Text>
+        </View>
+        <View style={{ width: 50 }} /> {/* Placeholder */}
       </View>
     </View>
   );
@@ -45,5 +53,15 @@ const styles = StyleSheet.create({
   },
   iconButton: {
     padding: THEME.spacing.sm,
+  },
+  centerContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+
+  logo: {
+    width: 32,
+    height: 32,
   },
 });

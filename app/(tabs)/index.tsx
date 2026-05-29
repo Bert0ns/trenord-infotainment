@@ -19,7 +19,12 @@ export default function HomeScreen() {
           {/* Trenord API */}
         </View>
       </View>
-      <SectionHeader title="Destination News" type="home" icon="newspaper" />
+      <SectionHeader
+        title="Destination News"
+        type="home"
+        icon="newspaper"
+        isFirst
+      />
       {/* News cards */}
       <SectionHeader title="Discover Milano" type="home" icon="explore" />
       {/* Tips cards */}
