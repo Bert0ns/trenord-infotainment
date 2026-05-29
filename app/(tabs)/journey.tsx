@@ -9,7 +9,7 @@ export default function TabTwoScreen() {
         <Text style={styles.pageTitle}>Lecco - R 2564</Text> {/* Trenord API */}
         <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
           <MaterialIcons
-            name="watch-later"
+            name="access-time"
             size={16}
             color={THEME.colors.onSurfaceVariant}
           />

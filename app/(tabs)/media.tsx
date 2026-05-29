@@ -1,6 +1,6 @@
+import SectionHeader from "@/components/sectionHeader";
 import { THEME } from "@/constants/theme";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-
 
 export default function TabTwoScreen() {
   return (
@@ -9,6 +9,12 @@ export default function TabTwoScreen() {
         <Text style={styles.pageTitle}>Featured Entertainment</Text>
         <Text style={styles.pageSubtitle}>Films, Documentaries, Podcasts.</Text>
       </View>
+      <SectionHeader title="Films" type="media" />
+      {/* Film cards */}
+      <SectionHeader title="Documentaries" type="media" />
+      {/* Documentaries cards */}
+      <SectionHeader title="Podcasts" type="journey" />
+      {/* Podcasts cards */}
     </ScrollView>
   );
 }

@@ -5,9 +5,6 @@
 
 import { Platform } from "react-native";
 
-const tintColorLight = "#0a7ea4";
-const tintColorDark = "#fff";
-
 export const THEME = {
   colors: {
     primary: "#004a2b", // Verde scuro Trenord
@@ -40,25 +37,6 @@ export const THEME = {
     lineHeight: 16,
     letterSpacing: 0.6, // 0.05em di 12px
     fontFamily: "Inter_700Bold",
-  },
-};
-
-export const Colors = {
-  light: {
-    text: "#11181C",
-    background: "#fff",
-    tint: tintColorLight,
-    icon: "#687076",
-    tabIconDefault: "#687076",
-    tabIconSelected: tintColorLight,
-  },
-  dark: {
-    text: "#ECEDEE",
-    background: "#151718",
-    tint: tintColorDark,
-    icon: "#9BA1A6",
-    tabIconDefault: "#9BA1A6",
-    tabIconSelected: tintColorDark,
   },
 };
 
