@@ -48,6 +48,15 @@ export default function ReportIssuePage() {
     }
   };
 
+  const onSubmitReportIssue = () => {
+    alert("Report submitted successfully!");
+    console.log("Report Issue form Data:", {
+      selectedIssues: Array.from(selectedIssues),
+      details,
+    });
+    requestClose();
+  };
+
   return (
     <SheetContainer ref={sheetRef} bottomInset={insets.bottom} onClose={() => router.back()}>
       <ReportHeader title="Report an Issue" onClose={requestClose} />
@@ -74,10 +83,7 @@ export default function ReportIssuePage() {
         <DetailsInput value={details} onChange={setDetails} />
 
         <ActionButtons
-          onSubmit={() => {
-            alert("Report submitted successfully!");
-            requestClose();
-          }}
+          onSubmit={onSubmitReportIssue}
           onCancel={requestClose}
         />
       </ScrollView>

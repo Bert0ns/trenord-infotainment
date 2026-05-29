@@ -1,6 +1,6 @@
-import DropDownSelector from "@/components/ui/dropDownSelector";
 import SectionCard from "@/components/settings-componenents/sectionCard";
 import SettingSwitch from "@/components/settings-componenents/settingSwitch";
+import DropDownSelector from "@/components/ui/dropDownSelector";
 import { THEME } from "@/constants/theme";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -13,7 +13,7 @@ import {
   View,
 } from "react-native";
 
-export default function TabTwoScreen() {
+export default function SettingsScreen() {
   const router = useRouter();
 
   // add globals states
@@ -37,7 +37,10 @@ export default function TabTwoScreen() {
     return (
       <TouchableOpacity
         style={[styles.themeBox, isActive && styles.themeBoxActive]}
-        onPress={() => setTheme(title)}
+        onPress={() => {
+          console.log("Theme changed to:", title);
+          setTheme(title);
+        }}
       >
         <MaterialIcons
           name={icon}
@@ -76,7 +79,10 @@ export default function TabTwoScreen() {
           label="Anti-Sickness Mode"
           description="Reduces motion animations and increases contrast to mitigate travel nausea."
           value={antiSickness}
-          onValueChange={setAntiSickness}
+          onValueChange={(value) => {
+            console.log("Anti-Sickness Mode changed to:", value);
+            setAntiSickness(value);
+          }}
         />
       </SectionCard>
 
@@ -84,7 +90,10 @@ export default function TabTwoScreen() {
         <DropDownSelector
           options={languages}
           selectedValue={language}
-          onSelect={setLanguage}
+          onSelect={(value) => {
+            console.log("Language changed to:", value);
+            setLanguage(value);
+          }}
           placeholder="Select language"
         />
       </SectionCard>
@@ -94,19 +103,31 @@ export default function TabTwoScreen() {
           label="Journey Progress"
           description="Updates on approaching stops"
           value={journeyProgress}
-          onValueChange={setJourneyProgress}
+          onValueChange={(value) => {
+            console.log("Journey Progress notifications changed to:", value);
+            setJourneyProgress(value);
+          }}
         />
         <SettingSwitch
           label="Delay Alerts"
           description="Real-time schedule changes"
           value={delayAlerts}
-          onValueChange={setDelayAlerts}
+          onValueChange={(value) => {
+            console.log("Delay Alerts notifications changed to:", value);
+            setDelayAlerts(value);
+          }}
         />
         <SettingSwitch
           label="Weather & Disruptions"
           description="Major network issues"
           value={weatherAlerts}
-          onValueChange={setWeatherAlerts}
+          onValueChange={(value) => {
+            console.log(
+              "Weather & Disruptions notifications changed to:",
+              value,
+            );
+            setWeatherAlerts(value);
+          }}
         />
       </SectionCard>
 
