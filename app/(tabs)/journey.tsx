@@ -1,20 +1,19 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { THEME } from "../../constants/theme";
+import { THEME } from "@/constants/theme";
 
-export default function TabTwoScreen() {
+export default function JourneyScreen() {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.pageHeader}>
-        <Text style={styles.pageTitle}>Lecco - R 2564</Text> {/* Trenord API */}
+        <Text style={styles.pageTitle}>Lecco - R 2564</Text>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
           <MaterialIcons
             name="access-time"
             size={16}
             color={THEME.colors.onSurfaceVariant}
           />
-          <Text style={styles.pageSubtitle}>08:30 - 10:15</Text>{" "}
-          {/* Trenord API */}
+          <Text style={styles.pageSubtitle}>08:30 - 10:15</Text>
         </View>
       </View>
     </ScrollView>

@@ -92,7 +92,7 @@ const DOCUMENTARIES_DATA = [
   },
 ];
 
-export default function TabTwoScreen() {
+export default function MediaScreen() {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.pageHeader}>
