@@ -101,7 +101,7 @@ export default function MediaScreen() {
         <Text style={styles.pageTitle}>Featured Entertainment</Text>
         <Text style={styles.pageSubtitle}>Films, Documentaries, Podcasts.</Text>
       </View>
-      <SectionHeader title="Films" type="media" isFirst />
+      <SectionHeader title="Films" type="media" icon="movie-creation" isFirst />
       {/* Film cards */}
       <FlatList
         data={MOVIES_DATA}
@@ -117,7 +117,7 @@ export default function MediaScreen() {
           />
         )}
       />
-      <SectionHeader title="Documentaries" type="media" />
+      <SectionHeader title="Documentaries" type="media" icon="public" />
       {/* Documentaries cards */}
       <FlatList
         data={DOCUMENTARIES_DATA}
@@ -133,18 +133,16 @@ export default function MediaScreen() {
           />
         )}
       />
-      <SectionHeader title="Podcasts" type="journey" />
+      <SectionHeader title="Podcasts" type="journey" icon="podcasts" />
       {/* Podcasts cards */}
-      <View>
-        {PODCASTS_DATA.map((item) => (
-          <PodcastCard
-            key={item.id.toString()}
-            imageSource={item.image}
-            title={item.title}
-            episode={item.episode}
-          />
-        ))}
-      </View>
+      {PODCASTS_DATA.map((podcast) => (
+        <PodcastCard
+          key={podcast.id}
+          imageSource={podcast.image}
+          title={podcast.title}
+          episode={podcast.episode}
+        />
+      ))}
     </ScrollView>
   );
 }

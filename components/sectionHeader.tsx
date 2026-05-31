@@ -27,14 +27,26 @@ export default function SectionHeader({
             size={16}
             color={styles.iconColor.color}
           />
-          <Text style={styles.titelHome}>{title}</Text>
+          <Text style={styles.titleHome}>{title}</Text>
         </View>
       ) : (
-        <Text style={styles.title}>{title}</Text>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+          <MaterialIcons
+            name={icon || "train"}
+            size={18}
+            color={THEME.colors.primary}
+          />
+          <Text style={styles.title}>{title}</Text>
+        </View>
       )}
       {type === "media" && (
         <TouchableOpacity>
           <Text style={styles.seeAll}>See all</Text>
+        </TouchableOpacity>
+      )}
+      {type === "home" && (
+        <TouchableOpacity>
+          <Text style={styles.seeAll}>See more</Text>
         </TouchableOpacity>
       )}
     </View>
@@ -61,7 +73,7 @@ const useStyles = createStyleHook((theme) => ({
     fontWeight: "700",
     color: theme.colors.foreground,
   },
-  titelHome: {
+  titleHome: {
     fontSize: 16,
     fontWeight: "800",
     color: theme.colors.foreground,
@@ -74,4 +86,9 @@ const useStyles = createStyleHook((theme) => ({
   iconColor: {
     color: theme.colors.primary,
   },
-}));
+  seeMore: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: theme.colors.primary,
+  },
+});
