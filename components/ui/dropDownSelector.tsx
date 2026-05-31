@@ -77,11 +77,11 @@ const useStyles = createStyleHook((theme) => ({
     paddingVertical: 14,
 
     borderWidth: 1,
-    borderColor: "#DDD",
+    borderColor: theme.colors.outlineVariant20,
 
     borderRadius: 12,
 
-    backgroundColor: "white",
+    backgroundColor: theme.colors.surface,
   },
 
   dropdownOpen: {
@@ -98,12 +98,12 @@ const useStyles = createStyleHook((theme) => ({
     borderWidth: 1,
     borderTopWidth: 0,
 
-    borderColor: "#DDD",
+    borderColor: theme.colors.outlineVariant20,
 
     borderBottomLeftRadius: 12,
     borderBottomRightRadius: 12,
 
-    backgroundColor: "white",
+    backgroundColor: theme.colors.surface,
 
     overflow: "hidden",
   },

@@ -67,5 +67,6 @@ const useStyles = createStyleHook((theme) => ({
   logo: {
     width: 32,
     height: 32,
+    borderRadius: theme.borderRadius.sm,
   },
 }));
