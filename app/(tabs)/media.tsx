@@ -135,18 +135,16 @@ export default function MediaScreen() {
       />
       <SectionHeader title="Podcasts" type="journey" />
       {/* Podcasts cards */}
-      <FlatList
-        data={PODCASTS_DATA}
-        showsHorizontalScrollIndicator={false}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
+      <View>
+        {PODCASTS_DATA.map((item) => (
           <PodcastCard
+            key={item.id.toString()}
             imageSource={item.image}
             title={item.title}
             episode={item.episode}
           />
-        )}
-      />
+        ))}
+      </View>
     </ScrollView>
   );
 }
