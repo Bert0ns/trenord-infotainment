@@ -11,7 +11,6 @@ export default function HomeScreen() {
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.pageHeader}>
         <Text style={styles.pageTitle}>Milano Centrale - R 2564</Text>
-        {/* Trenord API */}
         <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
           <MaterialIcons
             name="access-time"
@@ -19,7 +18,6 @@ export default function HomeScreen() {
             color={theme.colors.onSurfaceVariant}
           />
           <Text style={styles.pageSubtitle}>08:30 - 10:15</Text>
-          {/* Trenord API */}
         </View>
       </View>
       <SectionHeader
