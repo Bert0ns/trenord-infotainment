@@ -34,7 +34,7 @@ export default function SectionHeader({
           <MaterialIcons
             name={icon || "train"}
             size={18}
-            color={THEME.colors.primary}
+            color={styles.iconColor.color}
           />
           <Text style={styles.title}>{title}</Text>
         </View>
