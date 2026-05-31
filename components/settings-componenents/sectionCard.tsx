@@ -35,7 +35,7 @@ export default function SectionCard({
 
 const useStyles = createStyleHook((theme) => ({
   card: {
-    backgroundColor: theme.colors.surfaceVariant,
+    backgroundColor: theme.colors.muted,
     borderRadius: theme.borderRadius.xl,
     padding: theme.spacing.md,
     marginBottom: theme.spacing.md,
@@ -54,7 +54,7 @@ const useStyles = createStyleHook((theme) => ({
   title: {
     fontSize: 16,
     fontWeight: "700",
-    color: theme.colors.onSurface,
+    color: theme.colors.foreground,
   },
   iconColor: {
     color: theme.colors.primary,

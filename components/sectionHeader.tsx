@@ -59,12 +59,12 @@ const useStyles = createStyleHook((theme) => ({
   title: {
     fontSize: 22,
     fontWeight: "700",
-    color: theme.colors.onSurface,
+    color: theme.colors.foreground,
   },
   titelHome: {
     fontSize: 16,
     fontWeight: "800",
-    color: theme.colors.onSurface,
+    color: theme.colors.foreground,
   },
   seeAll: {
     fontSize: 16,

@@ -35,9 +35,9 @@ export default function Header() {
 
 const useStyles = createStyleHook((theme) => ({
   headerContainer: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: theme.colors.background,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.surfaceVariant,
+    borderBottomColor: theme.colors.muted,
   },
   headerContent: {
     height: 56,

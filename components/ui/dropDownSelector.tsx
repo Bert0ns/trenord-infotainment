@@ -77,11 +77,11 @@ const useStyles = createStyleHook((theme) => ({
     paddingVertical: 14,
 
     borderWidth: 1,
-    borderColor: theme.colors.outlineVariant20,
+    borderColor: theme.colors.borderTransparent,
 
     borderRadius: 12,
 
-    backgroundColor: theme.colors.surface,
+    backgroundColor: theme.colors.background,
   },
 
   dropdownOpen: {
@@ -91,19 +91,19 @@ const useStyles = createStyleHook((theme) => ({
 
   dropdownText: {
     fontSize: 16,
-    color: theme.colors.onSurface,
+    color: theme.colors.foreground,
   },
 
   menu: {
     borderWidth: 1,
     borderTopWidth: 0,
 
-    borderColor: theme.colors.outlineVariant20,
+    borderColor: theme.colors.borderTransparent,
 
     borderBottomLeftRadius: 12,
     borderBottomRightRadius: 12,
 
-    backgroundColor: theme.colors.surface,
+    backgroundColor: theme.colors.background,
 
     overflow: "hidden",
   },
@@ -115,9 +115,9 @@ const useStyles = createStyleHook((theme) => ({
 
   menuItemText: {
     fontSize: 16,
-    color: theme.colors.onSurface,
+    color: theme.colors.foreground,
   },
   chevronColor: {
-    color: theme.colors.onSurfaceVariant,
+    color: theme.colors.mutedForeground,
   },
 }));

@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
+import { createStyleHook } from "@/hooks/use-theme-color";
 
 type ActionButtonsProps = {
   onSubmit: () => void;
@@ -7,6 +8,8 @@ type ActionButtonsProps = {
 };
 
 export function ActionButtons({ onSubmit, onCancel }: ActionButtonsProps) {
+  const styles = useStyles();
+
   return (
     <View>
       <Pressable
@@ -15,7 +18,7 @@ export function ActionButtons({ onSubmit, onCancel }: ActionButtonsProps) {
         onPress={onSubmit}
       >
         <Text style={styles.submitLabel}>Submit Report</Text>
-        <Ionicons name="arrow-forward" size={18} color="#F3F7F5" />
+        <Ionicons name="arrow-forward" size={18} color={styles.submitLabel.color} />
       </Pressable>
 
       <Pressable
@@ -32,19 +35,19 @@ export function ActionButtons({ onSubmit, onCancel }: ActionButtonsProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = createStyleHook((theme) => ({
   submitButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: 10,
-    backgroundColor: "#0D4730",
+    backgroundColor: theme.colors.primary,
     borderRadius: 28,
     paddingVertical: 16,
     marginBottom: 12,
   },
   submitLabel: {
-    color: "#F3F7F5",
+    color: theme.colors.primaryForeground,
     fontSize: 17,
     fontWeight: "700",
   },
@@ -58,6 +61,7 @@ const styles = StyleSheet.create({
   cancelLabel: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#5C6661",
+    color: theme.colors.mutedForeground,
   },
-});
+}));
+

@@ -1,4 +1,4 @@
-import { createStyleHook } from "@/hooks/use-theme-color";
+import { createStyleHook, useSelectedScheme } from "@/hooks/use-theme-color";
 import { MaterialIcons } from "@expo/vector-icons";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { BlurView } from "expo-blur";
@@ -12,12 +12,13 @@ export default function CustomTabBar({
 }: BottomTabBarProps) {
   const styles = useStyles();
 
-  //const insets = useSafeAreaInsets(); // Calcola lo spazio per gli iPhone moderni (pb-safe-area-bottom)
+  const scheme = useSelectedScheme();
+  const tint = scheme === "light" ? "light" : "dark";
 
   return (
     <BlurView
       intensity={80}
-      tint="light" // we can use "light" or "dark" or "default"
+      tint={tint} // 'light' for light theme, 'dark' for dark theme
       style={[styles.container]}
     >
       <View style={styles.content}>
@@ -111,15 +112,8 @@ const useStyles = createStyleHook((theme) => ({
     bottom: 0,
     left: 0,
     right: 0,
-    // bg-surface/70
-    backgroundColor: theme.colors.surface70,
-    // border-t border-outline-variant/20
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.outlineVariant20,
-    // rounded-t-xl
-    borderTopLeftRadius: theme.borderRadius.xl,
-    borderTopRightRadius: theme.borderRadius.xl,
-    // shadow-lg
+    backgroundColor: theme.colors.backgroundTransparent,
+    borderTopWidth: 0,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.1,
@@ -155,7 +149,7 @@ const useStyles = createStyleHook((theme) => ({
     opacity: 1,
   },
   iconUnfocused: {
-    color: theme.colors.onSurfaceVariant,
+    color: theme.colors.mutedForeground,
     opacity: 0.7,
   },
   label: {
@@ -170,7 +164,7 @@ const useStyles = createStyleHook((theme) => ({
     opacity: 1,
   },
   labelUnfocused: {
-    color: theme.colors.onSurfaceVariant,
+    color: theme.colors.mutedForeground,
     opacity: 0.7,
   },
 }));

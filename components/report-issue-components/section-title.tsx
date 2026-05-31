@@ -1,19 +1,21 @@
 import { type ReactNode } from "react";
-import { StyleSheet, Text } from "react-native";
+import { Text } from "react-native";
+import { createStyleHook } from "@/hooks/use-theme-color";
 
 type SectionTitleProps = {
   children: ReactNode;
 };
 
 export function SectionTitle({ children }: SectionTitleProps) {
+  const styles = useStyles();
   return <Text style={styles.sectionTitle}>{children}</Text>;
 }
 
-const styles = StyleSheet.create({
+const useStyles = createStyleHook((theme) => ({
   sectionTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#4A5750",
+    color: theme.colors.mutedForeground,
     marginBottom: 12,
   },
-});
+}));

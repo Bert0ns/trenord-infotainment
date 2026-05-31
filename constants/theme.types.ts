@@ -1,42 +1,42 @@
 export type Colors = {
-  /** Verde scuro Trenord */
+  /** Page background */
+  background: string;
+  /** Primary text */
+  foreground: string;
+  /** Brand primary color */
   primary: string;
-  /** Verde più scuro per hover/active */
-  primaryContainer: string;
-  /** Sfondo pagina */
-  surface: string;
-  /** Sfondo delle card grigio chiaro */
-  surfaceVariant: string;
-  /** Testo principale */
-  onSurface: string;
-  /** Testo secondario/descrizioni */
-  onSurfaceVariant: string;
-  /** Bordi */
-  outline: string;
-  /** Rosso per bottone Report */
-  error: string;
-  /** Sfondo trasparente per la bottom nav bar */
-  surface70: string;
-  /** Bordi trasparenti per la bottom nav bar */
-  outlineVariant20: string;
+  /** Text on the primary color */
+  primaryForeground: string;
+  /** Secondary color */
+  secondary: string;
+  /** Text on the secondary color */
+  secondaryForeground: string;
+  /** Background for inactive elements or cards */
+  muted: string;
+  /** Secondary text / descriptions */
+  mutedForeground: string;
+  /** Borders (e.g. outline) */
+  border: string;
+  /** Red for Report button or errors */
+  destructive: string;
+  /** Text on destructive/red color */
+  destructiveForeground: string;
+  /** Transparent background */
+  backgroundTransparent: string;
+  /** Transparent borders  */
+  borderTransparent: string;
 };
 
 export type Sizes = {
-  /** Small spacing (px) */
   sm: number;
-  /** Medium spacing (px) */
   md: number;
-  /** Large spacing (px) */
   lg: number;
-  /** Extra large spacing (px) */
   xl: number;
 };
 
 export type Typography = {
-  /** usato solo per la bottom nav bar */
   fontSize: number;
   lineHeight: number;
-  /** 0.05em di 12px */
   letterSpacing: number;
   fontFamily: string;
 };

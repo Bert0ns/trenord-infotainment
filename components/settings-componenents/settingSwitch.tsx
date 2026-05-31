@@ -46,12 +46,12 @@ const useStyles = createStyleHook((theme) => ({
   },
   label: {
     fontSize: 15,
-    color: theme.colors.onSurface,
+    color: theme.colors.foreground,
     marginBottom: 2,
   },
   description: {
     fontSize: 13,
-    color: theme.colors.onSurfaceVariant,
+    color: theme.colors.mutedForeground,
   },
   switchTrackTrue: {
     color: theme.colors.primary,

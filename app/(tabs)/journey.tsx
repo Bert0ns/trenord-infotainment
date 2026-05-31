@@ -14,7 +14,7 @@ export default function JourneyScreen() {
           <MaterialIcons
             name="access-time"
             size={16}
-            color={theme.colors.onSurfaceVariant}
+            color={theme.colors.mutedForeground}
           />
           <Text style={styles.pageSubtitle}>08:30 - 10:15</Text>
         </View>
@@ -26,7 +26,7 @@ export default function JourneyScreen() {
 const useStyles = createStyleHook((theme) => ({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: theme.colors.background,
   },
   content: {
     padding: theme.spacing.md,
@@ -43,7 +43,7 @@ const useStyles = createStyleHook((theme) => ({
   },
   pageSubtitle: {
     fontSize: 16,
-    color: theme.colors.onSurfaceVariant,
+    color: theme.colors.mutedForeground,
     lineHeight: 22,
   },
   themeRow: {
@@ -56,18 +56,18 @@ const useStyles = createStyleHook((theme) => ({
     alignItems: "center",
     paddingVertical: theme.spacing.md,
     borderWidth: 1,
-    borderColor: theme.colors.outline,
+    borderColor: theme.colors.border,
     borderRadius: theme.borderRadius.md,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: theme.colors.background,
   },
   themeBoxActive: {
     borderColor: theme.colors.primary,
-    backgroundColor: theme.colors.primaryContainer,
+    backgroundColor: theme.colors.secondary,
   },
   themeBoxText: {
     marginTop: theme.spacing.sm,
     fontSize: 14,
-    color: theme.colors.onSurfaceVariant,
+    color: theme.colors.mutedForeground,
   },
   themeBoxTextActive: {
     color: theme.colors.primary,
@@ -78,21 +78,21 @@ const useStyles = createStyleHook((theme) => ({
     justifyContent: "space-between",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: theme.colors.outline,
+    borderColor: theme.colors.border,
     borderRadius: theme.borderRadius.md,
     padding: theme.spacing.md,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: theme.colors.background,
   },
   dropdownText: {
     fontSize: 16,
-    color: theme.colors.onSurface,
+    color: theme.colors.foreground,
   },
   footer: {
     marginTop: theme.spacing.md,
     alignItems: "center",
   },
   reportButton: {
-    backgroundColor: theme.colors.error,
+    backgroundColor: theme.colors.destructive,
     width: "100%",
     paddingVertical: 14,
     borderRadius: theme.borderRadius.xl,
@@ -106,7 +106,7 @@ const useStyles = createStyleHook((theme) => ({
   },
   versionText: {
     fontSize: 13,
-    color: theme.colors.onSurfaceVariant,
+    color: theme.colors.mutedForeground,
     marginBottom: theme.spacing.sm,
   },
   linksRow: {
@@ -118,7 +118,7 @@ const useStyles = createStyleHook((theme) => ({
     color: theme.colors.primary,
   },
   card: {
-    backgroundColor: theme.colors.surfaceVariant,
+    backgroundColor: theme.colors.muted,
     borderRadius: theme.borderRadius.xl,
     padding: theme.spacing.md,
     marginBottom: theme.spacing.md,

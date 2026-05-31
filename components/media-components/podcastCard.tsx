@@ -44,7 +44,7 @@ const useStyles = createStyleHook((theme) => ({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: theme.colors.surfaceVariant, // Grigio chiaro (#f3f3f8)
+    backgroundColor: theme.colors.muted, // Grigio chiaro (#f3f3f8)
     borderRadius: theme.borderRadius.lg,
     padding: theme.spacing.sm + 2,
     marginBottom: theme.spacing.sm,
@@ -62,12 +62,12 @@ const useStyles = createStyleHook((theme) => ({
   title: {
     fontSize: 16,
     fontWeight: "700",
-    color: theme.colors.onSurface,
+    color: theme.colors.foreground,
     marginBottom: 2,
   },
   episode: {
     fontSize: 13,
-    color: theme.colors.onSurfaceVariant,
+    color: theme.colors.mutedForeground,
   },
   plusButton: {
     padding: theme.spacing.sm,

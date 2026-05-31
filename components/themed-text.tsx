@@ -17,7 +17,7 @@ export function ThemedText({
 }: ThemedTextProps) {
   const color = useThemeColor(
     { light: lightColor, dark: darkColor },
-    "onSurface",
+    "foreground",
   );
 
   return (
