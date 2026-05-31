@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Pressable, StyleSheet, Text } from "react-native";
-import { THEME } from "../../constants/theme";
+import { Pressable, Text } from "react-native";
+import { createStyleHook } from "@/hooks/use-theme-color";
 
 import type { IssueOption } from "./issue-options";
 
@@ -17,6 +17,7 @@ export function IssueOptionCard({
   onPress,
   variant = "compact",
 }: IssueOptionCardProps) {
+  const styles = useStyles();
   const isWide = variant === "wide";
 
   return (
@@ -34,7 +35,7 @@ export function IssueOptionCard({
       <Ionicons
         name={option.icon}
         size={22}
-        color={selected ? THEME.colors.primary : THEME.colors.onSurfaceVariant}
+        color={selected ? styles.iconSelected.color : styles.icon.color}
       />
       <Text style={[styles.label, selected && styles.labelSelected]}>
         {option.label}
@@ -43,12 +44,12 @@ export function IssueOptionCard({
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = createStyleHook((theme) => ({
   card: {
     borderWidth: 1,
-    borderColor: "#C7D1CB",
+    borderColor: theme.colors.border,
     borderRadius: 18,
-    backgroundColor: "#F7F9F8",
+    backgroundColor: theme.colors.muted,
     gap: 8,
   },
   cardCompact: {
@@ -63,8 +64,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   cardSelected: {
-    borderColor: THEME.colors.primary,
-    backgroundColor: THEME.colors.primaryContainer,
+    borderColor: theme.colors.primary,
+    backgroundColor: theme.colors.secondary,
   },
   cardPressed: {
     opacity: 0.85,
@@ -72,9 +73,15 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     fontWeight: "600",
-    color: THEME.colors.onSurfaceVariant,
+    color: theme.colors.foreground,
   },
   labelSelected: {
-    color: THEME.colors.primary,
+    color: theme.colors.primary,
   },
-});
+  icon: {
+    color: theme.colors.foreground,
+  },
+  iconSelected: {
+    color: theme.colors.primary,
+  },
+}));

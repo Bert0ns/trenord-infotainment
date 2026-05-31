@@ -1,21 +1,24 @@
-import { THEME } from "@/constants/theme";
+import { createStyleHook, useSelectedScheme } from "@/hooks/use-theme-color";
 import { MaterialIcons } from "@expo/vector-icons";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { BlurView } from "expo-blur";
 import React from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 
 export default function CustomTabBar({
   state,
   descriptors,
   navigation,
 }: BottomTabBarProps) {
-  //const insets = useSafeAreaInsets(); // Calcola lo spazio per gli iPhone moderni (pb-safe-area-bottom)
+  const styles = useStyles();
+
+  const scheme = useSelectedScheme();
+  const tint = scheme === "light" ? "light" : "dark";
 
   return (
     <BlurView
       intensity={80}
-      tint="light" // we can use "light" or "dark" or "default"
+      tint={tint} // 'light' for light theme, 'dark' for dark theme
       style={[styles.container]}
     >
       <View style={styles.content}>
@@ -77,21 +80,20 @@ export default function CustomTabBar({
                 size={28}
                 color={
                   isFocused
-                    ? THEME.colors.primary
-                    : THEME.colors.onSurfaceVariant
+                    ? styles.iconFocused.color
+                    : styles.iconUnfocused.color
                 }
-                style={[styles.icon, { opacity: isFocused ? 1 : 0.7 }]}
+                style={[
+                  ,
+                  styles.icon,
+                  isFocused ? styles.iconFocused : styles.iconUnfocused,
+                ]}
               />
 
               <Text
                 style={[
                   styles.label,
-                  {
-                    color: isFocused
-                      ? THEME.colors.primary
-                      : THEME.colors.onSurfaceVariant,
-                    opacity: isFocused ? 1 : 0.7,
-                  },
+                  isFocused ? styles.labelFocused : styles.labelUnfocused,
                 ]}
               >
                 {String(label)}
@@ -104,21 +106,14 @@ export default function CustomTabBar({
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = createStyleHook((theme) => ({
   container: {
     position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
-    // bg-surface/70
-    backgroundColor: THEME.colors.surface70,
-    // border-t border-outline-variant/20
-    borderTopWidth: 1,
-    borderTopColor: THEME.colors.outlineVariant20,
-    // rounded-t-xl
-    borderTopLeftRadius: THEME.borderRadius.xl,
-    borderTopRightRadius: THEME.borderRadius.xl,
-    // shadow-lg
+    backgroundColor: theme.colors.backgroundTransparent,
+    borderTopWidth: 0,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.1,
@@ -144,16 +139,32 @@ const styles = StyleSheet.create({
     width: 4, // after:w-1
     height: 4, // after:h-1
     borderRadius: 2,
-    backgroundColor: THEME.colors.primary,
+    backgroundColor: theme.colors.primary,
   },
   icon: {
     marginBottom: 4, // mb-1
   },
+  iconFocused: {
+    color: theme.colors.primary,
+    opacity: 1,
+  },
+  iconUnfocused: {
+    color: theme.colors.mutedForeground,
+    opacity: 0.7,
+  },
   label: {
     // font-label-caps text-label-caps dalla config tailwind
-    fontFamily: THEME.typography.fontFamily,
-    fontSize: THEME.typography.fontSize,
-    //lineHeight: THEME.typography.lineHeight,
-    letterSpacing: THEME.typography.letterSpacing,
+    fontFamily: theme.typography.fontFamily,
+    fontSize: theme.typography.fontSize,
+    //lineHeight: theme.typography.lineHeight,
+    letterSpacing: theme.typography.letterSpacing,
   },
-});
+  labelFocused: {
+    color: theme.colors.primary,
+    opacity: 1,
+  },
+  labelUnfocused: {
+    color: theme.colors.mutedForeground,
+    opacity: 0.7,
+  },
+}));

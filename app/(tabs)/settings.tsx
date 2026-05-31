@@ -1,28 +1,19 @@
 import SectionCard from "@/components/settings-componenents/sectionCard";
 import SettingSwitch from "@/components/settings-componenents/settingSwitch";
 import DropDownSelector from "@/components/ui/dropDownSelector";
-import { THEME } from "@/constants/theme";
+import { AppSettings, useSettings } from "@/hooks/settings";
+import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { useState } from "react";
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import React from "react";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 export default function SettingsScreen() {
   const router = useRouter();
+  const styles = useStyles();
+  const theme = useTheme();
 
-  // add globals states
-  const [theme, setTheme] = useState("Light");
-  const [antiSickness, setAntiSickness] = useState(false);
-  const [journeyProgress, setJourneyProgress] = useState(true);
-  const [delayAlerts, setDelayAlerts] = useState(true);
-  const [weatherAlerts, setWeatherAlerts] = useState(false);
-  const [language, setLanguage] = useState("English (UK)");
+  const { settings, set } = useSettings();
 
   const languages = ["English (UK)", "Italiano"];
 
@@ -30,29 +21,24 @@ export default function SettingsScreen() {
     title,
     icon,
   }: {
-    title: string;
+    title: AppSettings["theme"];
     icon: keyof typeof MaterialIcons.glyphMap;
   }) => {
-    const isActive = theme === title;
+    const isActive = settings.theme === title;
     return (
       <TouchableOpacity
         style={[styles.themeBox, isActive && styles.themeBoxActive]}
-        onPress={() => {
-          console.log("Theme changed to:", title);
-          setTheme(title);
-        }}
+        onPress={() => set("theme", title)}
       >
         <MaterialIcons
           name={icon}
           size={24}
-          color={
-            isActive ? THEME.colors.primary : THEME.colors.onSurfaceVariant
-          }
+          color={isActive ? theme.colors.primary : theme.colors.mutedForeground}
         />
         <Text
           style={[styles.themeBoxText, isActive && styles.themeBoxTextActive]}
         >
-          {title}
+          {title.toLocaleUpperCase()}
         </Text>
       </TouchableOpacity>
     );
@@ -69,31 +55,25 @@ export default function SettingsScreen() {
 
       <SectionCard iconName="palette" title="App Theme">
         <View style={styles.themeRow}>
-          <ThemeOption title="Light" icon="light-mode" />
-          <ThemeOption title="Dark" icon="dark-mode" />
-          <ThemeOption title="System" icon="settings-system-daydream" />
+          <ThemeOption title="light" icon="light-mode" />
+          <ThemeOption title="dark" icon="dark-mode" />
+          <ThemeOption title="system" icon="settings-system-daydream" />
         </View>
       </SectionCard>
       <SectionCard iconName="health-and-safety" title="Travel Comfort">
         <SettingSwitch
           label="Anti-Sickness Mode"
           description="Reduces motion animations and increases contrast to mitigate travel nausea."
-          value={antiSickness}
-          onValueChange={(value) => {
-            console.log("Anti-Sickness Mode changed to:", value);
-            setAntiSickness(value);
-          }}
+          value={settings.antiSickness}
+          onValueChange={(value) => set("antiSickness", value)}
         />
       </SectionCard>
 
       <SectionCard iconName="language" title="Language">
         <DropDownSelector
           options={languages}
-          selectedValue={language}
-          onSelect={(value) => {
-            console.log("Language changed to:", value);
-            setLanguage(value);
-          }}
+          selectedValue={settings.language}
+          onSelect={(value) => set("language", value)}
           placeholder="Select language"
         />
       </SectionCard>
@@ -102,32 +82,20 @@ export default function SettingsScreen() {
         <SettingSwitch
           label="Journey Progress"
           description="Updates on approaching stops"
-          value={journeyProgress}
-          onValueChange={(value) => {
-            console.log("Journey Progress notifications changed to:", value);
-            setJourneyProgress(value);
-          }}
+          value={settings.journeyProgress}
+          onValueChange={(value) => set("journeyProgress", value)}
         />
         <SettingSwitch
           label="Delay Alerts"
           description="Real-time schedule changes"
-          value={delayAlerts}
-          onValueChange={(value) => {
-            console.log("Delay Alerts notifications changed to:", value);
-            setDelayAlerts(value);
-          }}
+          value={settings.delayAlerts}
+          onValueChange={(value) => set("delayAlerts", value)}
         />
         <SettingSwitch
           label="Weather & Disruptions"
           description="Major network issues"
-          value={weatherAlerts}
-          onValueChange={(value) => {
-            console.log(
-              "Weather & Disruptions notifications changed to:",
-              value,
-            );
-            setWeatherAlerts(value);
-          }}
+          value={settings.weatherAlerts}
+          onValueChange={(value) => set("weatherAlerts", value)}
         />
       </SectionCard>
 
@@ -146,54 +114,54 @@ export default function SettingsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = createStyleHook((theme) => ({
   container: {
     flex: 1,
-    backgroundColor: THEME.colors.surface,
+    backgroundColor: theme.colors.background,
   },
   content: {
-    padding: THEME.spacing.md,
+    padding: theme.spacing.md,
     paddingBottom: 100, // Spazio extra per non sovrapporsi alla tua bottom nav bar
   },
   pageHeader: {
-    marginBottom: THEME.spacing.lg,
+    marginBottom: theme.spacing.lg,
   },
   pageTitle: {
     fontSize: 32,
     fontWeight: "800",
-    color: THEME.colors.primary,
-    marginBottom: THEME.spacing.sm,
+    color: theme.colors.primary,
+    marginBottom: theme.spacing.sm,
   },
   pageSubtitle: {
     fontSize: 16,
-    color: THEME.colors.onSurfaceVariant,
+    color: theme.colors.mutedForeground,
     lineHeight: 22,
   },
   themeRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    gap: THEME.spacing.sm,
+    gap: theme.spacing.sm,
   },
   themeBox: {
     flex: 1,
     alignItems: "center",
-    paddingVertical: THEME.spacing.md,
+    paddingVertical: theme.spacing.md,
     borderWidth: 1,
-    borderColor: THEME.colors.outline,
-    borderRadius: THEME.borderRadius.mdLg,
-    backgroundColor: THEME.colors.surface,
+    borderColor: theme.colors.border,
+    borderRadius: theme.borderRadius.md,
+    backgroundColor: theme.colors.background,
   },
   themeBoxActive: {
-    borderColor: THEME.colors.primary,
-    backgroundColor: THEME.colors.primaryContainer,
+    borderColor: theme.colors.primary,
+    backgroundColor: theme.colors.secondary,
   },
   themeBoxText: {
-    marginTop: THEME.spacing.sm,
+    marginTop: theme.spacing.sm,
     fontSize: 14,
-    color: THEME.colors.onSurfaceVariant,
+    color: theme.colors.mutedForeground,
   },
   themeBoxTextActive: {
-    color: THEME.colors.primary,
+    color: theme.colors.primary,
     fontWeight: "600",
   },
   dropdown: {
@@ -201,26 +169,26 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: THEME.colors.outline,
-    borderRadius: THEME.borderRadius.mdLg,
-    padding: THEME.spacing.md,
-    backgroundColor: THEME.colors.surface,
+    borderColor: theme.colors.border,
+    borderRadius: theme.borderRadius.md,
+    padding: theme.spacing.md,
+    backgroundColor: theme.colors.background,
   },
   dropdownText: {
     fontSize: 16,
-    color: THEME.colors.onSurface,
+    color: theme.colors.foreground,
   },
   footer: {
-    marginTop: THEME.spacing.md,
+    marginTop: theme.spacing.md,
     alignItems: "center",
   },
   reportButton: {
-    backgroundColor: THEME.colors.error,
+    backgroundColor: theme.colors.destructive,
     width: "100%",
     paddingVertical: 14,
-    borderRadius: THEME.borderRadius.xl,
+    borderRadius: theme.borderRadius.xl,
     alignItems: "center",
-    marginBottom: THEME.spacing.lg,
+    marginBottom: theme.spacing.lg,
   },
   reportButtonText: {
     color: "#ffffff",
@@ -229,8 +197,8 @@ const styles = StyleSheet.create({
   },
   versionText: {
     fontSize: 13,
-    color: THEME.colors.onSurfaceVariant,
-    marginBottom: THEME.spacing.sm,
+    color: theme.colors.mutedForeground,
+    marginBottom: theme.spacing.sm,
   },
   linksRow: {
     flexDirection: "row",
@@ -238,12 +206,12 @@ const styles = StyleSheet.create({
   },
   link: {
     fontSize: 13,
-    color: THEME.colors.primary,
+    color: theme.colors.primary,
   },
   card: {
-    backgroundColor: THEME.colors.surfaceVariant,
-    borderRadius: THEME.borderRadius.xl,
-    padding: THEME.spacing.md,
-    marginBottom: THEME.spacing.md,
+    backgroundColor: theme.colors.muted,
+    borderRadius: theme.borderRadius.xl,
+    padding: theme.spacing.md,
+    marginBottom: theme.spacing.md,
   },
-});
+}));

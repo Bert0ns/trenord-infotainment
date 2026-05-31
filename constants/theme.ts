@@ -4,20 +4,40 @@
  */
 
 import { Platform } from "react-native";
+import { Colors, GlobalTheme } from "./theme.types";
 
-export const THEME = {
+export const THEME: GlobalTheme = {
   colors: {
-    primary: "#004a2b", // Verde scuro Trenord
-    //primaryContainer: "#d2eedb", // Verde chiaro per sfondi attivi
-    primaryContainer: "rgba(0, 100, 60, 0.2)", // Verde più scuro per hover/active
-    surface: "#ffffff", // Sfondo pagina
-    surfaceVariant: "#f3f3f8", // Sfondo delle card grigio chiaro
-    onSurface: "#1a1c1f", // Testo principale
-    onSurfaceVariant: "#3f4942", // Testo secondario/descrizioni
-    outline: "#bec9bf", // Bordi
-    error: "#ba1a1a", // Rosso per bottone Report
-    surface70: "rgba(249, 249, 254, 0.7)", // Sfondo trasparente per la bottom nav bar
-    outlineVariant20: "rgba(190, 201, 191, 0.1)", // Bordi trasparenti per la bottom nav bar
+    light: {
+      background: "#ffffff",
+      foreground: "#1a1c1f",
+      primary: "#004a2b",
+      primaryForeground: "#ffffff",
+      secondary: "rgba(0, 100, 60, 0.2)",
+      secondaryForeground: "#004a2b",
+      muted: "#f3f3f8",
+      mutedForeground: "#3f4942",
+      border: "#bec9bf",
+      destructive: "#ba1a1a",
+      destructiveForeground: "#ffffff",
+      backgroundTransparent: "rgba(249, 249, 254, 0.7)",
+      borderTransparent: "rgba(190, 201, 191, 0.1)",
+    },
+    dark: {
+      background: "#181D19",
+      foreground: "#DFE4DE",
+      primary: "#82D8A8",
+      primaryForeground: "#00391E",
+      secondary: "#82D8A833",
+      secondaryForeground: "#82D8A8",
+      muted: "#FFFFFF0D",
+      mutedForeground: "#BEC9C0",
+      border: "#88938B33",
+      destructive: "#ba1a1a",
+      destructiveForeground: "#ffffff",
+      backgroundTransparent: "#181D19",
+      borderTransparent: "#3F49424D",
+    },
   },
   spacing: {
     sm: 8,
@@ -26,8 +46,8 @@ export const THEME = {
     xl: 32,
   },
   borderRadius: {
-    md: 8,
-    mdLg: 12,
+    sm: 8,
+    md: 12,
     lg: 16,
     xl: 20, // da capire
   },
@@ -65,3 +85,6 @@ export const Fonts = Platform.select({
     mono: "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
   },
 });
+
+export type Theme = typeof THEME;
+export type ColorName = keyof Colors;

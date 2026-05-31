@@ -1,4 +1,5 @@
-import { StyleSheet, TextInput } from "react-native";
+import { TextInput } from "react-native";
+import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
 
 type DetailsInputProps = {
   value: string;
@@ -6,10 +7,13 @@ type DetailsInputProps = {
 };
 
 export function DetailsInput({ value, onChange }: DetailsInputProps) {
+  const styles = useStyles();
+  const theme = useTheme();
+
   return (
     <TextInput
       placeholder="Please provide more context..."
-      placeholderTextColor="#9BA7A0"
+      placeholderTextColor={theme.colors.mutedForeground}
       value={value}
       onChangeText={onChange}
       multiline
@@ -19,16 +23,16 @@ export function DetailsInput({ value, onChange }: DetailsInputProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = createStyleHook((theme) => ({
   textArea: {
     minHeight: 110,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: "#C7D1CB",
+    borderColor: theme.colors.border,
     padding: 14,
     fontSize: 15,
-    color: "#2A312D",
-    backgroundColor: "#F7F9F8",
+    color: theme.colors.foreground,
+    backgroundColor: theme.colors.muted,
     marginBottom: 20,
   },
-});
+}));

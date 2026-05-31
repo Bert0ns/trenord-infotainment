@@ -1,8 +1,11 @@
-import { fireEvent, render } from "@testing-library/react-native";
+import { act, fireEvent, render } from "@testing-library/react-native";
 import { useRouter } from "expo-router";
 import React from "react";
 
-import ReportIssuePage from "../app/report-issue-page";
+import ReportIssuePage from "@/app/report-issue-page";
+import { SettingsProvider } from "@/hooks/settings";
+
+declare const global: any;
 
 // Mock expo-router
 jest.mock("expo-router", () => ({
@@ -59,6 +62,14 @@ jest.mock("@expo/vector-icons", () => ({
 describe("ReportIssuePage", () => {
   const mockBack = jest.fn();
 
+  const renderWithProvider = async (component: React.ReactElement) => {
+    const result = render(<SettingsProvider>{component}</SettingsProvider>);
+    await act(async () => {
+      await Promise.resolve();
+    });
+    return result;
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
     (useRouter as jest.Mock).mockReturnValue({
@@ -67,8 +78,10 @@ describe("ReportIssuePage", () => {
     global.alert = jest.fn(); // Mock window.alert
   });
 
-  it("renders the page and its main elements", () => {
-    const { getByText, getByPlaceholderText } = render(<ReportIssuePage />);
+  it("renders the page and its main elements", async () => {
+    const { getByText, getByPlaceholderText } = await renderWithProvider(
+      <ReportIssuePage />,
+    );
 
     expect(getByText("Report an Issue")).toBeTruthy();
     expect(getByText("What seems to be the problem?")).toBeTruthy();
@@ -76,8 +89,11 @@ describe("ReportIssuePage", () => {
     expect(getByText("Submit Report")).toBeTruthy();
   });
 
-  it("updates the details input text correctly when user types", () => {
-    const { getByPlaceholderText } = render(<ReportIssuePage />);
+  it("updates the details input text correctly when user types", async () => {
+    const { getByPlaceholderText } = await renderWithProvider(
+      <ReportIssuePage />,
+    );
+
     const input = getByPlaceholderText("Please provide more context...");
 
     fireEvent.changeText(input, "The AC is broken in carriage 3.");
@@ -85,8 +101,8 @@ describe("ReportIssuePage", () => {
     expect(input.props.value).toBe("The AC is broken in carriage 3.");
   });
 
-  it("triggers a success alert on submit", () => {
-    const { getByText } = render(<ReportIssuePage />);
+  it("triggers a success alert on submit", async () => {
+    const { getByText } = await renderWithProvider(<ReportIssuePage />);
     const submitBtn = getByText("Submit Report");
 
     fireEvent.press(submitBtn);

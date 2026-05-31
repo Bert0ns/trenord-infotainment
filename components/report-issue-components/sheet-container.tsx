@@ -9,6 +9,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useTheme } from "@/hooks/use-theme-color";
 
 type SheetContainerProps = {
   bottomInset: number;
@@ -36,6 +37,7 @@ export const SheetContainer = React.forwardRef<
 >(function SheetContainer({ bottomInset, onClose, children }, ref) {
   const translateY = useSharedValue(WINDOW_HEIGHT);
   const isClosing = useSharedValue(false);
+  const theme = useTheme();
 
   useEffect(() => {
     translateY.value = withSpring(0, SPRING_CONFIG);
@@ -88,17 +90,17 @@ export const SheetContainer = React.forwardRef<
         <Animated.View
           style={[
             styles.sheet,
-            { paddingBottom: Math.max(bottomInset, DEFAULT_PADDING_BOTTOM) },
+            { paddingBottom: Math.max(bottomInset, DEFAULT_PADDING_BOTTOM), backgroundColor: theme.colors.background },
             sheetStyle,
           ]}
         >
           <GestureDetector gesture={dragGesture}>
             <View style={styles.dragRegion}>
-              <View style={styles.handle} />
+              <View style={[styles.handle, { backgroundColor: theme.colors.muted }]} />
             </View>
           </GestureDetector>
           {children}
-          <View style={styles.bottomExtension} />
+          <View style={[styles.bottomExtension, { backgroundColor: theme.colors.background }]} />
         </Animated.View>
       </SafeAreaView>
     </View>
@@ -115,12 +117,10 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   sheet: {
-    backgroundColor: "#F3F5F4",
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
     paddingHorizontal: 20,
     paddingTop: 12,
-    shadowColor: "#0E1512",
     shadowOpacity: 0.15,
     shadowRadius: 18,
     shadowOffset: { width: 0, height: -6 },
@@ -140,7 +140,6 @@ const styles = StyleSheet.create({
     width: 54,
     height: 6,
     borderRadius: 999,
-    backgroundColor: "#D6DED9",
     marginBottom: 0,
     marginTop: 24,
   },
@@ -150,8 +149,7 @@ const styles = StyleSheet.create({
     marginTop: -2, // Pull the extension up slightly to cover the sub-pixel rendering gap
     left: 0,
     right: 0,
-    height: WINDOW_HEIGHT,
-    backgroundColor: "#F3F5F4",
+    height: WINDOW_HEIGHT,    
     borderWidth: 0,
   },
 });
