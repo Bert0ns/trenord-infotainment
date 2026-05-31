@@ -13,6 +13,7 @@
       "bundleIdentifier": "com.toto04.trenord-infotainment"
     },
     "android": {
+      "package": "com.toto04.trenordinfotainment",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",

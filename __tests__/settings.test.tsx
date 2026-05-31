@@ -1,8 +1,8 @@
-import { fireEvent, render } from "@testing-library/react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { act, fireEvent, render } from "@testing-library/react-native";
 import { useRouter } from "expo-router";
-import React from "react";
 
-import { THEME } from "@/constants/theme";
+import { SettingsProvider } from "@/hooks/settings";
 import SettingsScreen from "../app/(tabs)/settings";
 
 // Mock the SettingSwitch component to make switch interaction testable.
@@ -41,71 +41,99 @@ jest.mock("@expo/vector-icons", () => ({
   Ionicons: "Ionicons",
 }));
 
+const renderWithProvider = async (component: React.ReactElement) => {
+  const result = render(<SettingsProvider>{component}</SettingsProvider>);
+  // Flush the microtask queue to allow SettingsProvider's async useEffect to complete
+  await act(async () => {
+    await Promise.resolve();
+  });
+  return result;
+};
+
 describe("SettingsScreen", () => {
   const mockPush = jest.fn();
 
-  beforeEach(() => {
+  beforeEach(async () => {
     jest.clearAllMocks();
+    await AsyncStorage.clear();
     (useRouter as jest.Mock).mockReturnValue({ push: mockPush });
   });
 
-  it("renders headings and footer", () => {
-    const { getByText } = render(<SettingsScreen />);
+  it("renders headings and footer", async () => {
+    const { getByText } = await renderWithProvider(<SettingsScreen />);
 
     expect(getByText("Settings")).toBeTruthy();
     expect(
       getByText("Manage your app preferences and travel experience."),
     ).toBeTruthy();
-    expect(getByText("Report Issue")).toBeTruthy();
-    expect(getByText("App Version 0.0.0")).toBeTruthy();
+    expect(getByText(/App Version 0.0.0/)).toBeTruthy();
   });
 
-  it("toggles Anti-Sickness switch", () => {
-    const { getAllByText } = render(<SettingsScreen />);
+  it("initializes with default settings", async () => {
+    const { getByTestId, getByText } = await renderWithProvider(
+      <SettingsScreen />,
+    );
 
-    // Count how many 'ON' indicators exist before pressing
-    const onBefore = getAllByText("ON").length;
-
-    const toggleButtons = getAllByText("Toggle");
-    fireEvent.press(toggleButtons[0]);
-
-    const onAfter = getAllByText("ON").length;
-    expect(onAfter).toBe(onBefore + 1);
+    expect(getByTestId("value-Anti-Sickness Mode").props.children).toBe("OFF");
+    expect(getByTestId("value-Journey Progress").props.children).toBe("ON");
+    expect(getByTestId("value-Delay Alerts").props.children).toBe("ON");
+    expect(getByTestId("value-Weather & Disruptions").props.children).toBe(
+      "OFF",
+    );
+    expect(getByText("English (UK)")).toBeTruthy();
   });
 
-  it("selects language from dropdown", () => {
-    const { getByText } = render(<SettingsScreen />);
+  it("toggles all configuration switches correctly", async () => {
+    const { getByTestId } = await renderWithProvider(<SettingsScreen />);
 
-    // initial language is English (UK)
-    const trigger = getByText("English (UK)");
-    fireEvent.press(trigger);
+    fireEvent.press(getByTestId("toggle-Anti-Sickness Mode"));
+    expect(getByTestId("value-Anti-Sickness Mode").props.children).toBe("ON");
 
-    // Italian option should appear
-    const italian = getByText("Italiano");
-    expect(italian).toBeTruthy();
+    fireEvent.press(getByTestId("toggle-Journey Progress"));
+    expect(getByTestId("value-Journey Progress").props.children).toBe("OFF");
 
-    fireEvent.press(italian);
+    fireEvent.press(getByTestId("toggle-Delay Alerts"));
+    expect(getByTestId("value-Delay Alerts").props.children).toBe("OFF");
 
-    // selected value should now be Italiano
-    expect(getByText("Italiano")).toBeTruthy();
-  });
-
-  it("changes theme when ThemeOption pressed", () => {
-    const { getByText } = render(<SettingsScreen />);
-
-    const dark = getByText("Dark");
-    fireEvent.press(dark);
-
-    const instance = getByText("Dark");
-    expect(instance.props.style).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ color: THEME.colors.primary }),
-      ]),
+    fireEvent.press(getByTestId("toggle-Weather & Disruptions"));
+    expect(getByTestId("value-Weather & Disruptions").props.children).toBe(
+      "ON",
     );
   });
 
-  it("navigates to report page on Report Issue press", () => {
-    const { getByText } = render(<SettingsScreen />);
+  it("selects language from dropdown", async () => {
+    const { getByText } = await renderWithProvider(<SettingsScreen />);
+
+    const trigger = getByText("English (UK)");
+    fireEvent.press(trigger);
+
+    const option = getByText("Italiano");
+    fireEvent.press(option);
+
+    expect(getByText("Italiano")).toBeTruthy();
+  });
+
+  it("changes theme across all options (LIGHT, DARK, SYSTEM)", async () => {
+    const { getByText } = await renderWithProvider(<SettingsScreen />);
+
+    const options = ["LIGHT", "DARK", "SYSTEM"];
+
+    for (const option of options) {
+      const themeBtn = getByText(option);
+      fireEvent.press(themeBtn);
+
+      const activeThemeBtn = getByText(option);
+      // "themeBoxTextActive" explicitly adds fontWeight 600, checking for it verifies it's active
+      expect(activeThemeBtn.props.style).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ fontWeight: "600" }),
+        ]),
+      );
+    }
+  });
+
+  it("navigates to report page on Report Issue press", async () => {
+    const { getByText } = await renderWithProvider(<SettingsScreen />);
 
     const reportBtn = getByText("Report Issue");
     fireEvent.press(reportBtn);

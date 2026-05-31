@@ -8,7 +8,8 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "expo lint",
-    "test": "jest --watchAll --silent"
+    "test": "jest",
+    "test-watch": "jest --watchAll"
   },
   "dependencies": {
     "@expo-google-fonts/inter": "^0.4.2",
@@ -20,7 +21,6 @@
     "expo": "~55.0.26",
     "expo-blur": "~55.0.14",
     "expo-constants": "~55.0.16",
-    "expo-dev-client": "~55.0.35",
     "expo-font": "~55.0.8",
     "expo-haptics": "~55.0.14",
     "expo-image": "~55.0.11",
@@ -59,6 +59,9 @@
   "packageManager": "pnpm@11.5.0+sha512.dbfcc4f81cf48597afd4bc391ffdf12c11f1a9fb83a395bfa6b0a2d9cc2fd8ffebafdb1ccbd529632153f793904c2615b7f09fe1a345473fd1c35845172a8eb1",
   "jest": {
     "preset": "jest-expo",
+    "setupFiles": [
+      "<rootDir>/jest.setup.js"
+    ],
     "moduleNameMapper": {
       "^@/(.*)$": "<rootDir>/$1"
     },
