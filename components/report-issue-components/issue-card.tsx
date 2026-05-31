@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Pressable, StyleSheet, Text } from "react-native";
+import { THEME } from "../../constants/theme";
 
 import type { IssueOption } from "./issue-options";
 
@@ -33,7 +34,7 @@ export function IssueOptionCard({
       <Ionicons
         name={option.icon}
         size={22}
-        color={selected ? "#0F5132" : "#2F3A35"}
+        color={selected ? THEME.colors.primary : THEME.colors.onSurfaceVariant}
       />
       <Text style={[styles.label, selected && styles.labelSelected]}>
         {option.label}
@@ -62,8 +63,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   cardSelected: {
-    borderColor: "#0F5132",
-    backgroundColor: "#D5E5DF",
+    borderColor: THEME.colors.primary,
+    backgroundColor: THEME.colors.primaryContainer,
   },
   cardPressed: {
     opacity: 0.85,
@@ -71,9 +72,9 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#2F3A35",
+    color: THEME.colors.onSurfaceVariant,
   },
   labelSelected: {
-    color: "#0F5132",
+    color: THEME.colors.primary,
   },
 });
