@@ -91,4 +91,4 @@ const useStyles = createStyleHook((theme) => ({
     fontWeight: "600",
     color: theme.colors.primary,
   },
-});
+}));
