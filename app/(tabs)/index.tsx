@@ -18,7 +18,7 @@ export default function HomeScreen() {
             size={16}
             color={theme.colors.onSurfaceVariant}
           />
-          <Text style={styles.pageSubtitle}>08:30 - 10:15</Text>{" "}
+          <Text style={styles.pageSubtitle}>08:30 - 10:15</Text>
           {/* Trenord API */}
         </View>
       </View>
