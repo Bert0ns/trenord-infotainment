@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { useMemo, useState, useRef } from "react";
+import { useMemo, useRef, useState } from "react";
 import { ScrollView, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -58,7 +58,11 @@ export default function ReportIssuePage() {
   };
 
   return (
-    <SheetContainer ref={sheetRef} bottomInset={insets.bottom} onClose={() => router.back()}>
+    <SheetContainer
+      ref={sheetRef}
+      bottomInset={insets.bottom}
+      onClose={() => router.back()}
+    >
       <ReportHeader title="Report an Issue" onClose={requestClose} />
 
       <ScrollView
@@ -82,10 +86,7 @@ export default function ReportIssuePage() {
         <SectionTitle>Additional details (Optional)</SectionTitle>
         <DetailsInput value={details} onChange={setDetails} />
 
-        <ActionButtons
-          onSubmit={onSubmitReportIssue}
-          onCancel={requestClose}
-        />
+        <ActionButtons onSubmit={onSubmitReportIssue} onCancel={requestClose} />
       </ScrollView>
     </SheetContainer>
   );

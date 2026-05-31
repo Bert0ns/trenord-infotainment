@@ -1,8 +1,11 @@
+import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
 import { MaterialIcons } from "@expo/vector-icons";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { THEME } from "@/constants/theme";
+import { ScrollView, Text, View } from "react-native";
 
 export default function JourneyScreen() {
+  const styles = useStyles();
+  const theme = useTheme();
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.pageHeader}>
@@ -11,7 +14,7 @@ export default function JourneyScreen() {
           <MaterialIcons
             name="access-time"
             size={16}
-            color={THEME.colors.onSurfaceVariant}
+            color={theme.colors.onSurfaceVariant}
           />
           <Text style={styles.pageSubtitle}>08:30 - 10:15</Text>
         </View>
@@ -20,54 +23,54 @@ export default function JourneyScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = createStyleHook((theme) => ({
   container: {
     flex: 1,
-    backgroundColor: THEME.colors.surface,
+    backgroundColor: theme.colors.surface,
   },
   content: {
-    padding: THEME.spacing.md,
+    padding: theme.spacing.md,
     paddingBottom: 100, // Spazio extra per non sovrapporsi alla tua bottom nav bar
   },
   pageHeader: {
-    marginBottom: THEME.spacing.lg,
+    marginBottom: theme.spacing.lg,
   },
   pageTitle: {
     fontSize: 32,
     fontWeight: "800",
-    color: THEME.colors.primary,
-    marginBottom: THEME.spacing.sm,
+    color: theme.colors.primary,
+    marginBottom: theme.spacing.sm,
   },
   pageSubtitle: {
     fontSize: 16,
-    color: THEME.colors.onSurfaceVariant,
+    color: theme.colors.onSurfaceVariant,
     lineHeight: 22,
   },
   themeRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    gap: THEME.spacing.sm,
+    gap: theme.spacing.sm,
   },
   themeBox: {
     flex: 1,
     alignItems: "center",
-    paddingVertical: THEME.spacing.md,
+    paddingVertical: theme.spacing.md,
     borderWidth: 1,
-    borderColor: THEME.colors.outline,
-    borderRadius: THEME.borderRadius.mdLg,
-    backgroundColor: THEME.colors.surface,
+    borderColor: theme.colors.outline,
+    borderRadius: theme.borderRadius.md,
+    backgroundColor: theme.colors.surface,
   },
   themeBoxActive: {
-    borderColor: THEME.colors.primary,
-    backgroundColor: THEME.colors.primaryContainer,
+    borderColor: theme.colors.primary,
+    backgroundColor: theme.colors.primaryContainer,
   },
   themeBoxText: {
-    marginTop: THEME.spacing.sm,
+    marginTop: theme.spacing.sm,
     fontSize: 14,
-    color: THEME.colors.onSurfaceVariant,
+    color: theme.colors.onSurfaceVariant,
   },
   themeBoxTextActive: {
-    color: THEME.colors.primary,
+    color: theme.colors.primary,
     fontWeight: "600",
   },
   dropdown: {
@@ -75,26 +78,26 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: THEME.colors.outline,
-    borderRadius: THEME.borderRadius.mdLg,
-    padding: THEME.spacing.md,
-    backgroundColor: THEME.colors.surface,
+    borderColor: theme.colors.outline,
+    borderRadius: theme.borderRadius.md,
+    padding: theme.spacing.md,
+    backgroundColor: theme.colors.surface,
   },
   dropdownText: {
     fontSize: 16,
-    color: THEME.colors.onSurface,
+    color: theme.colors.onSurface,
   },
   footer: {
-    marginTop: THEME.spacing.md,
+    marginTop: theme.spacing.md,
     alignItems: "center",
   },
   reportButton: {
-    backgroundColor: THEME.colors.error,
+    backgroundColor: theme.colors.error,
     width: "100%",
     paddingVertical: 14,
-    borderRadius: THEME.borderRadius.xl,
+    borderRadius: theme.borderRadius.xl,
     alignItems: "center",
-    marginBottom: THEME.spacing.lg,
+    marginBottom: theme.spacing.lg,
   },
   reportButtonText: {
     color: "#ffffff",
@@ -103,8 +106,8 @@ const styles = StyleSheet.create({
   },
   versionText: {
     fontSize: 13,
-    color: THEME.colors.onSurfaceVariant,
-    marginBottom: THEME.spacing.sm,
+    color: theme.colors.onSurfaceVariant,
+    marginBottom: theme.spacing.sm,
   },
   linksRow: {
     flexDirection: "row",
@@ -112,12 +115,12 @@ const styles = StyleSheet.create({
   },
   link: {
     fontSize: 13,
-    color: THEME.colors.primary,
+    color: theme.colors.primary,
   },
   card: {
-    backgroundColor: THEME.colors.surfaceVariant,
-    borderRadius: THEME.borderRadius.xl,
-    padding: THEME.spacing.md,
-    marginBottom: THEME.spacing.md,
+    backgroundColor: theme.colors.surfaceVariant,
+    borderRadius: theme.borderRadius.xl,
+    padding: theme.spacing.md,
+    marginBottom: theme.spacing.md,
   },
-});
+}));

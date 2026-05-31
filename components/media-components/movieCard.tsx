@@ -1,6 +1,6 @@
+import { createStyleHook } from "@/hooks/use-theme-color";
 import React from "react";
-import { ImageBackground, StyleSheet, Text, View } from "react-native";
-import { THEME } from "../../constants/theme";
+import { ImageBackground, Text, View } from "react-native";
 
 interface MovieCardProps {
   imageSource: any;
@@ -15,6 +15,8 @@ export default function MovieCard({
   category,
   duration,
 }: MovieCardProps) {
+  const styles = useStyles();
+
   return (
     <View style={styles.cardContainer}>
       <ImageBackground
@@ -33,11 +35,11 @@ export default function MovieCard({
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = createStyleHook((theme) => ({
   cardContainer: {
     width: 330,
     height: 220,
-    marginRight: THEME.spacing.md,
+    marginRight: theme.spacing.md,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
@@ -49,12 +51,12 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   imageRadius: {
-    borderRadius: THEME.borderRadius.lg,
+    borderRadius: theme.borderRadius.lg,
   },
   overlay: {
-    padding: THEME.spacing.md,
+    padding: theme.spacing.md,
     backgroundColor: "rgba(0, 0, 0, 0.3)", // Scurisce l'immagine per far risaltare i testi
-    borderRadius: THEME.borderRadius.lg,
+    borderRadius: theme.borderRadius.lg,
     height: "100%",
     justifyContent: "flex-end",
   },
@@ -64,7 +66,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 6,
-    marginBottom: THEME.spacing.sm,
+    marginBottom: theme.spacing.sm,
   },
   badgeText: {
     fontSize: 11,
@@ -82,4 +84,4 @@ const styles = StyleSheet.create({
     color: "#e2e2e7",
     fontSize: 14,
   },
-});
+}));

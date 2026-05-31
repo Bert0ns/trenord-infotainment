@@ -1,6 +1,6 @@
+import { createStyleHook } from "@/hooks/use-theme-color";
 import React from "react";
-import { StyleSheet, Switch, Text, View } from "react-native";
-import { THEME } from "../../constants/theme";
+import { Switch, Text, View } from "react-native";
 
 interface SettingSwitchProps {
   label: string;
@@ -15,6 +15,8 @@ export default function SettingSwitch({
   value,
   onValueChange,
 }: SettingSwitchProps) {
+  const styles = useStyles();
+
   return (
     <View style={styles.container}>
       <View style={styles.textContainer}>
@@ -24,31 +26,34 @@ export default function SettingSwitch({
       <Switch
         value={value}
         onValueChange={onValueChange}
-        trackColor={{ false: "#d9dade", true: THEME.colors.primary }}
+        trackColor={{ false: "#d9dade", true: styles.switchTrackTrue.color }}
         thumbColor={"#ffffff"}
       />
     </View>
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = createStyleHook((theme) => ({
   container: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: THEME.spacing.sm,
+    paddingVertical: theme.spacing.sm,
   },
   textContainer: {
     flex: 1,
-    paddingRight: THEME.spacing.md,
+    paddingRight: theme.spacing.md,
   },
   label: {
     fontSize: 15,
-    color: THEME.colors.onSurface,
+    color: theme.colors.onSurface,
     marginBottom: 2,
   },
   description: {
     fontSize: 13,
-    color: THEME.colors.onSurfaceVariant,
+    color: theme.colors.onSurfaceVariant,
   },
-});
+  switchTrackTrue: {
+    color: theme.colors.primary,
+  },
+}));

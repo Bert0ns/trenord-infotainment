@@ -1,7 +1,7 @@
-import { THEME } from "@/constants/theme";
+import { createStyleHook } from "@/hooks/use-theme-color";
 import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 
 interface SectionCardProps {
   iconName: keyof typeof MaterialIcons.glyphMap;
@@ -14,6 +14,8 @@ export default function SectionCard({
   title,
   children,
 }: SectionCardProps) {
+  const styles = useStyles();
+
   return (
     <View style={styles.card}>
       <View style={styles.header}>
@@ -21,7 +23,7 @@ export default function SectionCard({
           <MaterialIcons
             name={iconName}
             size={20}
-            color={THEME.colors.primary}
+            color={styles.iconColor.color}
           />
         </View>
         <Text style={styles.title}>{title}</Text>
@@ -31,20 +33,20 @@ export default function SectionCard({
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = createStyleHook((theme) => ({
   card: {
-    backgroundColor: THEME.colors.surfaceVariant,
-    borderRadius: THEME.borderRadius.xl,
-    padding: THEME.spacing.md,
-    marginBottom: THEME.spacing.md,
+    backgroundColor: theme.colors.surfaceVariant,
+    borderRadius: theme.borderRadius.xl,
+    padding: theme.spacing.md,
+    marginBottom: theme.spacing.md,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: THEME.spacing.md,
+    marginBottom: theme.spacing.md,
   },
   iconContainer: {
-    backgroundColor: "#d6e2db", // Grigio-verde chiaro
+    backgroundColor: "#00643C33", // Grigio-verde chiaro
     padding: 6,
     borderRadius: 8,
     marginRight: 12,
@@ -52,6 +54,9 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: "700",
-    color: THEME.colors.onSurface,
+    color: theme.colors.onSurface,
   },
-});
+  iconColor: {
+    color: theme.colors.primary,
+  },
+}));

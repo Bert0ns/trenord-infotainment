@@ -1,7 +1,7 @@
+import { createStyleHook } from "@/hooks/use-theme-color";
 import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { THEME } from "../../constants/theme";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 
 interface PodcastCardProps {
   imageSource: any;
@@ -14,6 +14,8 @@ export default function PodcastCard({
   title,
   episode,
 }: PodcastCardProps) {
+  const styles = useStyles();
+
   return (
     <View style={styles.container}>
       <Image source={imageSource} style={styles.image} />
@@ -31,43 +33,46 @@ export default function PodcastCard({
         <MaterialIcons
           name="add-circle-outline"
           size={24}
-          color={THEME.colors.primary}
+          color={styles.iconColor.color}
         />
       </TouchableOpacity>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = createStyleHook((theme) => ({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: THEME.colors.surfaceVariant, // Grigio chiaro (#f3f3f8)
-    borderRadius: THEME.borderRadius.lg,
-    padding: THEME.spacing.sm + 2,
-    marginBottom: THEME.spacing.sm,
+    backgroundColor: theme.colors.surfaceVariant, // Grigio chiaro (#f3f3f8)
+    borderRadius: theme.borderRadius.lg,
+    padding: theme.spacing.sm + 2,
+    marginBottom: theme.spacing.sm,
   },
   image: {
     width: 48,
     height: 48,
-    borderRadius: THEME.borderRadius.md,
+    borderRadius: theme.borderRadius.sm,
     backgroundColor: "#000", // Fallback se l'immagine carica lentamente
   },
   textContainer: {
     flex: 1,
-    paddingHorizontal: THEME.spacing.md,
+    paddingHorizontal: theme.spacing.md,
   },
   title: {
     fontSize: 16,
     fontWeight: "700",
-    color: THEME.colors.onSurface,
+    color: theme.colors.onSurface,
     marginBottom: 2,
   },
   episode: {
     fontSize: 13,
-    color: THEME.colors.onSurfaceVariant,
+    color: theme.colors.onSurfaceVariant,
   },
   plusButton: {
-    padding: THEME.spacing.sm,
+    padding: theme.spacing.sm,
   },
-});
+  iconColor: {
+    color: theme.colors.primary,
+  },
+}));

@@ -1,7 +1,7 @@
+import { createStyleHook } from "@/hooks/use-theme-color";
 import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { THEME } from "../constants/theme";
+import { Text, TouchableOpacity, View } from "react-native";
 
 interface SectionHeaderProps {
   title: string;
@@ -16,6 +16,8 @@ export default function SectionHeader({
   icon,
   isFirst,
 }: SectionHeaderProps) {
+  const styles = useStyles();
+
   return (
     <View style={isFirst ? styles.firstContainer : styles.container}>
       {type === "home" ? (
@@ -23,7 +25,7 @@ export default function SectionHeader({
           <MaterialIcons
             name={icon || "train"}
             size={16}
-            color={THEME.colors.primary}
+            color={styles.iconColor.color}
           />
           <Text style={styles.titelHome}>{title}</Text>
         </View>
@@ -39,34 +41,37 @@ export default function SectionHeader({
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = createStyleHook((theme) => ({
   container: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "baseline",
-    marginTop: THEME.spacing.lg,
-    marginBottom: THEME.spacing.md,
+    marginTop: theme.spacing.lg,
+    marginBottom: theme.spacing.md,
   },
   firstContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "baseline",
     marginTop: 0,
-    marginBottom: THEME.spacing.md,
+    marginBottom: theme.spacing.md,
   },
   title: {
     fontSize: 22,
     fontWeight: "700",
-    color: THEME.colors.onSurface,
+    color: theme.colors.onSurface,
   },
   titelHome: {
     fontSize: 16,
     fontWeight: "800",
-    color: THEME.colors.onSurface,
+    color: theme.colors.onSurface,
   },
   seeAll: {
     fontSize: 16,
     fontWeight: "600",
-    color: THEME.colors.primary,
+    color: theme.colors.primary,
   },
-});
+  iconColor: {
+    color: theme.colors.primary,
+  },
+}));

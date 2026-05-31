@@ -1,6 +1,6 @@
-import { THEME } from "@/constants/theme";
+import { createStyleHook } from "@/hooks/use-theme-color";
 import { useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 
 import { MaterialIcons } from "@expo/vector-icons";
 
@@ -17,6 +17,7 @@ export default function DropDownSelector({
   onSelect,
   placeholder = "Select...",
 }: DropDownSelectorProps) {
+  const styles = useStyles();
   const [open, setOpen] = useState(false);
 
   function handleSelect(value: string) {
@@ -40,7 +41,7 @@ export default function DropDownSelector({
         <MaterialIcons
           name={open ? "keyboard-arrow-up" : "keyboard-arrow-down"}
           size={24}
-          color={THEME.colors.onSurfaceVariant}
+          color={styles.chevronColor.color}
         />
       </TouchableOpacity>
 
@@ -62,7 +63,7 @@ export default function DropDownSelector({
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = createStyleHook((theme) => ({
   container: {
     width: "100%",
   },
@@ -90,6 +91,7 @@ const styles = StyleSheet.create({
 
   dropdownText: {
     fontSize: 16,
+    color: theme.colors.onSurface,
   },
 
   menu: {
@@ -113,5 +115,9 @@ const styles = StyleSheet.create({
 
   menuItemText: {
     fontSize: 16,
+    color: theme.colors.onSurface,
   },
-});
+  chevronColor: {
+    color: theme.colors.onSurfaceVariant,
+  },
+}));
