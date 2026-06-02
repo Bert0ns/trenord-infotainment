@@ -22,6 +22,12 @@ export const THEME: GlobalTheme = {
       destructiveForeground: "#ffffff",
       backgroundTransparent: "rgba(249, 249, 254, 0.7)",
       borderTransparent: "rgba(190, 201, 191, 0.1)",
+      homeSecondary: "#82D8A8",
+      info: "#4A90E2",
+      infoForeground: "#ffffff",
+      warning: "#F5A623",
+      warningForeground: "#ffffff",
+      cloud: "#BEC9C0",
     },
     dark: {
       background: "#181D19",
@@ -33,10 +39,16 @@ export const THEME: GlobalTheme = {
       muted: "#FFFFFF0D",
       mutedForeground: "#BEC9C0",
       border: "#88938B33",
-      destructive: "#ba1a1a",
+      destructive: "#9f1616",
       destructiveForeground: "#ffffff",
       backgroundTransparent: "#181D19",
       borderTransparent: "#3F49424D",
+      homeSecondary: "#004a2b",
+      info: "#64B5F6",
+      infoForeground: "#002C59",
+      warning: "#FFB74D",
+      warningForeground: "#4A2B00",
+      cloud: "#BEC9C0",
     },
   },
   spacing: {
@@ -49,7 +61,7 @@ export const THEME: GlobalTheme = {
     sm: 8,
     md: 12,
     lg: 16,
-    xl: 20, // da capire
+    xl: 20,
   },
   typography: {
     // usato solo per la bottom nav bar

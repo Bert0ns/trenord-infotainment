@@ -25,6 +25,18 @@ export type Colors = {
   backgroundTransparent: string;
   /** Transparent borders  */
   borderTransparent: string;
+  /** Background color for on-time trains */
+  homeSecondary: string;
+  /** Text color for on Time/ Low Crowding*/
+  info: string;
+  /** Text color for on Time / Low Crowding */
+  infoForeground: string;
+  /** Background color for Normal Crowding */
+  warning: string;
+  /** Text color for Normal Crowding */
+  warningForeground: string;
+  /** Color for cloud icon in weather card */
+  cloud: string;
 };
 
 export type Sizes = {
