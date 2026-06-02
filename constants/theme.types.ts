@@ -37,6 +37,8 @@ export type Colors = {
   warningForeground: string;
   /** Color for cloud icon in weather card */
   cloud: string;
+  /** Background for live status card */
+  homeLiveStatus: string;
 };
 
 export type Sizes = {

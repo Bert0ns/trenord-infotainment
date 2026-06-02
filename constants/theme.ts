@@ -28,6 +28,7 @@ export const THEME: GlobalTheme = {
       warning: "#F5A623",
       warningForeground: "#ffffff",
       cloud: "#BEC9C0",
+      homeLiveStatus: "#004a2b",
     },
     dark: {
       background: "#181D19",
@@ -49,6 +50,7 @@ export const THEME: GlobalTheme = {
       warning: "#FFB74D",
       warningForeground: "#4A2B00",
       cloud: "#BEC9C0",
+      homeLiveStatus: "#438d64",
     },
   },
   spacing: {

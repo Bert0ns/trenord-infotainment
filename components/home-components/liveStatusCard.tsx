@@ -58,7 +58,7 @@ export default function LiveStatusCard({
             <MaterialIcons
               name="speed"
               size={16}
-              color={theme.colors.primaryForeground}
+              color={theme.colors.destructiveForeground}
               style={styles.icon}
             />
             <Text style={styles.valueText}>{speed}</Text>
@@ -76,7 +76,7 @@ export default function LiveStatusCard({
 
 const useStyles = createStyleHook((theme) => ({
   card: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: theme.colors.homeLiveStatus,
     borderRadius: theme.borderRadius.xl,
     padding: theme.spacing.lg,
     paddingBottom: theme.spacing.md,
@@ -92,7 +92,7 @@ const useStyles = createStyleHook((theme) => ({
   },
   label: {
     color: theme.colors.homeSecondary,
-    opacity: 0.7,
+    opacity: 1.5,
     fontSize: 10,
     fontWeight: "700",
     letterSpacing: 1,
@@ -118,12 +118,12 @@ const useStyles = createStyleHook((theme) => ({
     fontWeight: "600",
   },
   stationName: {
-    color: theme.colors.primaryForeground,
+    color: theme.colors.destructiveForeground,
     fontSize: 32,
     fontWeight: "800",
   },
   arrTime: {
-    color: theme.colors.primaryForeground,
+    color: theme.colors.destructiveForeground,
     fontSize: 14,
     opacity: 0.9,
     marginBottom: theme.spacing.md,
@@ -131,7 +131,7 @@ const useStyles = createStyleHook((theme) => ({
   divider: {
     height: 1,
     backgroundColor: theme.colors.homeSecondary,
-    opacity: 0.2,
+    opacity: 0.5,
     marginBottom: theme.spacing.md,
   },
   bottomRow: {
@@ -149,7 +149,7 @@ const useStyles = createStyleHook((theme) => ({
     marginRight: 4,
   },
   valueText: {
-    color: theme.colors.primaryForeground,
+    color: theme.colors.destructiveForeground,
     fontSize: 16,
     fontWeight: "500",
   },
