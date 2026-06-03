@@ -75,11 +75,10 @@ import { importJWK, SignJWT } from "jose";
 import crypto from "crypto";
 
 // Configuration
-const clientId = "GbLkYjtRcmiTKvhPxsaynbClIWHjXWgr";
+const clientId = "YOUR_CLIENT_ID";
 const issuer = "trenord-idp";
 const audience = "b2b";
 const tokenUrl = "https://preprod.mp.trenord.it/b2b/oauth/token";
-
 async function main() {
   // 1. Read the JWK file
   const jwkRaw = fs.readFileSync("./bertoni_jwt.json", "utf-8");
