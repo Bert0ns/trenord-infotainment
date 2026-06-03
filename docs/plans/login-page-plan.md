@@ -8,7 +8,7 @@ The goal is to modify the `app/index.tsx` screen to dynamically fetch real train
 
 To achieve this securely and efficiently, we will add the following libraries:
 
-- **`jose`**: A lightweight, standard JS library to handle JWT creation. Since the app is using Expo SDK 55, it natively supports `crypto.subtle` (Web Crypto API) via `expo-crypto`, meaning `jose` will work perfectly without requiring any polyfills.
+- **`jsrsasign`**: A pure JavaScript cryptography library used to sign the RS256 JWT assertion in environments where Web Crypto support may be limited.
 - **`zustand`**: A minimal, pure-JavaScript state management library used to store the fetched train data so it can be accessed by the rest of the application (`/(tabs)` screens).
 
 ## 3. UI/UX Flow (app/index.tsx)
