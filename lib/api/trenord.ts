@@ -1,4 +1,4 @@
-import { importJWK, SignJWT } from "jose";
+import { KJUR, KEYUTIL } from "jsrsasign";
 
 // Read configuration securely from Expo environment
 const clientId = process.env.EXPO_PUBLIC_TRENORD_CLIENT_ID!;
@@ -28,25 +28,33 @@ function getJwk() {
 async function getAccessToken(): Promise<string> {
   console.log("[Trenord API] Getting private JWK for authentication...");
   const jwk = getJwk();
-  const privateKey = await importJWK(jwk, "RS256");
+  
+  // Parse JWK into an RSA key object compatible with jsrsasign
+  const privateKey = KEYUTIL.getKey(jwk);
 
-  // React Native global crypto (Expo 50+) supports randomUUID
+  // Generate a random UUID for the JWT ID
   const jti =
     typeof crypto !== "undefined" && crypto.randomUUID
       ? crypto.randomUUID()
       : Math.random().toString(36).substring(2, 15);
 
-  const jwt = await new SignJWT({
+  const header = { alg: "RS256", typ: "JWT", kid: "dima" };
+  const payload = {
     iss: clientId,
     sub: clientId,
     aud: issuer,
     jti: jti,
     requested_audiences: [audience],
-  })
-    .setProtectedHeader({ alg: "RS256", typ: "JWT", kid: "dima" })
-    .setIssuedAt()
-    .setExpirationTime("5m")
-    .sign(privateKey);
+    iat: Math.floor(Date.now() / 1000),
+    exp: Math.floor(Date.now() / 1000) + 300, // Expires in 5 minutes
+  };
+
+  const jwt = KJUR.jws.JWS.sign(
+    "RS256",
+    JSON.stringify(header),
+    JSON.stringify(payload),
+    privateKey as any
+  );
 
   // Use string concatenation for URLSearchParams if polyfill is missing
   const params = [

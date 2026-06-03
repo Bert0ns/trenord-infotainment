@@ -13,18 +13,19 @@ process.env.EXPO_PUBLIC_TRENORD_PRIVATE_JWK = JSON.stringify({
 // Use require to ensure env variables are set before execution
 const { fetchTrainData } = require("../../lib/api/trenord");
 
-// Mock `jose` package to avoid real crypto in tests
-jest.mock("jose", () => {
+// Mock `jsrsasign` package to avoid real crypto in tests
+jest.mock('jsrsasign', () => {
   return {
-    importJWK: jest.fn().mockResolvedValue("mockPrivateKey"),
-    SignJWT: jest.fn().mockImplementation(() => {
-      return {
-        setProtectedHeader: jest.fn().mockReturnThis(),
-        setIssuedAt: jest.fn().mockReturnThis(),
-        setExpirationTime: jest.fn().mockReturnThis(),
-        sign: jest.fn().mockResolvedValue("mock-signed-jwt"),
-      };
-    }),
+    KEYUTIL: {
+      getKey: jest.fn().mockReturnValue('mockPrivateKey'),
+    },
+    KJUR: {
+      jws: {
+        JWS: {
+          sign: jest.fn().mockReturnValue('mock-signed-jwt'),
+        },
+      },
+    },
   };
 });
 
