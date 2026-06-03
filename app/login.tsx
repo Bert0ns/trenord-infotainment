@@ -41,8 +41,21 @@ export default function LoginScreen() {
 
   useEffect(() => {
     // Only clear on initial mount if they arrive here already logged in
-    if (useJourneyStore.getState().trainId) {
-      useJourneyStore.getState().clearJourney();
+    const checkAndClear = () => {
+      if (useJourneyStore.getState().trainId) {
+        useJourneyStore.getState().clearJourney();
+      }
+    };
+
+    if (useJourneyStore.persist.hasHydrated()) {
+      checkAndClear();
+    } else {
+      const unsub = useJourneyStore.persist.onFinishHydration(() => {
+        checkAndClear();
+      });
+      return () => {
+        unsub();
+      };
     }
   }, []);
 
