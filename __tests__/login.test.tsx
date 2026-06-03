@@ -1,5 +1,5 @@
 import React from "react";
-import { render, fireEvent, waitFor } from "@testing-library/react-native";
+import { render, fireEvent } from "@testing-library/react-native";
 import LoginScreen from "../app/login";
 import * as api from "../lib/api/trenord";
 import { useJourneyStore } from "../store/journeyStore";
