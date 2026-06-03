@@ -4,15 +4,25 @@ import { Image } from "expo-image";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
 
 export default function Header() {
   const insets = useSafeAreaInsets();
   const styles = useStyles();
+  const router = useRouter();
+
+  const handleBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace("/login");
+    }
+  };
 
   return (
     <View style={[styles.headerContainer, { paddingTop: insets.top }]}>
       <View style={styles.headerContent}>
-        <TouchableOpacity style={styles.iconButton}>
+        <TouchableOpacity style={styles.iconButton} onPress={handleBack}>
           <MaterialIcons
             name="arrow-back-ios"
             size={24}
