@@ -36,6 +36,7 @@ export default function LoginScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const [trainData, setTrainData] = useState<any>(null);
   const [stations, setStations] = useState<Station[]>([]);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const setJourney = useJourneyStore((state) => state.setJourney);
 
@@ -45,6 +46,7 @@ export default function LoginScreen() {
   function handleCodeChange(value: string) {
     const digitsOnly = value.replace(/\D/g, "");
     setTicketCode(digitsOnly);
+    if (errorMsg) setErrorMsg(null);
     // Reset data if code changes
     if (trainData) {
       setTrainData(null);
@@ -57,11 +59,14 @@ export default function LoginScreen() {
     if (!canSearch) return;
     console.log(`[Login UI] Searching for train code: ${ticketCode}...`);
     setIsLoading(true);
+    setErrorMsg(null);
     try {
       const data = await fetchTrainData(ticketCode);
       if (!data || data.length === 0 || !data[0].journey_list) {
         console.warn("[Login UI] Train not found or empty response returned.");
-        Alert.alert("Not Found", "We couldn't find a train with this code.");
+        setErrorMsg(
+          "We couldn't find any active train with this code. Please verify the number.",
+        );
         setIsLoading(false);
         return;
       }
@@ -81,10 +86,7 @@ export default function LoginScreen() {
       );
     } catch (err: any) {
       console.error("[Login UI] Connection Error:", err.message);
-      Alert.alert(
-        "Connection Error",
-        err.message || "Failed to fetch train details",
-      );
+      setErrorMsg("Connection error. Could not reach the server.");
     } finally {
       setIsLoading(false);
     }
@@ -157,6 +159,17 @@ export default function LoginScreen() {
                     />
                   </View>
                 </View>
+
+                {errorMsg && (
+                  <View style={styles.errorContainer}>
+                    <MaterialIcons
+                      name="error-outline"
+                      size={20}
+                      color="#ef4444"
+                    />
+                    <Text style={styles.errorText}>{errorMsg}</Text>
+                  </View>
+                )}
 
                 {trainData && stations.length > 0 && (
                   <View style={styles.field}>
@@ -382,5 +395,23 @@ const useStyles = createStyleHook((theme) => ({
     width: 1,
     height: 16,
     backgroundColor: theme.colors.borderTransparent,
+  },
+  errorContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(239, 68, 68, 0.1)",
+    borderWidth: 1,
+    borderColor: "rgba(239, 68, 68, 0.4)",
+    borderRadius: 12,
+    padding: 12,
+    gap: 10,
+    marginTop: -4,
+  },
+  errorText: {
+    flex: 1,
+    fontSize: 14,
+    color: "#ef4444",
+    lineHeight: 20,
+    fontWeight: "500",
   },
 }));
