@@ -61,13 +61,14 @@ async function getAccessToken(): Promise<string> {
     privateKey as any,
   );
 
-  // Use string concatenation for URLSearchParams if polyfill is missing
   const params = [
-    `grant_type=client_credentials`,
-    `client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer`,
-    `client_assertion=${jwt}`,
-    `client_id=${clientId}`,
-    `token_endpoint_auth_method=private_key_jwt`,
+    "grant_type=client_credentials",
+    `client_assertion_type=${encodeURIComponent(
+      "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+    )}`,
+    `client_assertion=${encodeURIComponent(jwt)}`,
+    `client_id=${encodeURIComponent(clientId)}`,
+    "token_endpoint_auth_method=private_key_jwt",
   ].join("&");
 
   console.log(
