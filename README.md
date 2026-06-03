@@ -15,13 +15,15 @@ Preferred package manager: pnpm.
    ```bash
    pnpm start
    ```
+
 3. If the in browser login always fails it is because you have to disavle CORS policy
 
    ```powershell
    # In Windows press win+r
    chrome.exe --user-data-dir="C://Chrome dev session" --disable-web-security
    ```
-In the output, you'll find options to open the app in a
+
+   In the output, you'll find options to open the app in a
 
 - [development build](https://docs.expo.dev/develop/development-builds/introduction/)
 - [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
