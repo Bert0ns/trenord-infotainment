@@ -3,7 +3,7 @@ import { Fonts } from "@/constants/theme";
 import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   ImageBackground,
   KeyboardAvoidingView,
@@ -15,7 +15,6 @@ import {
   TouchableOpacity,
   View,
   ActivityIndicator,
-  Alert,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { fetchTrainData } from "@/lib/api/trenord";
@@ -39,6 +38,13 @@ export default function LoginScreen() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const setJourney = useJourneyStore((state) => state.setJourney);
+
+  useEffect(() => {
+    // Only clear on initial mount if they arrive here already logged in
+    if (useJourneyStore.getState().trainId) {
+      useJourneyStore.getState().clearJourney();
+    }
+  }, []);
 
   const canSearch = ticketCode.length >= 4 && ticketCode.length <= 7;
   const canStart = destination.length > 0;

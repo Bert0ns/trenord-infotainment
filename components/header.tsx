@@ -1,5 +1,4 @@
 import { createStyleHook } from "@/hooks/use-theme-color";
-import { MaterialIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import React from "react";
 import { Text, View } from "react-native";
