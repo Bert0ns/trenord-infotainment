@@ -63,6 +63,7 @@ export default function RootLayout() {
     <GestureHandlerRootView style={styles.root}>
       <SettingsProvider>
         <Stack>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen
             name="report-issue-page"

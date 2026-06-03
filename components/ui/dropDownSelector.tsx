@@ -9,6 +9,11 @@ interface DropDownSelectorProps {
   selectedValue: string;
   onSelect: (value: string) => void;
   placeholder?: string;
+  leadingIconName?: keyof typeof MaterialIcons.glyphMap;
+  leadingIconColor?: string;
+  leadingIconSize?: number;
+  placeholderTextColor?: string;
+  disabled?: boolean;
 }
 
 export default function DropDownSelector({
@@ -16,6 +21,11 @@ export default function DropDownSelector({
   selectedValue,
   onSelect,
   placeholder = "Select...",
+  leadingIconName,
+  leadingIconColor,
+  leadingIconSize = 20,
+  placeholderTextColor,
+  disabled = false,
 }: DropDownSelectorProps) {
   const styles = useStyles();
   const [open, setOpen] = useState(false);
@@ -26,17 +36,39 @@ export default function DropDownSelector({
   }
 
   const filteredOptions = options.filter((option) => option !== selectedValue);
+  const isPlaceholder = selectedValue.length === 0;
+  const resolvedPlaceholderColor =
+    placeholderTextColor ?? styles.placeholderText.color;
 
   return (
     <View style={styles.container}>
       <TouchableOpacity
         activeOpacity={0.8}
-        onPress={() => setOpen(!open)}
-        style={[styles.dropdown, open && styles.dropdownOpen]}
+        onPress={() => !disabled && setOpen(!open)}
+        style={[styles.dropdown, open && styles.dropdownOpen, disabled && styles.disabled]}
+        disabled={disabled}
       >
-        <Text style={open ? styles.dropdownText : styles.dropdownText}>
-          {selectedValue || placeholder}
-        </Text>
+        <View style={styles.dropdownContent}>
+          {leadingIconName ? (
+            <MaterialIcons
+              name={leadingIconName}
+              size={leadingIconSize}
+              color={leadingIconColor ?? styles.leadingIcon.color}
+            />
+          ) : null}
+          <Text
+            numberOfLines={1}
+            style={[
+              styles.dropdownText,
+              isPlaceholder && styles.placeholderText,
+              isPlaceholder && placeholderTextColor
+                ? { color: resolvedPlaceholderColor }
+                : null,
+            ]}
+          >
+            {selectedValue || placeholder}
+          </Text>
+        </View>
 
         <MaterialIcons
           name={open ? "keyboard-arrow-up" : "keyboard-arrow-down"}
@@ -88,10 +120,26 @@ const useStyles = createStyleHook((theme) => ({
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0,
   },
+  
+  disabled: {
+    opacity: 0.5,
+  },
 
   dropdownText: {
     fontSize: 16,
     color: theme.colors.foreground,
+  },
+  placeholderText: {
+    color: theme.colors.mutedForeground,
+  },
+  dropdownContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    flex: 1,
+  },
+  leadingIcon: {
+    color: theme.colors.mutedForeground,
   },
 
   menu: {
