@@ -27,7 +27,7 @@ To use the API via Postman, follow these steps:
 
 3. **Configure Postman Environment:**
    - Select the imported `Trenord B2B Environment` in Postman.
-   - Check that `clientId` is correctly set (e.g., `GbLkYjtRcmiTKvhPxsaynbClIWHjXWgr` for Bertoni).
+   - Check that `clientId` is correctly set.
    - Edit the `CLIENT_PRIVATE_JWT_CREDENTIALS` variable and replace `{YOUR-PRIVATE-KEY-IN-JWK}` with the JWK JSON you just generated.
 
 4. **Making Requests:**

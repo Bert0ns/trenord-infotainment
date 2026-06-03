@@ -15,16 +15,6 @@ const apiUrl = requireEnv("EXPO_PUBLIC_TRENORD_API_URL");
 // In Expo, EXPO_PUBLIC variables are stringified into the bundle
 const jwkRaw = requireEnv("EXPO_PUBLIC_TRENORD_PRIVATE_JWK");
 
-// Read configuration securely from Expo environment
-//const clientId = process.env.EXPO_PUBLIC_TRENORD_CLIENT_ID!;
-//const issuer = process.env.EXPO_PUBLIC_TRENORD_ISSUER!;
-//const audience = process.env.EXPO_PUBLIC_TRENORD_AUDIENCE!;
-//const tokenUrl = process.env.EXPO_PUBLIC_TRENORD_TOKEN_URL!;
-//const apiUrl = process.env.EXPO_PUBLIC_TRENORD_API_URL!;
-//
-//// In Expo, EXPO_PUBLIC variables are stringified into the bundle
-//const jwkRaw = process.env.EXPO_PUBLIC_TRENORD_PRIVATE_JWK!;
-
 let cachedJwk: any = null;
 
 function getJwk() {
@@ -99,9 +89,7 @@ async function getAccessToken(): Promise<string> {
   }
 
   const tokenData = await tokenResponse.json();
-  console.log(
-    `[Trenord API] Access Token acquired successfully! (Ends with: ...${tokenData.access_token.slice(-10)})`,
-  );
+  console.log("[Trenord API] Access Token acquired successfully!)");
   return tokenData.access_token;
 }
 
