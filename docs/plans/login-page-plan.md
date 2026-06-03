@@ -43,7 +43,7 @@ The store will track:
 
 ## 5. Development Steps
 
-1. Install dependencies (`jose`, `zustand`).
+1. Install dependencies (`jsrsasign`, `zustand`).
 2. Create the API service module (`lib/api/trenord.ts`) to handle authentication and fetching.
 3. Create the global store (`store/journeyStore.ts`).
 4. Update `app/index.tsx` to implement the 2-phase UI and integrate the API and Store.
