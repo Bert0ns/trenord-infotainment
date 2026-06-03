@@ -27,7 +27,7 @@ You can start developing by editing the files inside the **app** directory. This
 
 ## Testing
 
-Unit tests use Jest with React Native Testing Library. Test files live under [__tests__](__tests__) and follow the `*.test.tsx` naming convention.
+Unit tests use Jest with React Native Testing Library. Test files live under [**tests**](__tests__) and follow the `*.test.tsx` naming convention.
 
 Run the test suite:
 

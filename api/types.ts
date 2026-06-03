@@ -1,7 +1,7 @@
 /**
  * API response for journey lookup.
  */
-export type TrainInfoResponse = TrainInfo[]
+export type TrainInfoResponse = TrainInfo[];
 
 /**
  * Top-level journey information returned for a train query.

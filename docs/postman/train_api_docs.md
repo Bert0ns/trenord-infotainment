@@ -136,106 +136,106 @@ The endpoint returns a JSON array of journey candidates. In normal usage, the fi
 
 ### Root Journey Object
 
-| Field | Type | Description |
-| --- | --- | --- |
-| `services` | `array` | Currently unused in observed responses. |
-| `date` | `string` | Journey date in `YYYYMMDD` format. |
-| `dep_time` | `string` | Scheduled departure time (`HH:MM:SS`). |
-| `dep_station` | `object` | Origin station object. |
-| `arr_time` | `string` | Scheduled arrival time (`HH:MM:SS`). |
-| `arr_station` | `object` | Destination station object. |
-| `duration` | `string` | Scheduled journey duration (`HH:MM:SS`). |
-| `journey_list` | `array` | Journey segments (usually one for direct train rides). |
-| `delay` | `number` | Total delay in minutes for the journey. |
-| `delay_defined` | `boolean` | `true` when delay information is available/confirmed. |
-| `walk` | `boolean` | Indicates a walking segment (typically `false` for train endpoint). |
-| `bicycle` | `boolean` | Bicycle transport allowed for the journey. |
-| `handicap` | `boolean` | Accessibility support available. |
-| `class_1` | `boolean` | 1st class available. |
-| `class_2` | `boolean` | 2nd class available. |
-| `class_1_and_2` | `boolean` | Combined 1st/2nd class configuration. |
-| `mxp` | `boolean` | Malpensa Express train indicator. |
-| `mxp_special` | `boolean` | Special Malpensa Express indicator. |
-| `cancelled` | `boolean` | Journey/train cancellation status. |
+| Field           | Type      | Description                                                         |
+| --------------- | --------- | ------------------------------------------------------------------- |
+| `services`      | `array`   | Currently unused in observed responses.                             |
+| `date`          | `string`  | Journey date in `YYYYMMDD` format.                                  |
+| `dep_time`      | `string`  | Scheduled departure time (`HH:MM:SS`).                              |
+| `dep_station`   | `object`  | Origin station object.                                              |
+| `arr_time`      | `string`  | Scheduled arrival time (`HH:MM:SS`).                                |
+| `arr_station`   | `object`  | Destination station object.                                         |
+| `duration`      | `string`  | Scheduled journey duration (`HH:MM:SS`).                            |
+| `journey_list`  | `array`   | Journey segments (usually one for direct train rides).              |
+| `delay`         | `number`  | Total delay in minutes for the journey.                             |
+| `delay_defined` | `boolean` | `true` when delay information is available/confirmed.               |
+| `walk`          | `boolean` | Indicates a walking segment (typically `false` for train endpoint). |
+| `bicycle`       | `boolean` | Bicycle transport allowed for the journey.                          |
+| `handicap`      | `boolean` | Accessibility support available.                                    |
+| `class_1`       | `boolean` | 1st class available.                                                |
+| `class_2`       | `boolean` | 2nd class available.                                                |
+| `class_1_and_2` | `boolean` | Combined 1st/2nd class configuration.                               |
+| `mxp`           | `boolean` | Malpensa Express train indicator.                                   |
+| `mxp_special`   | `boolean` | Special Malpensa Express indicator.                                 |
+| `cancelled`     | `boolean` | Journey/train cancellation status.                                  |
 
 ### Station Object (`dep_station`, `arr_station`, `pass_list[].station`)
 
-| Field | Type | Description |
-| --- | --- | --- |
-| `station_id` | `string` | MIR station code (e.g. `S01933`). |
-| `station_ori_name` | `string` | Station name. |
+| Field              | Type     | Description                       |
+| ------------------ | -------- | --------------------------------- |
+| `station_id`       | `string` | MIR station code (e.g. `S01933`). |
+| `station_ori_name` | `string` | Station name.                     |
 
 ### Journey Segment Object (`journey_list[]`)
 
-| Field | Type | Description |
-| --- | --- | --- |
-| `train` | `object` | Main train metadata and live status. |
-| `pass_list` | `array` | Ordered station passes (origin, intermediate stops, destination). |
-| `journey_type` | `string` | Segment type, observed value: `train`. |
+| Field          | Type     | Description                                                       |
+| -------------- | -------- | ----------------------------------------------------------------- |
+| `train`        | `object` | Main train metadata and live status.                              |
+| `pass_list`    | `array`  | Ordered station passes (origin, intermediate stops, destination). |
+| `journey_type` | `string` | Segment type, observed value: `train`.                            |
 
 ### Train Object (`journey_list[].train`)
 
-| Field | Type | Description |
-| --- | --- | --- |
-| `CodiceTrasporto1` | `string` | Full train identifier used by Trenord backend. |
-| `train_category` | `string` | Service category (e.g. `REG`, `S3`, `MXP`). |
-| `train_operator` | `string` | Operator name, typically `TRENORD`. |
-| `direction` | `string` | Service direction / terminal destination name. |
-| `average_crowding` | `number` | Average crowding value. |
-| `average_crowding_label` | `string` | Human-readable crowding label. |
-| `crowding` | `object` | Crowding details (`percentage`, `level`, `source`). |
-| `delay` | `number` | Current train delay in minutes. |
-| `status` | `string` | Operational status code. |
-| `bicycle` | `boolean` | Bicycle transport allowed. |
-| `handicap` | `boolean` | Accessibility support available. |
-| `class_1` | `boolean` | 1st class available. |
-| `class_2` | `boolean` | 2nd class available. |
-| `class_1_and_2` | `boolean` | Combined class configuration flag. |
-| `mxp` | `boolean` | Malpensa Express indicator. |
-| `mxp_special` | `boolean` | Special Malpensa Express indicator. |
-| `direttrice` | `string` | Operating line/direction code (network branch identifier). |
-| `date` | `string` | Journey date in `YYYYMMDD`. |
-| `mir_origin` | `string` | MIR code for origin station. |
-| `mir_destination` | `string` | MIR code for destination station. |
-| `hafas_origin` | `string` | HAFAS code for origin station. |
-| `hafas_destination` | `string` | HAFAS code for destination station. |
-| `actual_time` | `string` | Last live update timestamp in ISO 8601 format. |
-| `actual_station` | `string` | Last reported station name. |
-| `actual_station_mir` | `string` | Last reported station MIR code. |
-| `pass_id` | `number` | Last passed stop index for the train progression. |
-| `schedule` | `array<string>` | Service operation dates for the train. |
-| `line` | `string` | Commercial line code. |
-| `train_id` | `string` | Short train identifier. |
-| `train_name` | `string` | Display name/code used in Trenord systems. |
-| `has_live_info` | `boolean` | Whether live telemetry is available. |
+| Field                    | Type            | Description                                                |
+| ------------------------ | --------------- | ---------------------------------------------------------- |
+| `CodiceTrasporto1`       | `string`        | Full train identifier used by Trenord backend.             |
+| `train_category`         | `string`        | Service category (e.g. `REG`, `S3`, `MXP`).                |
+| `train_operator`         | `string`        | Operator name, typically `TRENORD`.                        |
+| `direction`              | `string`        | Service direction / terminal destination name.             |
+| `average_crowding`       | `number`        | Average crowding value.                                    |
+| `average_crowding_label` | `string`        | Human-readable crowding label.                             |
+| `crowding`               | `object`        | Crowding details (`percentage`, `level`, `source`).        |
+| `delay`                  | `number`        | Current train delay in minutes.                            |
+| `status`                 | `string`        | Operational status code.                                   |
+| `bicycle`                | `boolean`       | Bicycle transport allowed.                                 |
+| `handicap`               | `boolean`       | Accessibility support available.                           |
+| `class_1`                | `boolean`       | 1st class available.                                       |
+| `class_2`                | `boolean`       | 2nd class available.                                       |
+| `class_1_and_2`          | `boolean`       | Combined class configuration flag.                         |
+| `mxp`                    | `boolean`       | Malpensa Express indicator.                                |
+| `mxp_special`            | `boolean`       | Special Malpensa Express indicator.                        |
+| `direttrice`             | `string`        | Operating line/direction code (network branch identifier). |
+| `date`                   | `string`        | Journey date in `YYYYMMDD`.                                |
+| `mir_origin`             | `string`        | MIR code for origin station.                               |
+| `mir_destination`        | `string`        | MIR code for destination station.                          |
+| `hafas_origin`           | `string`        | HAFAS code for origin station.                             |
+| `hafas_destination`      | `string`        | HAFAS code for destination station.                        |
+| `actual_time`            | `string`        | Last live update timestamp in ISO 8601 format.             |
+| `actual_station`         | `string`        | Last reported station name.                                |
+| `actual_station_mir`     | `string`        | Last reported station MIR code.                            |
+| `pass_id`                | `number`        | Last passed stop index for the train progression.          |
+| `schedule`               | `array<string>` | Service operation dates for the train.                     |
+| `line`                   | `string`        | Commercial line code.                                      |
+| `train_id`               | `string`        | Short train identifier.                                    |
+| `train_name`             | `string`        | Display name/code used in Trenord systems.                 |
+| `has_live_info`          | `boolean`       | Whether live telemetry is available.                       |
 
 ### Pass Object (`journey_list[].pass_list[]`)
 
-| Field | Type | Description |
-| --- | --- | --- |
-| `dep_time` | `string` | Scheduled departure time (`HH:MM:SS`), when present. |
-| `arr_time` | `string` | Scheduled arrival time (`HH:MM:SS`), when present. |
-| `station` | `object` | Station object for the pass event. |
-| `type` | `string` | Pass type: `O` origin, `F` intermediate stop, `D` destination. |
-| `is_journey` | `boolean` | Indicates this pass belongs to the selected journey. |
-| `actual_data` | `object` | Real-time data for this stop/pass. |
-| `cancelled` | `boolean` | Whether this stop is cancelled. |
-| `platform` | `string` | Platform number, when provided. |
-| `pass_count` | `number` | Stop sequence index starting from `1` at origin. |
-| `date` | `string` | Journey date in `YYYYMMDD`. |
+| Field         | Type      | Description                                                    |
+| ------------- | --------- | -------------------------------------------------------------- |
+| `dep_time`    | `string`  | Scheduled departure time (`HH:MM:SS`), when present.           |
+| `arr_time`    | `string`  | Scheduled arrival time (`HH:MM:SS`), when present.             |
+| `station`     | `object`  | Station object for the pass event.                             |
+| `type`        | `string`  | Pass type: `O` origin, `F` intermediate stop, `D` destination. |
+| `is_journey`  | `boolean` | Indicates this pass belongs to the selected journey.           |
+| `actual_data` | `object`  | Real-time data for this stop/pass.                             |
+| `cancelled`   | `boolean` | Whether this stop is cancelled.                                |
+| `platform`    | `string`  | Platform number, when provided.                                |
+| `pass_count`  | `number`  | Stop sequence index starting from `1` at origin.               |
+| `date`        | `string`  | Journey date in `YYYYMMDD`.                                    |
 
 ### Actual Data Object (`pass_list[].actual_data`)
 
-| Field | Type | Description |
-| --- | --- | --- |
-| `actual_station_mir` | `string` | MIR code for real-time station event. |
-| `actual_station_name` | `string` | Station name for real-time event. |
-| `actual_train_id` | `string` | Train ID linked to the event. |
-| `actual_type` | `string` | Event type: `O`, `F`, `D`. |
-| `dep_actual_time` | `string` | Real departure time (`HH:MM:SS`), when available. |
-| `arr_actual_time` | `string` | Real arrival time (`HH:MM:SS`), when available. |
-| `dep_delay_actual` | `number` | Departure delay in minutes. |
-| `arr_delay_actual` | `number` | Arrival delay in minutes. |
+| Field                 | Type     | Description                                       |
+| --------------------- | -------- | ------------------------------------------------- |
+| `actual_station_mir`  | `string` | MIR code for real-time station event.             |
+| `actual_station_name` | `string` | Station name for real-time event.                 |
+| `actual_train_id`     | `string` | Train ID linked to the event.                     |
+| `actual_type`         | `string` | Event type: `O`, `F`, `D`.                        |
+| `dep_actual_time`     | `string` | Real departure time (`HH:MM:SS`), when available. |
+| `arr_actual_time`     | `string` | Real arrival time (`HH:MM:SS`), when available.   |
+| `dep_delay_actual`    | `number` | Departure delay in minutes.                       |
+| `arr_delay_actual`    | `number` | Arrival delay in minutes.                         |
 
 ## Notes
 

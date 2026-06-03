@@ -5,6 +5,7 @@ This document contains everything discovered about the Trenord B2B Preprod API, 
 ## Included Postman Files
 
 In this directory, you will find:
+
 1. `MIA services v.2 - sharable PREPROD [DIMA].postman_collection.json`: The Postman Collection containing available API endpoints.
 2. `Trenord B2B Environment - Sharable PREPROD [DIMA].postman_environment.json`: The Postman Environment configuring URLs and variables.
 
@@ -41,6 +42,7 @@ Trenord's API uses OAuth 2.0 with the **Client Credentials** grant type and a **
 **Token Endpoint:** `POST https://preprod.mp.trenord.it/b2b/oauth/token`
 
 The request requires the following URL-encoded parameters:
+
 - `grant_type`: `client_credentials`
 - `client_assertion_type`: `urn:ietf:params:oauth:client-assertion-type:jwt-bearer`
 - `client_assertion`: A dynamically signed JWT (Assertion Token)
@@ -50,7 +52,8 @@ The request requires the following URL-encoded parameters:
 ### The JWT Assertion Token
 
 The `client_assertion` must be a JWT signed with your RS256 private key. It must include:
-- **Header:** `{ "alg": "RS256", "typ": "JWT", "kid": "dima" }` *(The `kid` must exactly match)*
+
+- **Header:** `{ "alg": "RS256", "typ": "JWT", "kid": "dima" }` _(The `kid` must exactly match)_
 - **Payload:**
   - `iss`: Your Client ID
   - `sub`: Your Client ID
@@ -67,69 +70,73 @@ The `client_assertion` must be a JWT signed with your RS256 private key. It must
 Below is a minimal Node.js script demonstrating how to authenticate and fetch data. It uses the modern `jose` library to handle the JWK and JWT generation natively.
 
 ```javascript
-import fs from 'fs';
-import { importJWK, SignJWT } from 'jose';
-import crypto from 'crypto';
+import fs from "fs";
+import { importJWK, SignJWT } from "jose";
+import crypto from "crypto";
 
 // Configuration
-const clientId = 'GbLkYjtRcmiTKvhPxsaynbClIWHjXWgr';
-const issuer = 'trenord-idp';
-const audience = 'b2b';
-const tokenUrl = 'https://preprod.mp.trenord.it/b2b/oauth/token';
+const clientId = "GbLkYjtRcmiTKvhPxsaynbClIWHjXWgr";
+const issuer = "trenord-idp";
+const audience = "b2b";
+const tokenUrl = "https://preprod.mp.trenord.it/b2b/oauth/token";
 
 async function main() {
-    // 1. Read the JWK file
-    const jwkRaw = fs.readFileSync('./bertoni_jwt.json', 'utf-8');
-    const jwk = JSON.parse(jwkRaw);
+  // 1. Read the JWK file
+  const jwkRaw = fs.readFileSync("./bertoni_jwt.json", "utf-8");
+  const jwk = JSON.parse(jwkRaw);
 
-    // 2. Import the JWK into the jose library
-    const privateKey = await importJWK(jwk, 'RS256');
+  // 2. Import the JWK into the jose library
+  const privateKey = await importJWK(jwk, "RS256");
 
-    // 3. Create and sign the JWT Assertion Token
-    const jwt = await new SignJWT({
-        iss: clientId,
-        sub: clientId,
-        aud: issuer,
-        jti: crypto.randomBytes(16).toString('hex'), // Unique identifier
-        requested_audiences: [audience]
-    })
-    .setProtectedHeader({ alg: 'RS256', typ: 'JWT', kid: 'dima' })
+  // 3. Create and sign the JWT Assertion Token
+  const jwt = await new SignJWT({
+    iss: clientId,
+    sub: clientId,
+    aud: issuer,
+    jti: crypto.randomBytes(16).toString("hex"), // Unique identifier
+    requested_audiences: [audience],
+  })
+    .setProtectedHeader({ alg: "RS256", typ: "JWT", kid: "dima" })
     .setIssuedAt()
-    .setExpirationTime('5m') // Must not be expired
+    .setExpirationTime("5m") // Must not be expired
     .sign(privateKey);
 
-    // 4. Request the Access Token from the OAuth endpoint
-    const params = new URLSearchParams();
-    params.append('grant_type', 'client_credentials');
-    params.append('client_assertion_type', 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer');
-    params.append('client_assertion', jwt);
-    params.append('client_id', clientId);
-    params.append('token_endpoint_auth_method', 'private_key_jwt');
+  // 4. Request the Access Token from the OAuth endpoint
+  const params = new URLSearchParams();
+  params.append("grant_type", "client_credentials");
+  params.append(
+    "client_assertion_type",
+    "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+  );
+  params.append("client_assertion", jwt);
+  params.append("client_id", clientId);
+  params.append("token_endpoint_auth_method", "private_key_jwt");
 
-    const tokenResponse = await fetch(tokenUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: params
-    });
+  const tokenResponse = await fetch(tokenUrl, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: params,
+  });
 
-    if (!tokenResponse.ok) {
-        throw new Error(`Failed to get token: ${await tokenResponse.text()}`);
-    }
+  if (!tokenResponse.ok) {
+    throw new Error(`Failed to get token: ${await tokenResponse.text()}`);
+  }
 
-    const tokenData = await tokenResponse.json();
-    const accessToken = tokenData.access_token;
+  const tokenData = await tokenResponse.json();
+  const accessToken = tokenData.access_token;
 
-    // 5. Make a basic API Call using the token (fetching MILANO CADORNA station)
-    const apiUrl = 'https://preprod.mp.trenord.it/b2b/stazioni_v2?NomeGeoStazioni=MILANO%20CADORNA';
-    const apiResponse = await fetch(apiUrl, {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${accessToken}`
-        }
-    });
+  // 5. Make a basic API Call using the token (fetching MILANO CADORNA station)
+  const apiUrl =
+    "https://preprod.mp.trenord.it/b2b/stazioni_v2?NomeGeoStazioni=MILANO%20CADORNA";
+  const apiResponse = await fetch(apiUrl, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
 
-    const apiData = await apiResponse.json();
-    console.log("API Call Success! Data:", apiData);
+  const apiData = await apiResponse.json();
+  console.log("API Call Success! Data:", apiData);
 }
 
 main().catch(console.error);

@@ -45,7 +45,11 @@ export default function DropDownSelector({
       <TouchableOpacity
         activeOpacity={0.8}
         onPress={() => !disabled && setOpen(!open)}
-        style={[styles.dropdown, open && styles.dropdownOpen, disabled && styles.disabled]}
+        style={[
+          styles.dropdown,
+          open && styles.dropdownOpen,
+          disabled && styles.disabled,
+        ]}
         disabled={disabled}
       >
         <View style={styles.dropdownContent}>
@@ -120,7 +124,7 @@ const useStyles = createStyleHook((theme) => ({
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0,
   },
-  
+
   disabled: {
     opacity: 0.5,
   },

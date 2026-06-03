@@ -125,17 +125,8 @@
         "url": {
           "raw": "https://preprod.mp.trenord.it/b2b/oauth/token",
           "protocol": "https",
-          "host": [
-            "preprod",
-            "mp",
-            "trenord",
-            "it"
-          ],
-          "path": [
-            "b2b",
-            "oauth",
-            "token"
-          ]
+          "host": ["preprod", "mp", "trenord", "it"],
+          "path": ["b2b", "oauth", "token"]
         }
       },
       "response": []
@@ -234,9 +225,7 @@
         {
           "listen": "prerequest",
           "script": {
-            "exec": [
-              ""
-            ],
+            "exec": [""],
             "type": "text/javascript",
             "packages": {}
           }
@@ -258,17 +247,8 @@
         "url": {
           "raw": "https://preprod.mp.trenord.it/b2b/train/2536?dep_time=10:27:00",
           "protocol": "https",
-          "host": [
-            "preprod",
-            "mp",
-            "trenord",
-            "it"
-          ],
-          "path": [
-            "b2b",
-            "train",
-            "2536"
-          ],
+          "host": ["preprod", "mp", "trenord", "it"],
+          "path": ["b2b", "train", "2536"],
           "query": [
             {
               "key": "dep_time",
@@ -292,17 +272,8 @@
             "url": {
               "raw": "https://preprod.mp.trenord.it/b2b/train/2536",
               "protocol": "https",
-              "host": [
-                "preprod",
-                "mp",
-                "trenord",
-                "it"
-              ],
-              "path": [
-                "b2b",
-                "train",
-                "2536"
-              ],
+              "host": ["preprod", "mp", "trenord", "it"],
+              "path": ["b2b", "train", "2536"],
               "query": [
                 {
                   "key": "dep_time",
@@ -417,16 +388,8 @@
         "url": {
           "raw": "https://preprod.mp.trenord.it/b2b/m53?station_id=S01700",
           "protocol": "https",
-          "host": [
-            "preprod",
-            "mp",
-            "trenord",
-            "it"
-          ],
-          "path": [
-            "b2b",
-            "m53"
-          ],
+          "host": ["preprod", "mp", "trenord", "it"],
+          "path": ["b2b", "m53"],
           "query": [
             {
               "key": "station_id",
@@ -460,16 +423,8 @@
         "url": {
           "raw": "https://preprod.mp.trenord.it/b2b/hafas-api?orig=MILANO CENTRALE&dest=COMO LUGANO&departure_hour=08:30&departure_date=20251211",
           "protocol": "https",
-          "host": [
-            "preprod",
-            "mp",
-            "trenord",
-            "it"
-          ],
-          "path": [
-            "b2b",
-            "hafas-api"
-          ],
+          "host": ["preprod", "mp", "trenord", "it"],
+          "path": ["b2b", "hafas-api"],
           "query": [
             {
               "key": "orig",
@@ -521,16 +476,8 @@
         "url": {
           "raw": "https://preprod.mp.trenord.it/b2b/stazioni_v2?NomeGeoStazioni=MILANO CADORNA",
           "protocol": "https",
-          "host": [
-            "preprod",
-            "mp",
-            "trenord",
-            "it"
-          ],
-          "path": [
-            "b2b",
-            "stazioni_v2"
-          ],
+          "host": ["preprod", "mp", "trenord", "it"],
+          "path": ["b2b", "stazioni_v2"],
           "query": [
             {
               "key": "CodiceMIR",
@@ -565,16 +512,8 @@
         "url": {
           "raw": "https://preprod.mp.trenord.it/b2b/stazione_servizi?GestoreInfrastruttura=RFI",
           "protocol": "https",
-          "host": [
-            "preprod",
-            "mp",
-            "trenord",
-            "it"
-          ],
-          "path": [
-            "b2b",
-            "stazione_servizi"
-          ],
+          "host": ["preprod", "mp", "trenord", "it"],
+          "path": ["b2b", "stazione_servizi"],
           "query": [
             {
               "key": "CodiceMIR",
@@ -628,9 +567,7 @@
       "script": {
         "type": "text/javascript",
         "packages": {},
-        "exec": [
-          ""
-        ]
+        "exec": [""]
       }
     }
   ],

@@ -40,14 +40,18 @@ Build a reliable, polished onboard app that improves commuting with:
 ## 2. Product Scope (Pages & Features)
 
 ### 2.1 Locked Page
+
 The default screen upon opening the app without an active journey.
-- **Features:** 
+
+- **Features:**
   - Access to Settings.
   - Login by manual insertion of the ticket code and selecting the destination station.
   - Once logged in, grants access to the full application starting from the Home Page.
 
 ### 2.2 Home Page (Dashboard)
+
 The main overview of the current journey.
+
 - **Features:**
   - Train status (delays, crowding levels, etc.).
   - ETA and journey progress percentage.
@@ -55,13 +59,17 @@ The main overview of the current journey.
   - AI-summarized news related to the destination.
 
 ### 2.3 Journey Page
+
 Detailed tracking of the trip.
+
 - **Features:**
   - Detailed timeline of all train stops.
   - Embedded Google Maps showing the user's real-time position with the railway path highlighted.
 
 ### 2.4 Journey Destination Page
+
 Information tailored to the arrival city/station.
+
 - **Features:**
   - Relevant AI-summarized destination news.
   - Points of Interest (POIs) with a button for direct navigation/directions.
@@ -69,18 +77,24 @@ Information tailored to the arrival city/station.
   - Environmental overview: weather state, air quality, UV index.
 
 ### 2.5 Media Page
+
 Entertainment options exclusively unlocked during the journey.
+
 - **Features:**
   - Sponsored or partner media access.
   - Movies, podcasts, music to enjoy during the ride.
 
 ### 2.6 Shake to Report Page
+
 A global interrupter / modal triggered by shaking the mobile device.
+
 - **Features:**
   - Lets users rapidly report an issue: Train is too crowded, air conditioning broken, dirty seats, app bugs, etc.
 
 ### 2.7 Settings Page
+
 General app configurations accessible even from the Locked Page.
+
 - **Features:**
   - Alternative button to trigger "Shake to report".
   - Button to select Dark, White or System color theme

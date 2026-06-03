@@ -14,43 +14,94 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  ActivityIndicator,
+  Alert,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { fetchTrainData } from "@/lib/api/trenord";
+import { useJourneyStore, Station } from "@/store/journeyStore";
 
 const BACKGROUND_IMAGE = {
   uri: "https://images.unsplash.com/photo-1474487548417-781cb71495f3?auto=format&fit=crop&w=1400&q=80",
 };
-
-const DESTINATIONS = [
-  "Milano Centrale",
-  "Bergamo",
-  "Brescia",
-  "Como San Giovanni",
-  "Lecco",
-  "Monza",
-];
 
 export default function LoginScreen() {
   const styles = useStyles();
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const router = useRouter();
+
   const [ticketCode, setTicketCode] = useState("");
   const [destination, setDestination] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [trainData, setTrainData] = useState<any>(null);
+  const [stations, setStations] = useState<Station[]>([]);
 
-  const canStart = ticketCode.length === 6 && destination.length > 0;
+  const setJourney = useJourneyStore((state) => state.setJourney);
+
+  const canSearch = ticketCode.length >= 4 && ticketCode.length <= 7;
+  const canStart = destination.length > 0;
 
   function handleCodeChange(value: string) {
     const digitsOnly = value.replace(/\D/g, "");
     setTicketCode(digitsOnly);
+    // Reset data if code changes
+    if (trainData) {
+      setTrainData(null);
+      setDestination("");
+      setStations([]);
+    }
+  }
+
+  async function handleSearch() {
+    if (!canSearch) return;
+    console.log(`[Login UI] Searching for train code: ${ticketCode}...`);
+    setIsLoading(true);
+    try {
+      const data = await fetchTrainData(ticketCode);
+      if (!data || data.length === 0 || !data[0].journey_list) {
+        console.warn("[Login UI] Train not found or empty response returned.");
+        Alert.alert("Not Found", "We couldn't find a train with this code.");
+        setIsLoading(false);
+        return;
+      }
+      const passList = data[0].journey_list[0].pass_list || [];
+      console.log(
+        `[Login UI] Train found! Parsed ${passList.length} stations from the journey.`,
+      );
+
+      const parsedStations = passList.map((p: any) => ({
+        station_id: p.station.station_id,
+        station_ori_name: p.station.station_ori_name,
+      }));
+      setStations(parsedStations);
+      setTrainData(data);
+      console.log(
+        `[Login UI] Dropdown populated, waiting for user to select destination...`,
+      );
+    } catch (err: any) {
+      console.error("[Login UI] Connection Error:", err.message);
+      Alert.alert(
+        "Connection Error",
+        err.message || "Failed to fetch train details",
+      );
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   function handleStart() {
-    if (!canStart) {
-      return;
+    if (!canStart) return;
+    const destStation = stations.find(
+      (s) => s.station_ori_name === destination,
+    );
+    if (destStation) {
+      console.log(
+        `[Login UI] Starting journey! Train: ${ticketCode}, Destination: ${destStation.station_ori_name} (${destStation.station_id})`,
+      );
+      setJourney(ticketCode, destStation, trainData);
+      router.replace("/(tabs)");
     }
-
-    router.replace("/(tabs)");
   }
 
   return (
@@ -95,47 +146,76 @@ export default function LoginScreen() {
                       style={styles.inputIcon}
                     />
                     <TextInput
-                      placeholder="Enter 6-digit code"
+                      placeholder="Enter 4-7 digit code"
                       placeholderTextColor={theme.colors.mutedForeground}
                       keyboardType="number-pad"
-                      maxLength={6}
+                      maxLength={7}
                       value={ticketCode}
                       onChangeText={handleCodeChange}
                       style={styles.textInput}
+                      editable={!isLoading}
                     />
                   </View>
                 </View>
 
-                <View style={styles.field}>
-                  <Text style={styles.label}>Destination station</Text>
-                  <DropDownSelector
-                    options={DESTINATIONS}
-                    selectedValue={destination}
-                    onSelect={setDestination}
-                    placeholder="Select destination"
-                    leadingIconName="place"
-                    leadingIconColor={theme.colors.mutedForeground}
-                    placeholderTextColor={theme.colors.mutedForeground}
-                    disabled={ticketCode.length !== 6}
-                  />
-                </View>
+                {trainData && stations.length > 0 && (
+                  <View style={styles.field}>
+                    <Text style={styles.label}>Destination station</Text>
+                    <DropDownSelector
+                      options={stations.map((s) => s.station_ori_name)}
+                      selectedValue={destination}
+                      onSelect={setDestination}
+                      placeholder="Select destination"
+                      leadingIconName="place"
+                      leadingIconColor={theme.colors.mutedForeground}
+                      placeholderTextColor={theme.colors.mutedForeground}
+                    />
+                  </View>
+                )}
 
-                <TouchableOpacity
-                  activeOpacity={0.9}
-                  style={[
-                    styles.startButton,
-                    !canStart && styles.startButtonDisabled,
-                  ]}
-                  onPress={handleStart}
-                  disabled={!canStart}
-                >
-                  <Text style={styles.startButtonText}>Start Journey</Text>
-                  <MaterialIcons
-                    name="arrow-forward"
-                    size={20}
-                    color={theme.colors.primaryForeground}
-                  />
-                </TouchableOpacity>
+                {!trainData ? (
+                  <TouchableOpacity
+                    activeOpacity={0.9}
+                    style={[
+                      styles.startButton,
+                      !canSearch && styles.startButtonDisabled,
+                    ]}
+                    onPress={handleSearch}
+                    disabled={!canSearch || isLoading}
+                  >
+                    {isLoading ? (
+                      <ActivityIndicator
+                        color={theme.colors.primaryForeground}
+                      />
+                    ) : (
+                      <>
+                        <Text style={styles.startButtonText}>Search Train</Text>
+                        <MaterialIcons
+                          name="search"
+                          size={20}
+                          color={theme.colors.primaryForeground}
+                        />
+                      </>
+                    )}
+                  </TouchableOpacity>
+                ) : (
+                  <TouchableOpacity
+                    activeOpacity={0.9}
+                    style={[
+                      styles.startButton,
+                      !canStart && styles.startButtonDisabled,
+                    ]}
+                    onPress={handleStart}
+                    disabled={!canStart}
+                  >
+                    <Text style={styles.startButtonText}>Start Journey</Text>
+                    <MaterialIcons
+                      name="arrow-forward"
+                      size={20}
+                      color={theme.colors.primaryForeground}
+                    />
+                  </TouchableOpacity>
+                )}
               </View>
             </View>
 
