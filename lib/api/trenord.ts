@@ -1,14 +1,29 @@
 import { KJUR, KEYUTIL } from "jsrsasign";
 
-// Read configuration securely from Expo environment
-const clientId = process.env.EXPO_PUBLIC_TRENORD_CLIENT_ID!;
-const issuer = process.env.EXPO_PUBLIC_TRENORD_ISSUER!;
-const audience = process.env.EXPO_PUBLIC_TRENORD_AUDIENCE!;
-const tokenUrl = process.env.EXPO_PUBLIC_TRENORD_TOKEN_URL!;
-const apiUrl = process.env.EXPO_PUBLIC_TRENORD_API_URL!;
+// Read configuration from Expo environment (EXPO_PUBLIC_* are bundled into the app)
+function requireEnv(name: string): string {
+  const value = process.env[name];
+  if (!value) throw new Error(`Missing ${name} in environment`);
+  return value;
+}
 
+const clientId = requireEnv("EXPO_PUBLIC_TRENORD_CLIENT_ID");
+const issuer = requireEnv("EXPO_PUBLIC_TRENORD_ISSUER");
+const audience = requireEnv("EXPO_PUBLIC_TRENORD_AUDIENCE");
+const tokenUrl = requireEnv("EXPO_PUBLIC_TRENORD_TOKEN_URL");
+const apiUrl = requireEnv("EXPO_PUBLIC_TRENORD_API_URL");
 // In Expo, EXPO_PUBLIC variables are stringified into the bundle
-const jwkRaw = process.env.EXPO_PUBLIC_TRENORD_PRIVATE_JWK!;
+const jwkRaw = requireEnv("EXPO_PUBLIC_TRENORD_PRIVATE_JWK");
+
+// Read configuration securely from Expo environment
+//const clientId = process.env.EXPO_PUBLIC_TRENORD_CLIENT_ID!;
+//const issuer = process.env.EXPO_PUBLIC_TRENORD_ISSUER!;
+//const audience = process.env.EXPO_PUBLIC_TRENORD_AUDIENCE!;
+//const tokenUrl = process.env.EXPO_PUBLIC_TRENORD_TOKEN_URL!;
+//const apiUrl = process.env.EXPO_PUBLIC_TRENORD_API_URL!;
+//
+//// In Expo, EXPO_PUBLIC variables are stringified into the bundle
+//const jwkRaw = process.env.EXPO_PUBLIC_TRENORD_PRIVATE_JWK!;
 
 let cachedJwk: any = null;
 
