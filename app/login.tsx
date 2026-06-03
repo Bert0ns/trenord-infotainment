@@ -66,6 +66,10 @@ export default function LoginScreen() {
     console.log(`[Login UI] Searching for train code: ${ticketCode}...`);
     setIsLoading(true);
     setErrorMsg(null);
+
+    // Yield to the UI thread so the spinner renders BEFORE the heavy crypto blocks the JS thread
+    await new Promise((resolve) => setTimeout(resolve, 50));
+
     try {
       const data = await fetchTrainData(ticketCode);
       if (!data || data.length === 0 || !data[0].journey_list) {

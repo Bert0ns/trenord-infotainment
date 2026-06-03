@@ -28,7 +28,7 @@ function getJwk() {
 async function getAccessToken(): Promise<string> {
   console.log("[Trenord API] Getting private JWK for authentication...");
   const jwk = getJwk();
-  
+
   // Parse JWK into an RSA key object compatible with jsrsasign
   const privateKey = KEYUTIL.getKey(jwk);
 
@@ -53,7 +53,7 @@ async function getAccessToken(): Promise<string> {
     "RS256",
     JSON.stringify(header),
     JSON.stringify(payload),
-    privateKey as any
+    privateKey as any,
   );
 
   // Use string concatenation for URLSearchParams if polyfill is missing

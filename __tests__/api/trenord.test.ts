@@ -14,15 +14,15 @@ process.env.EXPO_PUBLIC_TRENORD_PRIVATE_JWK = JSON.stringify({
 const { fetchTrainData } = require("../../lib/api/trenord");
 
 // Mock `jsrsasign` package to avoid real crypto in tests
-jest.mock('jsrsasign', () => {
+jest.mock("jsrsasign", () => {
   return {
     KEYUTIL: {
-      getKey: jest.fn().mockReturnValue('mockPrivateKey'),
+      getKey: jest.fn().mockReturnValue("mockPrivateKey"),
     },
     KJUR: {
       jws: {
         JWS: {
-          sign: jest.fn().mockReturnValue('mock-signed-jwt'),
+          sign: jest.fn().mockReturnValue("mock-signed-jwt"),
         },
       },
     },
