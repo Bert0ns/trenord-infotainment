@@ -114,14 +114,12 @@ export default function SettingsScreen() {
           >
             <Text style={styles.reportButtonText}>Report Issue</Text>
           </TouchableOpacity>
+
           <TouchableOpacity
-            style={[
-              styles.reportButton,
-              { backgroundColor: theme.colors.mutedForeground },
-            ]}
+            style={styles.logoutButton}
             onPress={handleLogout}
           >
-            <Text style={styles.reportButtonText}>
+            <Text style={styles.logoutButtonText}>
               {trainId ? "Log Out" : "Back to Login"}
             </Text>
           </TouchableOpacity>
@@ -209,7 +207,20 @@ const useStyles = createStyleHook((theme) => ({
     marginBottom: theme.spacing.lg,
   },
   reportButtonText: {
-    color: "#ffffff",
+    color: theme.colors.destructiveForeground,
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  logoutButton: {
+    backgroundColor: theme.colors.warning,
+    width: "100%",
+    paddingVertical: 14,
+    borderRadius: theme.borderRadius.xl,
+    alignItems: "center",
+    marginBottom: theme.spacing.lg,
+  },
+  logoutButtonText: {
+    color: theme.colors.warningForeground,
     fontSize: 16,
     fontWeight: "600",
   },

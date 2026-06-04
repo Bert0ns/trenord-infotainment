@@ -2,6 +2,7 @@ import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
 import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
 import { Dimensions, Image, Text, TouchableOpacity, View } from "react-native";
+import Card from "@/components/ui/card";
 
 interface DiscoveryCardProps {
   imageSource: any;
@@ -20,7 +21,7 @@ export default function DiscoverCard({
   const theme = useTheme();
 
   return (
-    <View style={styles.discoverCard}>
+    <Card variant="outline" style={[styles.discoverCard, { padding: 0 }]}>
       <Image source={imageSource} style={styles.image} />
       <View style={styles.info}>
         <Text style={styles.discoverTitle}>{title}</Text>
@@ -36,7 +37,7 @@ export default function DiscoverCard({
           <Text style={styles.buttonText}>Directions</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </Card>
   );
 }
 
@@ -60,10 +61,6 @@ const useStyles = createStyleHook((theme) => ({
 
   discoverCard: {
     width: width * 0.55,
-    backgroundColor: theme.colors.background,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-    borderRadius: theme.borderRadius.md,
     marginRight: theme.spacing.sm,
     overflow: "hidden",
   },

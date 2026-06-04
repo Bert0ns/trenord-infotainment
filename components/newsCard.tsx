@@ -1,6 +1,7 @@
-import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
+import { createStyleHook } from "@/hooks/use-theme-color";
 import React from "react";
 import { Dimensions, Text, View } from "react-native";
+import Card from "@/components/ui/card";
 
 export default function NewsCard({
   title,
@@ -10,16 +11,15 @@ export default function NewsCard({
   text: string;
 }) {
   const styles = useStyles();
-  const theme = useTheme();
 
   //const tagColor =
   //tag === "EVENT" ? theme.colors.primary : theme.colors.destructive;
 
   return (
-    <View style={styles.newsCard}>
+    <Card variant="outline" style={styles.newsCard}>
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.newsText}>{text}</Text>
-    </View>
+    </Card>
   );
 }
 
@@ -27,11 +27,6 @@ const { width } = Dimensions.get("window");
 const useStyles = createStyleHook((theme) => ({
   newsCard: {
     width: width * 0.65,
-    backgroundColor: theme.colors.background,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-    borderRadius: theme.borderRadius.md,
-    padding: theme.spacing.md,
     marginRight: theme.spacing.sm,
   },
   title: {

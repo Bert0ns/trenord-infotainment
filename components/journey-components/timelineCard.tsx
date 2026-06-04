@@ -8,8 +8,8 @@ export type NodeStatus = "past" | "current" | "future";
 interface TimelineCardProps {
   status: NodeStatus;
   stationName: string;
-  scheduledTime: string;
-  stimatedTime?: string;
+  scheduledTime?: string;
+  estimatedTime?: string;
   actualTime?: string;
   platform?: string;
   delayMinutes?: number;
@@ -22,7 +22,7 @@ export default function TimelineCard({
   stationName,
   scheduledTime,
   actualTime,
-  stimatedTime,
+  estimatedTime,
   platform,
   delayMinutes,
   isCancelled,
@@ -52,7 +52,7 @@ export default function TimelineCard({
           />
         )}
         {/* Dot */}
-        {isCancelled == true && (
+        {isCancelled === true && (
           <MaterialIcons
             name="cancel"
             size={14}
@@ -160,7 +160,7 @@ export default function TimelineCard({
               )}
               {/* Estimated time */}
               {isFuture && (
-                <Text style={styles.subInfoText}>{stimatedTime}</Text>
+                <Text style={styles.subInfoText}>{estimatedTime}</Text>
               )}
             </View>
           </View>

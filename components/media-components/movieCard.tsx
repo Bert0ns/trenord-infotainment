@@ -1,6 +1,7 @@
 import { createStyleHook } from "@/hooks/use-theme-color";
 import React from "react";
 import { ImageBackground, Text, View } from "react-native";
+import Card from "@/components/ui/card";
 
 interface MovieCardProps {
   imageSource: any;
@@ -18,7 +19,7 @@ export default function MovieCard({
   const styles = useStyles();
 
   return (
-    <View style={styles.cardContainer}>
+    <Card variant="elevated" style={[styles.cardContainer, { padding: 0 }]}>
       <ImageBackground
         source={imageSource}
         style={styles.image}
@@ -31,7 +32,7 @@ export default function MovieCard({
           </Text>
         </View>
       </ImageBackground>
-    </View>
+    </Card>
   );
 }
 
@@ -40,11 +41,6 @@ const useStyles = createStyleHook((theme) => ({
     width: 330,
     height: 220,
     marginRight: theme.spacing.md,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 5,
   },
   image: {
     flex: 1,

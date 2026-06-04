@@ -2,6 +2,7 @@ import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
 import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
 import { Text, View } from "react-native";
+import Card from "@/components/ui/card";
 
 export type CrowdingLevel = "low" | "normal" | "high";
 
@@ -38,7 +39,7 @@ export default function CrowdingCard({ level }: { level: CrowdingLevel }) {
   const config = getCrowdingConfig();
 
   return (
-    <View style={styles.card}>
+    <Card variant="muted" style={styles.card}>
       <View style={[styles.iconContainer, { backgroundColor: config.bg }]}>
         <MaterialIcons
           name={config.icon as any}
@@ -50,7 +51,7 @@ export default function CrowdingCard({ level }: { level: CrowdingLevel }) {
         <Text style={styles.label}>Current Carriage</Text>
         <Text style={styles.value}>{config.label}</Text>
       </View>
-    </View>
+    </Card>
   );
 }
 
@@ -58,9 +59,6 @@ const useStyles = createStyleHook((theme) => ({
   card: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: theme.colors.muted,
-    padding: theme.spacing.md,
-    borderRadius: theme.borderRadius.lg,
     marginBottom: theme.spacing.sm,
   },
   iconContainer: {

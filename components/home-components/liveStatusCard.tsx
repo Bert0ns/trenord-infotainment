@@ -2,6 +2,7 @@ import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
 import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
 import { Text, View } from "react-native";
+import Card from "@/components/ui/card";
 
 interface LiveStatusCardProps {
   nextStop: string;
@@ -22,7 +23,7 @@ export default function LiveStatusCard({
   const theme = useTheme();
 
   return (
-    <View style={styles.card}>
+    <Card style={styles.card}>
       <View style={styles.topRow}>
         <Text style={styles.label}>NEXT STOP</Text>
         {delayMinutes > 0 && (
@@ -70,14 +71,13 @@ export default function LiveStatusCard({
           <Text style={styles.valueText}>{trainNumber}</Text>
         </View>
       </View>
-    </View>
+    </Card>
   );
 }
 
 const useStyles = createStyleHook((theme) => ({
   card: {
     backgroundColor: theme.colors.homeLiveStatus,
-    borderRadius: theme.borderRadius.xl,
     padding: theme.spacing.lg,
     paddingBottom: theme.spacing.md,
     paddingTop: theme.spacing.md,
