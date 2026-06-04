@@ -46,7 +46,7 @@ describe("LiveStatusCard", () => {
         speed="120 km/h"
         trainNumber="1234"
         delayMinutes={5}
-      />
+      />,
     );
     expect(getByText("Milano Centrale")).toBeTruthy();
     expect(getByText("Arr: 10:30")).toBeTruthy();
@@ -63,7 +63,7 @@ describe("LiveStatusCard", () => {
         speed="80 km/h"
         trainNumber="5678"
         delayMinutes={0}
-      />
+      />,
     );
     expect(getByText("Lecco")).toBeTruthy();
     expect(getByText("Arr: 11:15")).toBeTruthy();

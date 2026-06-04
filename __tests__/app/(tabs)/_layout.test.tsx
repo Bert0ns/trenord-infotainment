@@ -12,12 +12,19 @@ jest.mock("@expo-google-fonts/inter", () => ({
 jest.mock("expo-router", () => {
   const React = require("react");
   const { View, Text } = require("react-native");
-  const TabsScreen = (props: any) => React.createElement(Text, props, props.name);
+  const TabsScreen = (props: any) =>
+    React.createElement(Text, props, props.name);
   const Tabs = (props: any) => {
     return React.createElement(View, props, [
       ...props.children,
       props.screenOptions?.header ? props.screenOptions.header() : null,
-      props.tabBar ? props.tabBar({ state: { routes: [] }, navigation: {}, descriptors: {} }) : null
+      props.tabBar
+        ? props.tabBar({
+            state: { routes: [] },
+            navigation: {},
+            descriptors: {},
+          })
+        : null,
     ]);
   };
   Tabs.Screen = TabsScreen;

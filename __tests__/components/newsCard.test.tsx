@@ -13,7 +13,7 @@ jest.mock("@/hooks/use-theme-color", () => ({
 describe("NewsCard", () => {
   it("renders correctly", () => {
     const { getByText } = render(
-      <NewsCard title="Breaking News" text="Something happened today." />
+      <NewsCard title="Breaking News" text="Something happened today." />,
     );
     expect(getByText("Breaking News")).toBeTruthy();
     expect(getByText("Something happened today.")).toBeTruthy();

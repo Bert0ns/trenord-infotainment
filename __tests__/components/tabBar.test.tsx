@@ -80,27 +80,27 @@ describe("CustomTabBar", () => {
           { key: "2", name: "journey" },
           { key: "3", name: "media" },
           { key: "4", name: "settings" },
-          { key: "5", name: "unknown" }
+          { key: "5", name: "unknown" },
         ],
-        index: 1 // journey is focused
+        index: 1, // journey is focused
       },
       descriptors: {
         "1": { options: { title: "Home" } },
         "2": { options: { title: "Journey" } },
         "3": { options: { title: "Media" } },
         "4": { options: { title: "Settings" } },
-        "5": { options: {} } // missing title, covers `options.title !== undefined` fallback
+        "5": { options: {} }, // missing title, covers `options.title !== undefined` fallback
       },
       navigation: {
         emit: jest.fn(() => ({ defaultPrevented: false })),
-        navigate: jest.fn()
-      }
+        navigate: jest.fn(),
+      },
     };
 
     const { getByText } = render(
       <SettingsProvider>
         <CustomTabBar {...(allRoutesMockProps as any)} />
-      </SettingsProvider>
+      </SettingsProvider>,
     );
 
     // Click on unfocused 'media' tab
@@ -113,6 +113,8 @@ describe("CustomTabBar", () => {
       target: "3",
       canPreventDefault: true,
     });
-    expect(allRoutesMockProps.navigation.navigate).toHaveBeenCalledWith("media");
+    expect(allRoutesMockProps.navigation.navigate).toHaveBeenCalledWith(
+      "media",
+    );
   });
 });

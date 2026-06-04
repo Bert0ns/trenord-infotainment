@@ -20,19 +20,19 @@ jest.mock("@/hooks/use-theme-color", () => ({
     buttonText: {},
   }),
   useTheme: () => ({
-    colors: { primaryForeground: "#fff" }
-  })
+    colors: { primaryForeground: "#fff" },
+  }),
 }));
 
 describe("DiscoverCard", () => {
   it("renders correctly", () => {
     const { getByText } = render(
-      <DiscoverCard 
-        title="Duomo di Milano" 
-        category="Landmark" 
-        distance="2 km" 
-        imageSource={{ uri: "https://example.com/duomo.jpg" }} 
-      />
+      <DiscoverCard
+        title="Duomo di Milano"
+        category="Landmark"
+        distance="2 km"
+        imageSource={{ uri: "https://example.com/duomo.jpg" }}
+      />,
     );
     expect(getByText("Duomo di Milano")).toBeTruthy();
     expect(getByText("Landmark • 2 km")).toBeTruthy();

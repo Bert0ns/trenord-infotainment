@@ -115,10 +115,7 @@ export default function SettingsScreen() {
             <Text style={styles.reportButtonText}>Report Issue</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.logoutButton}
-            onPress={handleLogout}
-          >
+          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
             <Text style={styles.logoutButtonText}>
               {trainId ? "Log Out" : "Back to Login"}
             </Text>

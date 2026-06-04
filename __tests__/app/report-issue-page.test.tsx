@@ -16,26 +16,35 @@ jest.mock("@/components/report-issue-components", () => {
   const React = require("react");
   const { View, Text, TouchableOpacity, TextInput } = require("react-native");
 
-  const SheetContainer = React.forwardRef(({ children, onClose }: any, ref: any) => {
-    React.useImperativeHandle(ref, () => ({
-      close: () => onClose && onClose()
-    }));
-    return <View testID="sheet-container">{children}</View>;
-  });
+  const SheetContainer = React.forwardRef(
+    ({ children, onClose }: any, ref: any) => {
+      React.useImperativeHandle(ref, () => ({
+        close: () => onClose && onClose(),
+      }));
+      return <View testID="sheet-container">{children}</View>;
+    },
+  );
 
   return {
     SheetContainer,
     ActionButtons: ({ onSubmit, onCancel }: any) => (
       <View>
-        <TouchableOpacity testID="submit-btn" onPress={onSubmit}><Text>Submit</Text></TouchableOpacity>
-        <TouchableOpacity testID="cancel-btn" onPress={onCancel}><Text>Cancel</Text></TouchableOpacity>
+        <TouchableOpacity testID="submit-btn" onPress={onSubmit}>
+          <Text>Submit</Text>
+        </TouchableOpacity>
+        <TouchableOpacity testID="cancel-btn" onPress={onCancel}>
+          <Text>Cancel</Text>
+        </TouchableOpacity>
       </View>
     ),
     DetailsInput: ({ value, onChange }: any) => (
       <TextInput testID="details-input" value={value} onChangeText={onChange} />
     ),
     IssueGrid: ({ onToggle }: any) => (
-      <TouchableOpacity testID="issue-grid-item" onPress={() => onToggle("cleanliness")}>
+      <TouchableOpacity
+        testID="issue-grid-item"
+        onPress={() => onToggle("cleanliness")}
+      >
         <Text>Grid Item</Text>
       </TouchableOpacity>
     ),
@@ -45,7 +54,9 @@ jest.mock("@/components/report-issue-components", () => {
       </TouchableOpacity>
     ),
     ReportHeader: ({ onClose }: any) => (
-      <TouchableOpacity testID="header-close" onPress={onClose}><Text>Close</Text></TouchableOpacity>
+      <TouchableOpacity testID="header-close" onPress={onClose}>
+        <Text>Close</Text>
+      </TouchableOpacity>
     ),
     SectionTitle: ({ children }: any) => <Text>{children}</Text>,
     issueOptions: [
@@ -53,7 +64,7 @@ jest.mock("@/components/report-issue-components", () => {
       { id: "cleanliness", label: "Cleanliness" },
       { id: "temperature", label: "Temperature" },
       { id: "noise", label: "Noise" },
-      { id: "other-issue", label: "Other" }
+      { id: "other-issue", label: "Other" },
     ],
   };
 });
@@ -61,7 +72,7 @@ jest.mock("@/components/report-issue-components", () => {
 describe("ReportIssuePage", () => {
   it("renders correctly and handles toggling issues", () => {
     const { getByTestId, getByText } = render(<ReportIssuePage />);
-    
+
     // Initially other-issue should be selected
     expect(getByText("Selected")).toBeTruthy();
 
@@ -89,7 +100,7 @@ describe("ReportIssuePage", () => {
   it("handles submit button", () => {
     // Mock global.alert
     global.alert = jest.fn();
-    
+
     const { getByTestId } = render(<ReportIssuePage />);
     fireEvent.press(getByTestId("submit-btn"));
 

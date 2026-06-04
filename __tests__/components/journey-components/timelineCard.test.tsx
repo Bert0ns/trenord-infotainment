@@ -58,7 +58,7 @@ describe("TimelineCard", () => {
         scheduledTime="10:00"
         actualTime="10:05"
         platform="3"
-      />
+      />,
     );
     expect(getByText("Milano Centrale")).toBeTruthy();
     expect(getByText("10:00")).toBeTruthy();
@@ -75,7 +75,7 @@ describe("TimelineCard", () => {
         actualTime="10:30"
         platform="2"
         delayMinutes={5}
-      />
+      />,
     );
     expect(getByText("Monza")).toBeTruthy();
     expect(getByText("10:30")).toBeTruthy();
@@ -90,7 +90,7 @@ describe("TimelineCard", () => {
         stationName="Lecco"
         scheduledTime="11:00"
         estimatedTime="11:02"
-      />
+      />,
     );
     expect(getByText("Lecco")).toBeTruthy();
     expect(getByText("11:00")).toBeTruthy();
@@ -104,7 +104,7 @@ describe("TimelineCard", () => {
         stationName="Como"
         scheduledTime="12:00"
         isCancelled={true}
-      />
+      />,
     );
     expect(getByText("Como")).toBeTruthy();
     expect(getByText("12:00")).toBeTruthy();

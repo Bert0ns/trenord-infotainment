@@ -35,7 +35,7 @@ describe("PodcastCard", () => {
         imageSource={{ uri: "test-podcast.jpg" }}
         title="Tech Talk"
         episode="Episode 42: The Future"
-      />
+      />,
     );
     expect(getByText("Tech Talk")).toBeTruthy();
     expect(getByText("Episode 42: The Future")).toBeTruthy();

@@ -25,13 +25,17 @@ describe("SectionHeader", () => {
   });
 
   it("renders correctly for home type", () => {
-    const { getByText } = render(<SectionHeader title="Home Title" type="home" />);
+    const { getByText } = render(
+      <SectionHeader title="Home Title" type="home" />,
+    );
     expect(getByText("Home Title")).toBeTruthy();
     expect(getByText("See more")).toBeTruthy();
   });
 
   it("renders correctly for media type", () => {
-    const { getByText } = render(<SectionHeader title="Media Title" type="media" isFirst />);
+    const { getByText } = render(
+      <SectionHeader title="Media Title" type="media" isFirst />,
+    );
     expect(getByText("Media Title")).toBeTruthy();
     expect(getByText("See all")).toBeTruthy();
   });

@@ -28,7 +28,7 @@ describe("MovieCard", () => {
         title="Inception"
         category="Sci-Fi"
         duration="2h 28m"
-      />
+      />,
     );
     expect(getByText("Inception")).toBeTruthy();
     expect(getByText("Sci-Fi • 2h 28m")).toBeTruthy();

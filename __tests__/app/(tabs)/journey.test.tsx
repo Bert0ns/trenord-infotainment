@@ -8,7 +8,7 @@ jest.mock("expo-router", () => {
   const React = require("react");
   const { Text } = require("react-native");
   return {
-    Redirect: () => React.createElement(Text, null, "Redirected to login")
+    Redirect: () => React.createElement(Text, null, "Redirected to login"),
   };
 });
 
@@ -19,21 +19,62 @@ jest.mock("@expo/vector-icons", () => ({
 jest.mock("@/hooks/use-theme-color", () => ({
   createStyleHook: () => () => ({
     iconColor: { color: "#000" },
-    titleHome: {}, title: {}, seeAll: {}, seeMore: {},
-    container: {}, content: {}, pageHeader: {}, pageTitle: {}, pageSubtitle: {},
-    themeRow: {}, themeBox: {}, themeBoxActive: {}, themeBoxText: {}, themeBoxTextActive: {},
-    dropdown: {}, dropdownText: {}, footer: {}, reportButton: {}, reportButtonText: {},
-    versionText: {}, linksRow: {}, link: {}, card: {}, timelineContainer: {},
-    newsCard: {}, tag: {}, newsText: {}, discoverCard: {}, image: {}, info: {},
-    discoverTitle: {}, discoverSubtitle: {}, button: {}, buttonText: {},
-    timelineItem: {}, timelineContent: {}, timelineTimeContainer: {}, timeText: {},
-    stationText: {}, delayText: {}, platformText: {}, timelineDot: {}, timelineLine: {}
+    titleHome: {},
+    title: {},
+    seeAll: {},
+    seeMore: {},
+    container: {},
+    content: {},
+    pageHeader: {},
+    pageTitle: {},
+    pageSubtitle: {},
+    themeRow: {},
+    themeBox: {},
+    themeBoxActive: {},
+    themeBoxText: {},
+    themeBoxTextActive: {},
+    dropdown: {},
+    dropdownText: {},
+    footer: {},
+    reportButton: {},
+    reportButtonText: {},
+    versionText: {},
+    linksRow: {},
+    link: {},
+    card: {},
+    timelineContainer: {},
+    newsCard: {},
+    tag: {},
+    newsText: {},
+    discoverCard: {},
+    image: {},
+    info: {},
+    discoverTitle: {},
+    discoverSubtitle: {},
+    button: {},
+    buttonText: {},
+    timelineItem: {},
+    timelineContent: {},
+    timelineTimeContainer: {},
+    timeText: {},
+    stationText: {},
+    delayText: {},
+    platformText: {},
+    timelineDot: {},
+    timelineLine: {},
   }),
   useTheme: () => ({
-    colors: { primary: "#000", mutedForeground: "#555", background: "#fff", border: "#eee", foreground: "#000", muted: "#ccc" },
+    colors: {
+      primary: "#000",
+      mutedForeground: "#555",
+      background: "#fff",
+      border: "#eee",
+      foreground: "#000",
+      muted: "#ccc",
+    },
     spacing: { sm: 4, md: 8, lg: 16 },
-    borderRadius: { sm: 4, md: 8, lg: 16, xl: 24 }
-  })
+    borderRadius: { sm: 4, md: 8, lg: 16, xl: 24 },
+  }),
 }));
 
 jest.mock("@/store/journeyStore", () => ({
@@ -46,15 +87,19 @@ describe("JourneyScreen", () => {
   });
 
   it("redirects to login if trainId is null", () => {
-    (useJourneyStore as unknown as jest.Mock).mockImplementation((selector: any) => selector({ trainId: null }));
+    (useJourneyStore as unknown as jest.Mock).mockImplementation(
+      (selector: any) => selector({ trainId: null }),
+    );
     const { getByText } = render(<JourneyScreen />);
     expect(getByText("Redirected to login")).toBeTruthy();
   });
 
   it("renders correctly if trainId is present", () => {
-    (useJourneyStore as unknown as jest.Mock).mockImplementation((selector: any) => selector({ trainId: "12345" }));
+    (useJourneyStore as unknown as jest.Mock).mockImplementation(
+      (selector: any) => selector({ trainId: "12345" }),
+    );
     const { getByText } = render(<JourneyScreen />);
-    
+
     expect(getByText("Lecco - R 2564")).toBeTruthy();
     expect(getByText("08:30 - 10:15")).toBeTruthy();
     expect(getByText("Milano Centrale")).toBeTruthy();
