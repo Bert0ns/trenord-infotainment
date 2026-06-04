@@ -113,10 +113,10 @@ describe("SettingsScreen", () => {
     expect(getByText("Italiano")).toBeTruthy();
   });
 
-  it("changes theme across all options (LIGHT, DARK, SYSTEM)", async () => {
+  it("changes theme across all options (Light, Dark, System)", async () => {
     const { getByText } = await renderWithProvider(<SettingsScreen />);
 
-    const options = ["LIGHT", "DARK", "SYSTEM"];
+    const options = ["Light", "Dark", "System"];
 
     for (const option of options) {
       const themeBtn = getByText(option);

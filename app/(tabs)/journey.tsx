@@ -1,3 +1,4 @@
+import TimelineCard from "@/components/journey-components/timelineCard";
 import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
 import { MaterialIcons } from "@expo/vector-icons";
 import { ScrollView, Text, View } from "react-native";
@@ -23,6 +24,42 @@ export default function JourneyScreen() {
           />
           <Text style={styles.pageSubtitle}>08:30 - 10:15</Text>
         </View>
+      </View>
+      {/* Timeline Fermate */}
+      <View style={styles.timelineContainer}>
+        <TimelineCard
+          status="past"
+          stationName="Milano Centrale"
+          scheduledTime="10:15"
+          actualTime="10:15"
+          platform="8"
+        />
+
+        <TimelineCard
+          status="current"
+          stationName="Monza"
+          scheduledTime="10:28"
+          actualTime="10:28"
+          platform="10"
+          delayMinutes={2}
+        />
+
+        <TimelineCard
+          status="future"
+          stationName="Calolziocorte-Olginate"
+          scheduledTime="11:04"
+          stimatedTime="11:06"
+          platform="1"
+        />
+
+        <TimelineCard
+          status="future"
+          stationName="Lecco"
+          scheduledTime="11:15"
+          //stimatedTime="11:17"
+          isCancelled={true}
+          isLast={true}
+        />
       </View>
     </ScrollView>
   );
@@ -127,5 +164,9 @@ const useStyles = createStyleHook((theme) => ({
     borderRadius: theme.borderRadius.xl,
     padding: theme.spacing.md,
     marginBottom: theme.spacing.md,
+  },
+  timelineContainer: {
+    marginTop: theme.spacing.sm,
+    paddingLeft: theme.spacing.sm, // Per dare spazio ai pallini
   },
 }));
