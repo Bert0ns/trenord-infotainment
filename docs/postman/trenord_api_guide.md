@@ -18,7 +18,7 @@ To use the API via Postman, follow these steps:
 
 2. **Generate your JWK:**
    You must convert your private RSA key (`.pem` or `.key` file) into a JSON Web Key (JWK) to sign requests.
-   - Go to [JWK Creator](https://russelldavies.github.io/jwk-creator/)
+   - Go to [JWK Creator](https://jwk-creator.vercel.app/)
    - Paste the contents of your private key.
    - Set **Public Key Use** to `Signing`.
    - Set **Algorithm** to `RS256`.
