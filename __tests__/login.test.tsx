@@ -168,4 +168,55 @@ describe("LoginScreen", () => {
     // Verify router replacement
     expect(mockReplace).toHaveBeenCalledWith("/(tabs)/home");
   });
+
+  it("succeeds when logging in with train number 24869", async () => {
+    const mockData = [
+      {
+        journey_list: [
+          {
+            pass_list: [
+              {
+                station: {
+                  station_id: "S01",
+                  station_ori_name: "Milano Centrale",
+                },
+              },
+            ],
+          },
+        ],
+      },
+    ];
+    (api.fetchTrainData as jest.Mock).mockResolvedValueOnce(mockData);
+
+    const { getByPlaceholderText, getByText, getByTestId, findByText } = render(
+      <SettingsProvider>
+        <LoginScreen />
+      </SettingsProvider>,
+    );
+
+    // Type code
+    const input = getByPlaceholderText("Enter 4-7 digit code");
+    fireEvent.changeText(input, "24869");
+
+    // Press Search
+    fireEvent.press(getByText("Search Train"));
+
+    // Wait for API response and for dropdown to appear
+    await findByText("Destination station");
+
+    // Simulate selecting the first station from the mocked dropdown
+    fireEvent.press(getByTestId("mock-dropdown"));
+
+    // Press Start Journey
+    const startButton = getByText("Start Journey");
+    fireEvent.press(startButton);
+
+    // Verify Zustand store was updated correctly
+    const state = useJourneyStore.getState();
+    expect(state.trainId).toBe("24869");
+    expect(state.destinationStation?.station_ori_name).toBe("Milano Centrale");
+
+    // Verify router replacement
+    expect(mockReplace).toHaveBeenCalledWith("/(tabs)/home");
+  });
 });
