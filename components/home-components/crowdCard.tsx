@@ -3,7 +3,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
 import { Text, View } from "react-native";
 
-export type CrowdingLevel = "low" | "normal" | "high";
+export type CrowdingLevel = "low" | "moderate" | "high";
 
 export default function CrowdingCard({ level }: { level: CrowdingLevel }) {
   const styles = useStyles();
@@ -18,11 +18,11 @@ export default function CrowdingCard({ level }: { level: CrowdingLevel }) {
           label: "Low Crowding",
           icon: "groups",
         };
-      case "normal":
+      case "moderate":
         return {
           bg: theme.colors.warning,
           text: theme.colors.warningForeground,
-          label: "Normal Crowding",
+          label: "Moderate Crowding",
           icon: "groups",
         };
       case "high":

@@ -9,6 +9,8 @@ interface LiveStatusCardProps {
   speed: string;
   trainNumber: string;
   delayMinutes: number;
+  isFirst?: boolean;
+  departureTime?: string;
 }
 
 export default function LiveStatusCard({
@@ -17,6 +19,8 @@ export default function LiveStatusCard({
   speed,
   trainNumber,
   delayMinutes,
+  isFirst,
+  departureTime,
 }: LiveStatusCardProps) {
   const styles = useStyles();
   const theme = useTheme();
@@ -24,7 +28,8 @@ export default function LiveStatusCard({
   return (
     <View style={styles.card}>
       <View style={styles.topRow}>
-        <Text style={styles.label}>NEXT STOP</Text>
+        {isFirst && <Text style={styles.label}>STARTING FROM</Text>}
+        {!isFirst && <Text style={styles.label}>NEXT STOP</Text>}
         {delayMinutes > 0 && (
           <View style={styles.delayBadge}>
             <MaterialIcons
@@ -46,7 +51,8 @@ export default function LiveStatusCard({
 
       <View>
         <Text style={styles.stationName}>{nextStop}</Text>
-        <Text style={styles.arrTime}>Arr: {arrivalTime}</Text>
+        {isFirst && <Text style={styles.arrTime}>Dep: {departureTime}</Text>}
+        {!isFirst && <Text style={styles.arrTime}>Arr: {arrivalTime}</Text>}
       </View>
 
       <View style={styles.divider} />

@@ -5,10 +5,11 @@ import WeatherCard from "@/components/home-components/weatherCard";
 import NewsCard from "@/components/newsCard";
 import SectionHeader from "@/components/sectionHeader";
 import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
-import { MaterialIcons } from "@expo/vector-icons";
-import { FlatList, ScrollView, Text, View } from "react-native";
-import { Redirect } from "expo-router";
 import { useJourneyStore } from "@/store/journeyStore";
+import { capitalizeWords } from "@/utils/string";
+import { MaterialIcons } from "@expo/vector-icons";
+import { Redirect } from "expo-router";
+import { FlatList, ScrollView, Text, View } from "react-native";
 
 export default function HomeScreen() {
   const styles = useStyles();
@@ -17,28 +18,103 @@ export default function HomeScreen() {
 
   if (!trainId) return <Redirect href="/login" />;
 
+  const destinationStation = useJourneyStore((s) => s.destinationStation);
+  const trainData = useJourneyStore((s) => s.trainData);
+  const origDestData = trainData[0];
+  const trainInfo = trainData[0].journey_list[0].train;
+  const passListArray = trainData[0].journey_list[0].pass_list;
+
+  // Find the next stop that is not yet departed, not cancelled
+  /*const nextStop = passListArray.find(
+    (pass: any) =>
+      (!pass.actual_data || pass.actual_data?.dep_actual_time === undefined) &&
+      pass.cancelled !== true,
+  );*/
+  // Find the last station departed and return the first successor that is not cancelled
+  const nextStop = passListArray
+    .slice(
+      passListArray.findLastIndex(
+        (pass: any) => pass.actual_data?.dep_actual_time !== undefined,
+      ) + 1,
+    )
+    .find((pass: any) => pass.cancelled !== true);
+
+  /*passListArray.forEach((pass: any) => {
+    console.log({
+      station_name: pass.station.station_ori_name,
+      //station_id: pass.station.station_id,
+      //dep_time: pass.dep_time,
+      /*dep_actual_time: pass.actual_data
+        ? pass.actual_data.dep_actual_time
+        : null,*/
+  //arr_time: pass.arr_time,
+  /*arr_actual_time: pass.actual_data
+        ? pass.actual_data.arr_actual_time
+        : null,*/
+  /*pass_count: pass.pass_count,
+    });
+  });*/
+
+  console.log(
+    "Next Stop: ",
+    nextStop ? nextStop.station.station_ori_name : "Unknown",
+  );
+  console.log(
+    "Crowding level:",
+    trainInfo.crowding ? trainInfo.crowding.level : "Unknown",
+  );
+  console.log("is First: " + (nextStop.pass_count === 1));
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.pageHeader}>
-        <Text style={styles.pageTitle}>Milano Centrale - R 2564</Text>
+        <Text style={styles.pageTitle}>
+          {destinationStation
+            ? capitalizeWords(destinationStation.station_ori_name)
+            : "Unknown"}{" "}
+          - {trainInfo.train_category} {trainId}
+        </Text>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
           <MaterialIcons
             name="access-time"
             size={16}
             color={theme.colors.mutedForeground}
           />
-          <Text style={styles.pageSubtitle}>08:30 - 10:15</Text>
+          <Text style={styles.pageSubtitle}>
+            {origDestData.dep_time
+              ? origDestData.dep_time.slice(0, 5)
+              : "Unknown"}{" "}
+            -{" "}
+            {origDestData.dep_time
+              ? origDestData.arr_time.slice(0, 5)
+              : "Unknown"}
+          </Text>
         </View>
       </View>
       <LiveStatusCard
-        nextStop="Monza"
-        arrivalTime="10:45"
+        nextStop={
+          nextStop
+            ? capitalizeWords(nextStop.station.station_ori_name)
+            : "Unknown"
+        }
+        arrivalTime={
+          nextStop.arr_time ? nextStop.arr_time.slice(0, 5) : "Unknown"
+        }
         speed="120 km/h"
-        trainNumber="R 2564"
-        delayMinutes={5}
+        trainNumber={`${trainInfo.train_category} ${trainId}`}
+        delayMinutes={trainInfo.delay}
+        isFirst={nextStop.pass_count === 1}
+        departureTime={
+          origDestData.dep_time ? origDestData.dep_time.slice(0, 5) : "Unknown"
+        }
       />
-
-      <CrowdingCard level="low" />
+      <CrowdingCard
+        level={
+          trainInfo.crowding
+            ? trainInfo.crowding.level.slice(0).toLowerCase()
+            : "low"
+        }
+      />
       <WeatherCard
         data={{
           city: "Milan",
