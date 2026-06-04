@@ -44,3 +44,8 @@ app-example
 
 # tests
 coverage/**/*
+
+# sensitive tokens and keys
+token.json
+*jwt.json
+.env

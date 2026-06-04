@@ -7,10 +7,15 @@ import SectionHeader from "@/components/sectionHeader";
 import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
 import { MaterialIcons } from "@expo/vector-icons";
 import { FlatList, ScrollView, Text, View } from "react-native";
+import { Redirect } from "expo-router";
+import { useJourneyStore } from "@/store/journeyStore";
 
 export default function HomeScreen() {
   const styles = useStyles();
   const theme = useTheme();
+  const trainId = useJourneyStore((s) => s.trainId);
+
+  if (!trainId) return <Redirect href="/login" />;
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>

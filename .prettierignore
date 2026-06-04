@@ -1,0 +1,6 @@
+coverage
+.expo
+dist
+build
+web-build
+node_modules

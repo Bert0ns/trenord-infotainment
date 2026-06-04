@@ -90,17 +90,27 @@ export const SheetContainer = React.forwardRef<
         <Animated.View
           style={[
             styles.sheet,
-            { paddingBottom: Math.max(bottomInset, DEFAULT_PADDING_BOTTOM), backgroundColor: theme.colors.background },
+            {
+              paddingBottom: Math.max(bottomInset, DEFAULT_PADDING_BOTTOM),
+              backgroundColor: theme.colors.background,
+            },
             sheetStyle,
           ]}
         >
           <GestureDetector gesture={dragGesture}>
             <View style={styles.dragRegion}>
-              <View style={[styles.handle, { backgroundColor: theme.colors.muted }]} />
+              <View
+                style={[styles.handle, { backgroundColor: theme.colors.muted }]}
+              />
             </View>
           </GestureDetector>
           {children}
-          <View style={[styles.bottomExtension, { backgroundColor: theme.colors.background }]} />
+          <View
+            style={[
+              styles.bottomExtension,
+              { backgroundColor: theme.colors.background },
+            ]}
+          />
         </Animated.View>
       </SafeAreaView>
     </View>
@@ -149,7 +159,7 @@ const styles = StyleSheet.create({
     marginTop: -2, // Pull the extension up slightly to cover the sub-pixel rendering gap
     left: 0,
     right: 0,
-    height: WINDOW_HEIGHT,    
+    height: WINDOW_HEIGHT,
     borderWidth: 0,
   },
 });

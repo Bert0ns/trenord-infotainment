@@ -16,7 +16,14 @@ Preferred package manager: pnpm.
    pnpm start
    ```
 
-In the output, you'll find options to open the app in a
+3. If the in browser login always fails it is because you have to disavle CORS policy
+
+   ```powershell
+   # In Windows press win+r
+   chrome.exe --user-data-dir="C://Chrome dev session" --disable-web-security
+   ```
+
+   In the output, you'll find options to open the app in a
 
 - [development build](https://docs.expo.dev/develop/development-builds/introduction/)
 - [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
@@ -27,7 +34,7 @@ You can start developing by editing the files inside the **app** directory. This
 
 ## Testing
 
-Unit tests use Jest with React Native Testing Library. Test files live under [__tests__](__tests__) and follow the `*.test.tsx` naming convention.
+Unit tests use Jest with React Native Testing Library. Test files live under [**tests**](__tests__) and follow the `*.test.tsx` naming convention.
 
 Run the test suite:
 
