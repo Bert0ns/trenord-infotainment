@@ -15,6 +15,7 @@ interface TimelineCardProps {
   delayMinutes?: number;
   isCancelled?: boolean;
   isLast?: boolean;
+  isFirst?: boolean;
 }
 
 export default function TimelineCard({
@@ -27,6 +28,7 @@ export default function TimelineCard({
   delayMinutes,
   isCancelled,
   isLast,
+  isFirst,
 }: TimelineCardProps) {
   const styles = useStyles();
   const theme = useTheme();
@@ -44,9 +46,10 @@ export default function TimelineCard({
             style={[
               styles.line,
               {
-                backgroundColor: isFuture
-                  ? theme.colors.border
-                  : theme.colors.primary,
+                backgroundColor:
+                  isFuture || isCurrent
+                    ? theme.colors.border
+                    : theme.colors.primary,
               },
             ]}
           />
@@ -103,9 +106,14 @@ export default function TimelineCard({
                   <Text style={styles.subInfoText}>Platform {platform}</Text>
                 )}
                 {/* Arriving + Platform */}
-                {isCurrent && (
+                {isCurrent && !isFirst && (
                   <Text style={styles.arrivingText}>
                     Arriving in 5 min • Platform {platform}
+                  </Text>
+                )}
+                {isCurrent && isFirst && (
+                  <Text style={styles.arrivingText}>
+                    Departing in 5 min • Platform {platform}
                   </Text>
                 )}
                 {/* Cancelled */}
