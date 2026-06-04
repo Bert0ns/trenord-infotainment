@@ -4,6 +4,7 @@ import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { BlurView } from "expo-blur";
 import React from "react";
 import { Pressable, Text, View } from "react-native";
+import { useJourneyStore } from "@/store/journeyStore";
 
 export default function CustomTabBar({
   state,
@@ -11,9 +12,12 @@ export default function CustomTabBar({
   navigation,
 }: BottomTabBarProps) {
   const styles = useStyles();
+  const trainId = useJourneyStore((s) => s.trainId);
 
   const scheme = useSelectedScheme();
   const tint = scheme === "light" ? "light" : "dark";
+
+  if (!trainId) return null;
 
   return (
     <BlurView
@@ -43,7 +47,7 @@ export default function CustomTabBar({
           let iconName: keyof typeof MaterialIcons.glyphMap = "help";
 
           switch (route.name) {
-            case "index": // Home
+            case "home": // Home
               iconName = "home";
               if (isFocused) iconName = "home";
               break;

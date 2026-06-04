@@ -7,6 +7,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { useJourneyStore } from "@/store/journeyStore";
 
 export default function SettingsScreen() {
   const router = useRouter();
@@ -14,8 +15,14 @@ export default function SettingsScreen() {
   const theme = useTheme();
 
   const { settings, set } = useSettings();
+  const { trainId, clearJourney } = useJourneyStore();
 
   const languages = ["English (UK)", "Italiano"];
+
+  const handleLogout = () => {
+    clearJourney();
+    router.replace("/login");
+  };
 
   const ThemeOption = ({
     title,
@@ -106,6 +113,17 @@ export default function SettingsScreen() {
             onPress={() => router.push("/report-issue-page")}
           >
             <Text style={styles.reportButtonText}>Report Issue</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.reportButton,
+              { backgroundColor: theme.colors.mutedForeground },
+            ]}
+            onPress={handleLogout}
+          >
+            <Text style={styles.reportButtonText}>
+              {trainId ? "Log Out" : "Back to Login"}
+            </Text>
           </TouchableOpacity>
           <Text style={styles.versionText}>App Version 0.0.0 </Text>
         </View>

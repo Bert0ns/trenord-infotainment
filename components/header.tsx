@@ -1,8 +1,7 @@
 import { createStyleHook } from "@/hooks/use-theme-color";
-import { MaterialIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function Header() {
@@ -12,13 +11,7 @@ export default function Header() {
   return (
     <View style={[styles.headerContainer, { paddingTop: insets.top }]}>
       <View style={styles.headerContent}>
-        <TouchableOpacity style={styles.iconButton}>
-          <MaterialIcons
-            name="arrow-back-ios"
-            size={24}
-            color={styles.iconColor.color}
-          />
-        </TouchableOpacity>
+        <View style={{ width: 50 }}>{/* Placeholder for centering */}</View>
         <View style={styles.centerContent}>
           <Image
             source={require("../assets/images/trenord-icon.png")}

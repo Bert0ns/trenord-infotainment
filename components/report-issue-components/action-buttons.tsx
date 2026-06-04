@@ -18,7 +18,11 @@ export function ActionButtons({ onSubmit, onCancel }: ActionButtonsProps) {
         onPress={onSubmit}
       >
         <Text style={styles.submitLabel}>Submit Report</Text>
-        <Ionicons name="arrow-forward" size={18} color={styles.submitLabel.color} />
+        <Ionicons
+          name="arrow-forward"
+          size={18}
+          color={styles.submitLabel.color}
+        />
       </Pressable>
 
       <Pressable
@@ -64,4 +68,3 @@ const useStyles = createStyleHook((theme) => ({
     color: theme.colors.mutedForeground,
   },
 }));
-

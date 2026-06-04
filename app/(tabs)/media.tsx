@@ -3,6 +3,8 @@ import PodcastCard from "@/components/media-components/podcastCard";
 import SectionHeader from "@/components/sectionHeader";
 import { createStyleHook } from "@/hooks/use-theme-color";
 import { FlatList, ScrollView, Text, View } from "react-native";
+import { Redirect } from "expo-router";
+import { useJourneyStore } from "@/store/journeyStore";
 
 //Mockup data films, documentaries and podcasts, API integration later
 const MOVIES_DATA = [
@@ -94,6 +96,9 @@ const DOCUMENTARIES_DATA = [
 
 export default function MediaScreen() {
   const styles = useStyles();
+  const trainId = useJourneyStore((s) => s.trainId);
+
+  if (!trainId) return <Redirect href="/login" />;
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>

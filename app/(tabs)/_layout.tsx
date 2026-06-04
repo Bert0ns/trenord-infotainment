@@ -23,7 +23,7 @@ export default function TabLayout() {
       tabBar={(props) => <CustomTabBar {...props} />}
       screenOptions={{ headerShown: true, header: () => <Header /> }}
     >
-      <Tabs.Screen name="index" options={{ title: "Home" }} />
+      <Tabs.Screen name="home" options={{ title: "Home" }} />
       <Tabs.Screen name="journey" options={{ title: "Journey" }} />
       <Tabs.Screen name="media" options={{ title: "Media" }} />
       <Tabs.Screen name="settings" options={{ title: "Settings" }} />
