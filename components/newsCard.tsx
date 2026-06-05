@@ -1,6 +1,6 @@
 import { createStyleHook } from "@/hooks/use-theme-color";
 import React from "react";
-import { Dimensions, Text, View } from "react-native";
+import { Dimensions, Text } from "react-native";
 import Card from "@/components/ui/card";
 
 export default function NewsCard({

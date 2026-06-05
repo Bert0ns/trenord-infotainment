@@ -3,7 +3,7 @@ import { Fonts } from "@/constants/theme";
 import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   ImageBackground,
   KeyboardAvoidingView,
@@ -17,9 +17,8 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { fetchTrainData } from "@/lib/api/trenord";
-import { useJourneyStore, Station } from "@/store/journeyStore";
 import QRScanner from "@/components/ui/qr-scanner";
+import { useLogin } from "@/hooks/use-login";
 
 const BACKGROUND_IMAGE = {
   uri: "https://images.unsplash.com/photo-1474487548417-781cb71495f3?auto=format&fit=crop&w=1400&q=80",
@@ -31,187 +30,21 @@ export default function LoginScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
 
-  const [ticketCode, setTicketCode] = useState("");
-  const [destination, setDestination] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [trainData, setTrainData] = useState<any>(null);
-  const [stations, setStations] = useState<Station[]>([]);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
-
-  const setJourney = useJourneyStore((state) => state.setJourney);
-
-  useEffect(() => {
-    // Only clear on initial mount if they arrive here already logged in
-    const checkAndClear = () => {
-      if (useJourneyStore.getState().trainId) {
-        useJourneyStore.getState().clearJourney();
-      }
-    };
-
-    if (useJourneyStore.persist.hasHydrated()) {
-      checkAndClear();
-    } else {
-      const unsub = useJourneyStore.persist.onFinishHydration(() => {
-        checkAndClear();
-      });
-      return () => {
-        unsub();
-      };
-    }
-  }, []);
-
-  const canSearch = ticketCode.length >= 4 && ticketCode.length <= 7;
-  const canStart = destination.length > 0;
-
-  function handleCodeChange(value: string) {
-    const digitsOnly = value.replace(/\D/g, "");
-    setTicketCode(digitsOnly);
-    if (errorMsg) setErrorMsg(null);
-    // Reset data if code changes
-    if (trainData) {
-      setTrainData(null);
-      setDestination("");
-      setStations([]);
-    }
-  }
-
-  async function handleSearch(
-    codeToSearch: string,
-    presetDestination?: string,
-  ) {
-    if (!codeToSearch || codeToSearch.length < 4 || codeToSearch.length > 7)
-      return;
-    console.log(`[Login UI] Searching for train code: ${codeToSearch}...`);
-    setIsLoading(true);
-    setErrorMsg(null);
-
-    // Yield to the UI thread so the spinner renders BEFORE the heavy crypto blocks the JS thread
-    await new Promise((resolve) => setTimeout(resolve, 50));
-
-    try {
-      const data = await fetchTrainData(codeToSearch);
-      if (!data || data.length === 0 || !data[0].journey_list) {
-        console.warn("[Login UI] Train not found or empty response returned.");
-        setErrorMsg(
-          "We couldn't find any active train with this code. Please verify the number.",
-        );
-        setIsLoading(false);
-        return;
-      }
-      const passList = data[0].journey_list[0].pass_list || [];
-      console.log(
-        `[Login UI] Train found! Parsed ${passList.length} stations from the journey.`,
-      );
-
-      const parsedStations = passList.map((p: any) => ({
-        station_id: p.station.station_id,
-        station_ori_name: p.station.station_ori_name,
-      }));
-      setStations(parsedStations);
-      setTrainData(data);
-
-      if (presetDestination) {
-        const stationExists = parsedStations.some(
-          (s: any) => s.station_ori_name === presetDestination,
-        );
-        if (stationExists) {
-          console.log(
-            `[QR Scanner] Preset destination '${presetDestination}' found in train route.`,
-          );
-          setDestination(presetDestination);
-
-          const destStation = parsedStations.find(
-            (s: any) => s.station_ori_name === presetDestination,
-          );
-          if (destStation) {
-            console.log(
-              `[Login UI] Auto-starting journey! Train: ${codeToSearch}, Destination: ${destStation.station_ori_name} (${destStation.station_id})`,
-            );
-            setJourney(codeToSearch, destStation, data);
-            router.replace("/(tabs)/home");
-            return; // We navigate away, stop further execution
-          }
-        } else {
-          console.warn(
-            `[QR Scanner] Preset destination '${presetDestination}' NOT found in train route.`,
-          );
-          setErrorMsg(
-            `The scanned destination "${presetDestination}" is not valid for this train. Please select manually.`,
-          );
-          setDestination("");
-        }
-      }
-
-      console.log(
-        `[Login UI] Dropdown populated, waiting for user to select destination...`,
-      );
-    } catch (err: any) {
-      console.error("[Login UI] Connection Error:", err.message);
-      setErrorMsg("Connection error. Could not reach the server.");
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  function handleSearchPress() {
-    handleSearch(ticketCode);
-  }
-
-  function handleQRScan(data: string) {
-    console.log("[QR Scanner] Raw scanned data:", data);
-    try {
-      const parsed = JSON.parse(data);
-      console.log("[QR Scanner] Parsed JSON:", parsed);
-
-      if (!parsed || typeof parsed !== "object") {
-        console.warn("[QR Scanner] Invalid payload format: not an object.");
-        setErrorMsg("Invalid QR format. Expected a JSON object.");
-        return;
-      }
-
-      if (!parsed.ticketCode) {
-        console.warn("[QR Scanner] Missing 'ticketCode' in payload.");
-        setErrorMsg("QR code is missing the ticket code.");
-        return;
-      }
-
-      const codeStr = String(parsed.ticketCode).trim();
-      if (codeStr.length < 4 || codeStr.length > 7) {
-        console.warn(
-          `[QR Scanner] Invalid ticket code length: ${codeStr.length}.`,
-        );
-        setErrorMsg(
-          `Scanned ticket code "${codeStr}" is invalid (must be 4-7 digits).`,
-        );
-        return;
-      }
-
-      console.log(
-        `[QR Scanner] Successfully extracted ticketCode: ${codeStr}, destination: ${
-          parsed.destination || "none"
-        }`,
-      );
-      setTicketCode(codeStr);
-      handleSearch(codeStr, parsed.destination);
-    } catch (e) {
-      console.warn("[QR Scanner] Failed to parse QR data as JSON:", e);
-      setErrorMsg("Invalid QR code format. Expected JSON.");
-    }
-  }
-
-  function handleStart() {
-    if (!canStart) return;
-    const destStation = stations.find(
-      (s) => s.station_ori_name === destination,
-    );
-    if (destStation) {
-      console.log(
-        `[Login UI] Starting journey! Train: ${ticketCode}, Destination: ${destStation.station_ori_name} (${destStation.station_id})`,
-      );
-      setJourney(ticketCode, destStation, trainData);
-      router.replace("/(tabs)/home");
-    }
-  }
+  const {
+    ticketCode,
+    destination,
+    isLoading,
+    trainData,
+    stations,
+    errorMsg,
+    canSearch,
+    canStart,
+    setDestination,
+    handleCodeChange,
+    handleSearch,
+    handleQRScan,
+    handleStart,
+  } = useLogin();
 
   return (
     <View style={styles.container}>
@@ -313,7 +146,7 @@ export default function LoginScreen() {
                       styles.startButton,
                       !canSearch && styles.startButtonDisabled,
                     ]}
-                    onPress={handleSearchPress}
+                    onPress={handleSearch}
                     disabled={!canSearch || isLoading}
                   >
                     {isLoading ? (

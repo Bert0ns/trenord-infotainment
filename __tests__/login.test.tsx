@@ -25,10 +25,28 @@ jest.mock("../lib/api/trenord", () => ({
   fetchTrainData: jest.fn(),
 }));
 
+// Mock expo-camera to prevent async state updates from permissions hook during tests
+jest.mock("expo-camera", () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { View } = require("react-native");
+  const MockCameraView = ({ children }: any) => (
+    <View testID="mock-camera">{children}</View>
+  );
+  MockCameraView.displayName = "MockCameraView";
+  return {
+    CameraView: MockCameraView,
+    useCameraPermissions: jest.fn(() => [
+      { granted: true, canAskAgain: true },
+      jest.fn(),
+    ]),
+  };
+});
+
 // Mock the DropDownSelector to easily simulate selecting an option
 jest.mock("../components/ui/dropDownSelector", () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { TouchableOpacity, Text } = require("react-native");
-  return ({ options, onSelect }: any) => (
+  const MockDropDownSelector = ({ options, onSelect }: any) => (
     <TouchableOpacity
       testID="mock-dropdown"
       onPress={() => onSelect(options[0])}
@@ -36,6 +54,8 @@ jest.mock("../components/ui/dropDownSelector", () => {
       <Text>Mock Dropdown</Text>
     </TouchableOpacity>
   );
+  MockDropDownSelector.displayName = "MockDropDownSelector";
+  return MockDropDownSelector;
 });
 
 // Mock SafeAreaInsets
