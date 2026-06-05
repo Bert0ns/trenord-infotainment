@@ -119,6 +119,18 @@ export default function LoginScreen() {
             `[QR Scanner] Preset destination '${presetDestination}' found in train route.`,
           );
           setDestination(presetDestination);
+
+          const destStation = parsedStations.find(
+            (s: any) => s.station_ori_name === presetDestination,
+          );
+          if (destStation) {
+            console.log(
+              `[Login UI] Auto-starting journey! Train: ${codeToSearch}, Destination: ${destStation.station_ori_name} (${destStation.station_id})`,
+            );
+            setJourney(codeToSearch, destStation, data);
+            router.replace("/(tabs)/home");
+            return; // We navigate away, stop further execution
+          }
         } else {
           console.warn(
             `[QR Scanner] Preset destination '${presetDestination}' NOT found in train route.`,
