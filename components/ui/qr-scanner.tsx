@@ -275,7 +275,7 @@ const useStyles = createStyleHook((theme) => ({
     borderBottomRightRadius: 16,
   },
   successPopup: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     justifyContent: "center",
     alignItems: "center",
     zIndex: 30,

@@ -239,4 +239,18 @@ describe("LoginScreen", () => {
     // Verify router replacement
     expect(mockReplace).toHaveBeenCalledWith("/(tabs)/home");
   });
+
+  it("navigates to settings when footer settings icon is pressed", () => {
+    const { getByText } = render(
+      <SettingsProvider>
+        <LoginScreen />
+      </SettingsProvider>,
+    );
+
+    // Find the settings button in the footer by text
+    const settingsBtn = getByText("Settings");
+    fireEvent.press(settingsBtn);
+
+    expect(mockPush).toHaveBeenCalledWith("/(tabs)/settings");
+  });
 });
