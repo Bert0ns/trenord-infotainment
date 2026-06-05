@@ -72,9 +72,9 @@ export default function QRScanner({ onScan, style }: QRScannerProps) {
           />
         </View>
         <View style={StyleSheet.absoluteFill}>
-          <View style={styles.topOverlay} />
-          <View style={styles.middleRow}>
-            <View style={styles.sideOverlay} />
+          <View style={styles.overlay}>
+            <View style={styles.maskHole} pointerEvents="none" />
+
             <View style={styles.cutout}>
               <View style={[styles.corner, styles.topLeftCorner]} />
               <View style={[styles.corner, styles.topRightCorner]} />
@@ -96,9 +96,7 @@ export default function QRScanner({ onScan, style }: QRScannerProps) {
                 </TouchableOpacity>
               </View>
             </View>
-            <View style={styles.sideOverlay} />
-          </View>
-          <View style={styles.bottomOverlay}>
+
             <Text style={styles.instructionText}>
               Enable camera to scan ticket
             </Text>
@@ -108,20 +106,20 @@ export default function QRScanner({ onScan, style }: QRScannerProps) {
     );
   }
 
-  return (
-    <View style={[styles.container, style]}>
-      <CameraView
-        style={styles.camera}
-        facing="back"
-        barcodeScannerSettings={{
-          barcodeTypes: ["qr"],
-        }}
-        onBarcodeScanned={scanned ? undefined : handleBarcodeScanned}
-      >
-        <View style={styles.overlay}>
-          <View style={styles.topOverlay} />
-          <View style={styles.middleRow}>
-            <View style={styles.sideOverlay} />
+  if (scanned) {
+    return (
+      <View style={[styles.container, style]}>
+        <View style={styles.mockCameraBackground}>
+          <MaterialIcons
+            name="qr-code-scanner"
+            size={120}
+            color="rgba(255,255,255,0.05)"
+          />
+        </View>
+        <View style={StyleSheet.absoluteFill}>
+          <View style={styles.overlay}>
+            <View style={styles.maskHole} pointerEvents="none" />
+
             <View style={styles.cutout}>
               <View style={[styles.corner, styles.topLeftCorner]} />
               <View style={[styles.corner, styles.topRightCorner]} />
@@ -136,13 +134,37 @@ export default function QRScanner({ onScan, style }: QRScannerProps) {
                 />
               </Animated.View>
             </View>
-            <View style={styles.sideOverlay} />
+
+            <Text style={styles.instructionText}>Verifying ticket...</Text>
           </View>
-          <View style={styles.bottomOverlay}>
-            <Text style={styles.instructionText}>
-              Align QR code within the frame
-            </Text>
+        </View>
+      </View>
+    );
+  }
+
+  return (
+    <View style={[styles.container, style]}>
+      <CameraView
+        style={styles.camera}
+        facing="back"
+        barcodeScannerSettings={{
+          barcodeTypes: ["qr"],
+        }}
+        onBarcodeScanned={handleBarcodeScanned}
+      >
+        <View style={styles.overlay}>
+          <View style={styles.maskHole} pointerEvents="none" />
+
+          <View style={styles.cutout}>
+            <View style={[styles.corner, styles.topLeftCorner]} />
+            <View style={[styles.corner, styles.topRightCorner]} />
+            <View style={[styles.corner, styles.bottomLeftCorner]} />
+            <View style={[styles.corner, styles.bottomRightCorner]} />
           </View>
+
+          <Text style={styles.instructionText}>
+            Align QR code within the frame
+          </Text>
         </View>
       </CameraView>
     </View>
@@ -158,13 +180,13 @@ const useStyles = createStyleHook((theme) => ({
     borderColor: theme.colors.borderTransparent,
   },
   mockCameraBackground: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundColor: "#1c1c1e",
     justifyContent: "center",
     alignItems: "center",
   },
   permissionBlockedContent: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     justifyContent: "center",
     alignItems: "center",
     zIndex: 20,
@@ -192,18 +214,16 @@ const useStyles = createStyleHook((theme) => ({
   },
   overlay: {
     flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  topOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.6)",
-  },
-  middleRow: {
-    flexDirection: "row",
-    height: 200,
-  },
-  sideOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.6)",
+  maskHole: {
+    position: "absolute",
+    width: 1000,
+    height: 1000,
+    borderRadius: 416, // 16 inner radius + 400 border width
+    borderWidth: 400,
+    borderColor: "rgba(0,0,0,0.5)",
   },
   cutout: {
     width: 200,
@@ -211,13 +231,9 @@ const useStyles = createStyleHook((theme) => ({
     backgroundColor: "transparent",
     position: "relative",
   },
-  bottomOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.6)",
-    alignItems: "center",
-    paddingTop: 16,
-  },
   instructionText: {
+    position: "absolute",
+    bottom: 16,
     color: "rgba(255,255,255,0.9)",
     fontSize: 13,
     fontWeight: "600",
@@ -263,7 +279,7 @@ const useStyles = createStyleHook((theme) => ({
     justifyContent: "center",
     alignItems: "center",
     zIndex: 30,
-    backgroundColor: "rgba(0,0,0,0.3)",
+    backgroundColor: "rgba(0,0,0,0)",
     borderRadius: 16,
   },
 }));
