@@ -14,6 +14,7 @@ import {
   type SheetHandle,
   issueOptions,
 } from "@/components/report-issue-components";
+import { logger } from "@/lib/logger";
 
 export default function ReportIssuePage() {
   const insets = useSafeAreaInsets();
@@ -49,11 +50,11 @@ export default function ReportIssuePage() {
   };
 
   const onSubmitReportIssue = () => {
-    alert("Report submitted successfully!");
-    console.log("Report Issue form Data:", {
+    logger.log("Report Issue form Data:", {
       selectedIssues: Array.from(selectedIssues),
       details,
     });
+    alert("Report submitted successfully!");
     requestClose();
   };
 

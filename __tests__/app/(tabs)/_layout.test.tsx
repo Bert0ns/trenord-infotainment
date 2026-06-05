@@ -10,37 +10,49 @@ jest.mock("@expo-google-fonts/inter", () => ({
 }));
 
 jest.mock("expo-router", () => {
-  const React = require("react");
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { View, Text } = require("react-native");
-  const TabsScreen = (props: any) =>
-    React.createElement(Text, props, props.name);
+  const TabsScreen = (props: any) => <Text {...props}>{props.name}</Text>;
+  TabsScreen.displayName = "TabsScreen";
+
   const Tabs = (props: any) => {
-    return React.createElement(View, props, [
-      ...props.children,
-      props.screenOptions?.header ? props.screenOptions.header() : null,
-      props.tabBar
-        ? props.tabBar({
-            state: { routes: [] },
-            navigation: {},
-            descriptors: {},
-          })
-        : null,
-    ]);
+    return (
+      <View testID="tabs-container" {...props}>
+        {props.children}
+        {props.screenOptions?.header ? (
+          <View key="header">{props.screenOptions.header()}</View>
+        ) : null}
+        {props.tabBar ? (
+          <View key="tabbar">
+            {props.tabBar({
+              state: { routes: [] },
+              navigation: {},
+              descriptors: {},
+            })}
+          </View>
+        ) : null}
+      </View>
+    );
   };
+  Tabs.displayName = "Tabs";
   Tabs.Screen = TabsScreen;
   return { Tabs };
 });
 
 jest.mock("@/components/header", () => {
-  const React = require("react");
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { Text } = require("react-native");
-  return () => React.createElement(Text, null, "Mocked Header");
+  const MockHeader = () => <Text>Mocked Header</Text>;
+  MockHeader.displayName = "MockHeader";
+  return MockHeader;
 });
 
 jest.mock("@/components/tabBar", () => {
-  const React = require("react");
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { Text } = require("react-native");
-  return () => React.createElement(Text, null, "Mocked TabBar");
+  const MockTabBar = () => <Text>Mocked TabBar</Text>;
+  MockTabBar.displayName = "MockTabBar";
+  return MockTabBar;
 });
 
 describe("TabLayout", () => {

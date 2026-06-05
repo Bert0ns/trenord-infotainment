@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { logger } from "@/lib/logger";
 import React, {
   createContext,
   useCallback,
@@ -55,13 +56,19 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     AsyncStorage.getItem(KEY).then((raw) => {
-      if (raw) setSettings({ ...DEFAULTS, ...JSON.parse(raw) });
+      if (raw) {
+        try {
+          setSettings({ ...DEFAULTS, ...JSON.parse(raw) });
+        } catch (e) {
+          logger.error("Failed to parse settings:", e);
+        }
+      }
     });
   }, []);
 
   const set = useCallback(
     <K extends keyof AppSettings>(key: K, val: AppSettings[K]) => {
-      console.log(`Setting ${key} to`, val);
+      logger.log(`Setting ${key} to ${val}`);
       setSettings((prev) => {
         const next = { ...prev, [key]: val };
         AsyncStorage.setItem(KEY, JSON.stringify(next));
