@@ -19,6 +19,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { fetchTrainData } from "@/lib/api/trenord";
 import { useJourneyStore, Station } from "@/store/journeyStore";
+import QRScanner from "@/components/ui/qr-scanner";
 
 const BACKGROUND_IMAGE = {
   uri: "https://images.unsplash.com/photo-1474487548417-781cb71495f3?auto=format&fit=crop&w=1400&q=80",
@@ -74,9 +75,13 @@ export default function LoginScreen() {
     }
   }
 
-  async function handleSearch() {
-    if (!canSearch) return;
-    console.log(`[Login UI] Searching for train code: ${ticketCode}...`);
+  async function handleSearch(
+    codeToSearch: string,
+    presetDestination?: string,
+  ) {
+    if (!codeToSearch || codeToSearch.length < 4 || codeToSearch.length > 7)
+      return;
+    console.log(`[Login UI] Searching for train code: ${codeToSearch}...`);
     setIsLoading(true);
     setErrorMsg(null);
 
@@ -84,7 +89,7 @@ export default function LoginScreen() {
     await new Promise((resolve) => setTimeout(resolve, 50));
 
     try {
-      const data = await fetchTrainData(ticketCode);
+      const data = await fetchTrainData(codeToSearch);
       if (!data || data.length === 0 || !data[0].journey_list) {
         console.warn("[Login UI] Train not found or empty response returned.");
         setErrorMsg(
@@ -104,6 +109,11 @@ export default function LoginScreen() {
       }));
       setStations(parsedStations);
       setTrainData(data);
+
+      if (presetDestination) {
+        setDestination(presetDestination);
+      }
+
       console.log(
         `[Login UI] Dropdown populated, waiting for user to select destination...`,
       );
@@ -112,6 +122,24 @@ export default function LoginScreen() {
       setErrorMsg("Connection error. Could not reach the server.");
     } finally {
       setIsLoading(false);
+    }
+  }
+
+  function handleSearchPress() {
+    handleSearch(ticketCode);
+  }
+
+  function handleQRScan(data: string) {
+    try {
+      const parsed = JSON.parse(data);
+      if (parsed.ticketCode) {
+        setTicketCode(parsed.ticketCode);
+        handleSearch(parsed.ticketCode, parsed.destination);
+      } else {
+        setErrorMsg("QR code is missing required ticket information.");
+      }
+    } catch (e) {
+      setErrorMsg("Invalid QR code format. Expected JSON.");
     }
   }
 
@@ -161,6 +189,19 @@ export default function LoginScreen() {
               </View>
 
               <View style={styles.card}>
+                {!trainData && (
+                  <>
+                    <View style={styles.scannerWrapper}>
+                      <QRScanner onScan={handleQRScan} style={styles.scanner} />
+                    </View>
+                    <View style={styles.dividerContainer}>
+                      <View style={styles.dividerLine} />
+                      <Text style={styles.dividerText}>OR</Text>
+                      <View style={styles.dividerLine} />
+                    </View>
+                  </>
+                )}
+
                 <View style={styles.field}>
                   <Text style={styles.label}>Ticket code</Text>
                   <View style={styles.inputRow}>
@@ -216,7 +257,7 @@ export default function LoginScreen() {
                       styles.startButton,
                       !canSearch && styles.startButtonDisabled,
                     ]}
-                    onPress={handleSearch}
+                    onPress={handleSearchPress}
                     disabled={!canSearch || isLoading}
                   >
                     {isLoading ? (
@@ -345,6 +386,30 @@ const useStyles = createStyleHook((theme) => ({
     shadowRadius: 12,
     shadowOffset: { width: 0, height: 8 },
     elevation: 10,
+  },
+  scannerWrapper: {
+    width: "100%",
+    alignItems: "center",
+  },
+  scanner: {
+    width: "100%",
+    height: 280,
+  },
+  dividerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 4,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: theme.colors.borderTransparent,
+  },
+  dividerText: {
+    marginHorizontal: 12,
+    fontSize: 12,
+    fontWeight: "700",
+    color: theme.colors.mutedForeground,
   },
   field: {
     gap: 8,

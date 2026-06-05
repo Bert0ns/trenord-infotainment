@@ -28,6 +28,7 @@
     "@types/jsrsasign": "^10.5.15",
     "expo": "~55.0.26",
     "expo-blur": "~55.0.14",
+    "expo-camera": "~55.0.19",
     "expo-constants": "~55.0.16",
     "expo-crypto": "^56.0.4",
     "expo-font": "~55.0.8",
