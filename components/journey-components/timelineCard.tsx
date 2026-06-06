@@ -1,6 +1,7 @@
 import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
 import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
 
 export type NodeStatus = "past" | "current" | "future";
@@ -30,6 +31,7 @@ export default function TimelineCard({
 }: TimelineCardProps) {
   const styles = useStyles();
   const theme = useTheme();
+  const { t } = useTranslation("journey", { keyPrefix: "timelineCard" });
 
   const isPast = status === "past";
   const isCurrent = status === "current";
@@ -100,12 +102,15 @@ export default function TimelineCard({
               <View style={styles.subInfoRow}>
                 {/* Platform */}
                 {platform && !isCurrent && (
-                  <Text style={styles.subInfoText}>Platform {platform}</Text>
+                  <Text style={styles.subInfoText}>
+                    {t("platform", { platform })}
+                  </Text>
                 )}
                 {/* Arriving + Platform */}
                 {isCurrent && (
                   <Text style={styles.arrivingText}>
-                    Arriving in 5 min • Platform {platform}
+                    {t("arrivingIn", { minutes: delayMinutes })} •{" "}
+                    {t("platform", { platform })}
                   </Text>
                 )}
                 {/* Cancelled */}
@@ -117,7 +122,7 @@ export default function TimelineCard({
                         { color: theme.colors.destructive },
                       ]}
                     >
-                      Cancelled
+                      {t("cancelled")}
                     </Text>
                   </View>
                 )}
@@ -132,7 +137,7 @@ export default function TimelineCard({
                     color={theme.colors.destructiveForeground}
                   />
                   <Text style={styles.delayText}>
-                    + {delayMinutes} min delay
+                    {t("minutesDelay", { minutes: delayMinutes })}
                   </Text>
                 </View>
               )}
@@ -155,7 +160,7 @@ export default function TimelineCard({
                 <Text
                   style={[styles.statusText, { color: theme.colors.primary }]}
                 >
-                  {`Departed at ${actualTime}`}
+                  {t("departedAt", { time: actualTime })}
                 </Text>
               )}
               {/* Estimated time */}

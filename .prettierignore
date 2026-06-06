@@ -4,3 +4,4 @@ dist
 build
 web-build
 node_modules
+pnpm-lock.yaml

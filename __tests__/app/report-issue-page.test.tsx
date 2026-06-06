@@ -1,5 +1,6 @@
+import enReportIssue from "@/lib/i18n/locales/en/reportIssue.json";
+import { fireEvent, render } from "@testing-library/react-native";
 import React from "react";
-import { render, fireEvent } from "@testing-library/react-native";
 import ReportIssuePage from "../../app/report-issue-page";
 
 jest.mock("expo-router", () => ({
@@ -104,7 +105,9 @@ describe("ReportIssuePage", () => {
     const { getByTestId } = render(<ReportIssuePage />);
     fireEvent.press(getByTestId("submit-btn"));
 
-    expect(global.alert).toHaveBeenCalledWith("Report submitted successfully!");
+    expect(global.alert).toHaveBeenCalledWith(
+      enReportIssue.reportSubmittedSuccessfully,
+    );
   });
 
   it("handles header close button", () => {

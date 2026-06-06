@@ -1,8 +1,9 @@
+import Card from "@/components/ui/card";
 import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
 import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
-import Card from "@/components/ui/card";
 
 export interface WeatherData {
   city: string;
@@ -14,11 +15,12 @@ export interface WeatherData {
 export default function WeatherCard({ data }: { data: WeatherData | null }) {
   const styles = useStyles();
   const theme = useTheme();
+  const { t } = useTranslation("home", { keyPrefix: "weatherCard" });
 
   if (!data)
     return (
       <Card variant="muted" style={styles.card}>
-        <Text style={styles.label}>Loading weather...</Text>
+        <Text style={styles.label}>{t("loadingWeather")}</Text>
       </Card>
     );
 
@@ -44,7 +46,7 @@ export default function WeatherCard({ data }: { data: WeatherData | null }) {
       />
       <View>
         <Text style={styles.label}>
-          {data.city} at {data.time}
+          {data.city} {t("at")} {data.time}
         </Text>
         <Text style={styles.value}>
           {data.temperature}°C, {data.condition}

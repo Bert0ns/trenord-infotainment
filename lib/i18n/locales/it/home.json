@@ -1,0 +1,22 @@
+{
+  "crowdingCard": {
+    "currentCarriage": "Vagone attuale",
+    "highCrowding": "Alto affollamento",
+    "lowCrowding": "Basso affollamento",
+    "normalCrowding": "Affollamento normale"
+  },
+  "discoverCard": {
+    "directions": "Direzioni"
+  },
+  "liveStatusCard": {
+    "minutesDelay": "min di ritardo",
+    "nextStop": "PROSSIMA FERMATA",
+    "onTime": "In Orario",
+    "speed": "VELOCITÀ",
+    "trainNumber": "TRENO"
+  },
+  "weatherCard": {
+    "at": "a",
+    "loadingWeather": "Caricamento meteo..."
+  }
+}

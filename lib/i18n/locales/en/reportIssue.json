@@ -1,0 +1,13 @@
+{
+  "actionButtons": {
+    "cancel": "Cancel",
+    "submitReport": "Submit Report"
+  },
+  "additionalDetails": "Additional details (optional)",
+  "detailsInput": {
+    "placeholder": "Please provide additional context..."
+  },
+  "reportAnIssue": "Report an issue",
+  "reportSubmittedSuccessfully": "Report submitted successfully!",
+  "whatSeemsToBeTheProblem": "What seems to be the problem?"
+}

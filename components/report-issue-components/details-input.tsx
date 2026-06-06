@@ -1,5 +1,6 @@
-import { TextInput } from "react-native";
 import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
+import { useTranslation } from "react-i18next";
+import { TextInput } from "react-native";
 
 type DetailsInputProps = {
   value: string;
@@ -9,10 +10,11 @@ type DetailsInputProps = {
 export function DetailsInput({ value, onChange }: DetailsInputProps) {
   const styles = useStyles();
   const theme = useTheme();
+  const { t } = useTranslation("reportIssue", { keyPrefix: "detailsInput" });
 
   return (
     <TextInput
-      placeholder="Please provide more context..."
+      placeholder={t("placeholder")}
       placeholderTextColor={theme.colors.mutedForeground}
       value={value}
       onChangeText={onChange}

@@ -1,6 +1,6 @@
-import React from "react";
-import { render } from "@testing-library/react-native";
 import TimelineCard from "@/components/journey-components/timelineCard";
+import { render } from "@testing-library/react-native";
+import React from "react";
 
 jest.mock("@expo/vector-icons", () => ({
   MaterialIcons: "MaterialIcons",
@@ -79,8 +79,8 @@ describe("TimelineCard", () => {
     );
     expect(getByText("Monza")).toBeTruthy();
     expect(getByText("10:30")).toBeTruthy();
-    expect(getByText("Arriving in 5 min • Platform 2")).toBeTruthy();
-    expect(getByText("+ 5 min delay")).toBeTruthy();
+    expect(getByText("Arriving in 5 minutes • Platform 2")).toBeTruthy();
+    expect(getByText("+5 min delay")).toBeTruthy();
   });
 
   it("renders correctly as a future station", () => {

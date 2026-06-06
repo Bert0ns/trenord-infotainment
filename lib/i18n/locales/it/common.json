@@ -1,0 +1,12 @@
+{
+  "sectionHeader": {
+    "seeAll": "Vedi tutto",
+    "seeMore": "Vedi altro"
+  },
+  "tabLayout": {
+    "home": "Home",
+    "journey": "Viaggio",
+    "media": "Media",
+    "settings": "Impostazioni"
+  }
+}

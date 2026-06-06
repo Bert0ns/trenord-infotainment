@@ -1,6 +1,7 @@
-import React from "react";
-import { render } from "@testing-library/react-native";
 import CrowdingCard from "@/components/home-components/crowdCard";
+import enHome from "@/lib/i18n/locales/en/home.json";
+import { render } from "@testing-library/react-native";
+import React from "react";
 
 jest.mock("@expo/vector-icons", () => ({
   MaterialIcons: "MaterialIcons",
@@ -33,17 +34,19 @@ jest.mock("@/hooks/use-theme-color", () => ({
 describe("CrowdingCard", () => {
   it("renders correctly with low crowding", () => {
     const { getByText } = render(<CrowdingCard level="low" />);
-    expect(getByText("Low Crowding")).toBeTruthy();
-    expect(getByText("Current Carriage")).toBeTruthy();
+    expect(getByText(enHome.crowdingCard.lowCrowding)).toBeTruthy();
+    expect(getByText(enHome.crowdingCard.currentCarriage)).toBeTruthy();
   });
 
   it("renders correctly with normal crowding", () => {
     const { getByText } = render(<CrowdingCard level="normal" />);
-    expect(getByText("Normal Crowding")).toBeTruthy();
+    expect(getByText(enHome.crowdingCard.normalCrowding)).toBeTruthy();
+    expect(getByText(enHome.crowdingCard.currentCarriage)).toBeTruthy();
   });
 
   it("renders correctly with high crowding", () => {
     const { getByText } = render(<CrowdingCard level="high" />);
-    expect(getByText("High Crowding")).toBeTruthy();
+    expect(getByText(enHome.crowdingCard.highCrowding)).toBeTruthy();
+    expect(getByText(enHome.crowdingCard.currentCarriage)).toBeTruthy();
   });
 });

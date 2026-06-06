@@ -1,9 +1,10 @@
+import enLogin from "@/lib/i18n/locales/en/login.json";
+import { fireEvent, render } from "@testing-library/react-native";
 import React from "react";
-import { render, fireEvent } from "@testing-library/react-native";
 import LoginScreen from "../app/login";
+import { SettingsProvider } from "../hooks/settings";
 import * as api from "../lib/api/trenord";
 import { useJourneyStore } from "../store/journeyStore";
-import { SettingsProvider } from "../hooks/settings";
 
 // Mock expo-router
 const mockReplace = jest.fn();
@@ -83,8 +84,8 @@ describe("LoginScreen", () => {
       </SettingsProvider>,
     );
 
-    expect(getByPlaceholderText("Enter 4-7 digit code")).toBeTruthy();
-    expect(getByText("Search Train")).toBeTruthy();
+    expect(getByPlaceholderText(enLogin.enterTicketCode)).toBeTruthy();
+    expect(getByText(enLogin.searchTrain)).toBeTruthy();
   });
 
   it("displays an error if the train API fails", async () => {
@@ -98,10 +99,10 @@ describe("LoginScreen", () => {
       </SettingsProvider>,
     );
 
-    const input = getByPlaceholderText("Enter 4-7 digit code");
+    const input = getByPlaceholderText(enLogin.enterTicketCode);
     fireEvent.changeText(input, "12345"); // valid length
 
-    const searchButton = getByText("Search Train");
+    const searchButton = getByText(enLogin.searchTrain);
     fireEvent.press(searchButton);
 
     const errorText = await findByText(
@@ -119,10 +120,10 @@ describe("LoginScreen", () => {
       </SettingsProvider>,
     );
 
-    const input = getByPlaceholderText("Enter 4-7 digit code");
+    const input = getByPlaceholderText(enLogin.enterTicketCode);
     fireEvent.changeText(input, "12345");
 
-    const searchButton = getByText("Search Train");
+    const searchButton = getByText(enLogin.searchTrain);
     fireEvent.press(searchButton);
 
     const errorText = await findByText(
@@ -163,20 +164,20 @@ describe("LoginScreen", () => {
     );
 
     // Type code
-    const input = getByPlaceholderText("Enter 4-7 digit code");
+    const input = getByPlaceholderText(enLogin.enterTicketCode);
     fireEvent.changeText(input, "12345");
 
     // Press Search
-    fireEvent.press(getByText("Search Train"));
+    fireEvent.press(getByText(enLogin.searchTrain));
 
     // Wait for API response and for dropdown to appear
-    await findByText("Destination station");
+    await findByText(enLogin.destinationStation);
 
     // Simulate selecting the first station from the mocked dropdown
     fireEvent.press(getByTestId("mock-dropdown"));
 
     // Press Start Journey
-    const startButton = getByText("Start Journey");
+    const startButton = getByText(enLogin.startJourney);
     fireEvent.press(startButton);
 
     // Verify Zustand store was updated correctly
@@ -215,20 +216,20 @@ describe("LoginScreen", () => {
     );
 
     // Type code
-    const input = getByPlaceholderText("Enter 4-7 digit code");
+    const input = getByPlaceholderText(enLogin.enterTicketCode);
     fireEvent.changeText(input, "24869");
 
     // Press Search
-    fireEvent.press(getByText("Search Train"));
+    fireEvent.press(getByText(enLogin.searchTrain));
 
     // Wait for API response and for dropdown to appear
-    await findByText("Destination station");
+    await findByText(enLogin.destinationStation);
 
     // Simulate selecting the first station from the mocked dropdown
     fireEvent.press(getByTestId("mock-dropdown"));
 
     // Press Start Journey
-    const startButton = getByText("Start Journey");
+    const startButton = getByText(enLogin.startJourney);
     fireEvent.press(startButton);
 
     // Verify Zustand store was updated correctly
@@ -248,7 +249,7 @@ describe("LoginScreen", () => {
     );
 
     // Find the settings button in the footer by text
-    const settingsBtn = getByText("Settings");
+    const settingsBtn = getByText(enLogin.settings);
     fireEvent.press(settingsBtn);
 
     expect(mockPush).toHaveBeenCalledWith("/(tabs)/settings");

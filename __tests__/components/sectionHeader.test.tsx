@@ -1,6 +1,7 @@
-import React from "react";
-import { render } from "@testing-library/react-native";
 import SectionHeader from "@/components/sectionHeader";
+import enCommon from "@/lib/i18n/locales/en/common.json";
+import { render } from "@testing-library/react-native";
+import React from "react";
 
 jest.mock("@expo/vector-icons", () => ({
   MaterialIcons: "MaterialIcons",
@@ -29,7 +30,7 @@ describe("SectionHeader", () => {
       <SectionHeader title="Home Title" type="home" />,
     );
     expect(getByText("Home Title")).toBeTruthy();
-    expect(getByText("See more")).toBeTruthy();
+    expect(getByText(enCommon.sectionHeader.seeMore)).toBeTruthy();
   });
 
   it("renders correctly for media type", () => {
@@ -37,6 +38,6 @@ describe("SectionHeader", () => {
       <SectionHeader title="Media Title" type="media" isFirst />,
     );
     expect(getByText("Media Title")).toBeTruthy();
-    expect(getByText("See all")).toBeTruthy();
+    expect(getByText(enCommon.sectionHeader.seeAll)).toBeTruthy();
   });
 });

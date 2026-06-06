@@ -42,3 +42,55 @@ jest.mock("react-native-reanimated", () => {
     },
   };
 });
+
+// Provide a test-friendly mock for react-i18next that returns real English
+// translations loaded from the project's locale JSON files. This keeps tests
+// stable and independent from device locale settings.
+jest.mock("react-i18next", () => {
+  const path = (p) => require(p);
+  const en = {
+    common: path("./lib/i18n/locales/en/common.json"),
+    home: path("./lib/i18n/locales/en/home.json"),
+    journey: path("./lib/i18n/locales/en/journey.json"),
+    login: path("./lib/i18n/locales/en/login.json"),
+    media: path("./lib/i18n/locales/en/media.json"),
+    reportIssue: path("./lib/i18n/locales/en/reportIssue.json"),
+    settings: path("./lib/i18n/locales/en/settings.json"),
+  };
+
+  function lookup(namespace, key, keyPrefix) {
+    const parts = (keyPrefix ? keyPrefix + "." + key : key).split(".");
+    let node = en[namespace] || {};
+    for (const p of parts) {
+      if (node && Object.prototype.hasOwnProperty.call(node, p)) {
+        node = node[p];
+      } else {
+        return key; // fallback to the raw key when missing
+      }
+    }
+    return typeof node === "string" ? node : key;
+  }
+
+  function replaceTemplate(str, opts) {
+    if (!opts) return str;
+    return Object.entries(opts).reduce(
+      (s, [k, v]) => s.replace(`{{${k}}}`, String(v)),
+      str,
+    );
+  }
+
+  return {
+    useTranslation: (ns, options) => {
+      const namespace =
+        typeof ns === "string" ? ns : Array.isArray(ns) ? ns[0] : "common";
+      const keyPrefix =
+        options && options.keyPrefix ? options.keyPrefix : undefined;
+      return {
+        t: (k, opts) => replaceTemplate(lookup(namespace, k, keyPrefix), opts),
+        i18n: { changeLanguage: jest.fn() },
+      };
+    },
+    Trans: ({ children }) => children,
+    initReactI18next: { type: "3rdParty", init: jest.fn() },
+  };
+});
