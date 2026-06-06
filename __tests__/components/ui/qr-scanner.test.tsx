@@ -61,7 +61,11 @@ describe("QRScanner component", () => {
   it("renders empty view when permission is null", () => {
     jest
       .spyOn(expoCamera, "useCameraPermissions")
-      .mockReturnValue([null as any, mockRequestPermission]);
+      .mockReturnValue([
+        null as any,
+        mockRequestPermission,
+        mockRequestPermission,
+      ]);
 
     const { toJSON } = renderWithProvider(<QRScanner onScan={mockOnScan} />);
     const json = toJSON();
@@ -78,6 +82,7 @@ describe("QRScanner component", () => {
       .mockReturnValue([
         { granted: false, canAskAgain: true } as any,
         mockRequestPermission,
+        mockRequestPermission,
       ]);
 
     const { getByText } = renderWithProvider(<QRScanner onScan={mockOnScan} />);
@@ -92,6 +97,7 @@ describe("QRScanner component", () => {
       .spyOn(expoCamera, "useCameraPermissions")
       .mockReturnValue([
         { granted: true, canAskAgain: true } as any,
+        mockRequestPermission,
         mockRequestPermission,
       ]);
 
@@ -108,6 +114,7 @@ describe("QRScanner component", () => {
       .spyOn(expoCamera, "useCameraPermissions")
       .mockReturnValue([
         { granted: true, canAskAgain: true } as any,
+        mockRequestPermission,
         mockRequestPermission,
       ]);
 

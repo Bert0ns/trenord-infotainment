@@ -6,8 +6,16 @@ describe("logger", () => {
   const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
   const errorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
 
+  const setNodeEnv = (value: string | undefined) => {
+    Object.defineProperty(process.env, "NODE_ENV", {
+      value,
+      configurable: true,
+      writable: true,
+    });
+  };
+
   afterEach(() => {
-    process.env.NODE_ENV = originalEnv;
+    setNodeEnv(originalEnv);
     jest.clearAllMocks();
   });
 
@@ -18,7 +26,7 @@ describe("logger", () => {
   });
 
   it("does not log when NODE_ENV is test", () => {
-    process.env.NODE_ENV = "test";
+    setNodeEnv("test");
     logger.log("test log");
     logger.warn("test warn");
     logger.error("test error");
@@ -29,7 +37,7 @@ describe("logger", () => {
   });
 
   it("logs when NODE_ENV is not test", () => {
-    process.env.NODE_ENV = "development";
+    setNodeEnv("development");
     logger.log("test log");
     logger.warn("test warn");
     logger.error("test error");
