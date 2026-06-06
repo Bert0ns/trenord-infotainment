@@ -1,0 +1,40 @@
+{
+  "backToLogin": "Torna al Login",
+  "language": {
+    "default": "Default del Sistema",
+    "placeholder": "Seleziona la lingua",
+    "title": "Lingua"
+  },
+  "logout": "Log Out",
+  "reportIssue": "Segnala un Problema",
+  "notifications": {
+    "delayAlerts": {
+      "description": "Cambiamenti in tempo reale degli orari",
+      "title": "Avvisi di Ritardo"
+    },
+    "journeyProgress": {
+      "description": "Aggiornamenti sulle fermate in arrivo",
+      "title": "Progresso del Viaggio"
+    },
+    "title": "Notifiche",
+    "weatherAlerts": {
+      "description": "Problemi significativi nella rete",
+      "title": "Meteo e Disconnessioni"
+    }
+  },
+  "theme": {
+    "title": "Tema dell'App",
+    "options": {
+      "light": "Chiaro",
+      "dark": "Scuro",
+      "system": "Sistema"
+    }
+  },
+  "travelComfort": {
+    "antiSickness": {
+      "description": "Riduce le animazioni del movimento e aumenta il contrasto per mitigare la nausea da viaggio.",
+      "label": "Modalità Anti-Nausea"
+    },
+    "title": "Conforto del Viaggio"
+  }
+}

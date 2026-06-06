@@ -1,23 +1,34 @@
 import SectionCard from "@/components/settings-componenents/sectionCard";
 import SettingSwitch from "@/components/settings-componenents/settingSwitch";
 import DropDownSelector from "@/components/ui/dropDownSelector";
-import { AppSettings, useSettings } from "@/hooks/settings";
+import { AppSettings, LanguageCode, useSettings } from "@/hooks/settings";
 import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
+import { useJourneyStore } from "@/store/journeyStore";
 import { MaterialIcons } from "@expo/vector-icons";
+import { getLocales } from "expo-localization";
 import { useRouter } from "expo-router";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { useJourneyStore } from "@/store/journeyStore";
 
 export default function SettingsScreen() {
   const router = useRouter();
   const styles = useStyles();
   const theme = useTheme();
+  const { t } = useTranslation("settings");
 
   const { settings, set } = useSettings();
   const { trainId, clearJourney } = useJourneyStore();
 
-  const languages = ["English (UK)", "Italiano"];
+  const languages: Record<LanguageCode, string> = {
+    en: "English (UK)",
+    it: "Italiano",
+    "--": t("language.default"),
+  };
+
+  const selectedLanguage =
+    languages[settings.language] +
+    (settings.language === "--" ? ` (${getLocales()[0].languageTag})` : "");
 
   const handleLogout = () => {
     clearJourney();
@@ -45,7 +56,7 @@ export default function SettingsScreen() {
         <Text
           style={[styles.themeBoxText, isActive && styles.themeBoxTextActive]}
         >
-          {title.charAt(0).toUpperCase() + title.slice(1)}
+          {t(`theme.options.${title}`)}
         </Text>
       </TouchableOpacity>
     );
@@ -60,47 +71,55 @@ export default function SettingsScreen() {
         </Text>
       </View>
 
-      <SectionCard iconName="palette" title="App Theme">
+      <SectionCard iconName="palette" title={t("theme.title")}>
         <View style={styles.themeRow}>
           <ThemeOption title="light" icon="light-mode" />
           <ThemeOption title="dark" icon="dark-mode" />
           <ThemeOption title="system" icon="settings-system-daydream" />
         </View>
       </SectionCard>
-      <SectionCard iconName="health-and-safety" title="Travel Comfort">
+      <SectionCard
+        iconName="health-and-safety"
+        title={t("travelComfort.title")}
+      >
         <SettingSwitch
-          label="Anti-Sickness Mode"
-          description="Reduces motion animations and increases contrast to mitigate travel nausea."
+          label={t("travelComfort.antiSickness.label")}
+          description={t("travelComfort.antiSickness.description")}
           value={settings.antiSickness}
           onValueChange={(value) => set("antiSickness", value)}
         />
       </SectionCard>
 
-      <SectionCard iconName="language" title="Language">
+      <SectionCard iconName="language" title={t("language.title")}>
         <DropDownSelector
-          options={languages}
-          selectedValue={settings.language}
-          onSelect={(value) => set("language", value)}
-          placeholder="Select language"
+          options={Object.values(languages)}
+          selectedValue={selectedLanguage}
+          onSelect={(value) => {
+            const langCode = Object.entries(languages).find(
+              ([, name]) => name === value,
+            )?.[0] as LanguageCode;
+            set("language", langCode);
+          }}
+          placeholder={t("language.placeholder")}
         />
       </SectionCard>
 
-      <SectionCard iconName="notifications" title="Notifications">
+      <SectionCard iconName="notifications" title={t("notifications.title")}>
         <SettingSwitch
-          label="Journey Progress"
-          description="Updates on approaching stops"
+          label={t("notifications.journeyProgress.title")}
+          description={t("notifications.journeyProgress.description")}
           value={settings.journeyProgress}
           onValueChange={(value) => set("journeyProgress", value)}
         />
         <SettingSwitch
-          label="Delay Alerts"
-          description="Real-time schedule changes"
+          label={t("notifications.delayAlerts.title")}
+          description={t("notifications.delayAlerts.description")}
           value={settings.delayAlerts}
           onValueChange={(value) => set("delayAlerts", value)}
         />
         <SettingSwitch
-          label="Weather & Disruptions"
-          description="Major network issues"
+          label={t("notifications.weatherAlerts.title")}
+          description={t("notifications.weatherAlerts.description")}
           value={settings.weatherAlerts}
           onValueChange={(value) => set("weatherAlerts", value)}
         />
@@ -112,12 +131,12 @@ export default function SettingsScreen() {
             style={styles.reportButton}
             onPress={() => router.push("/report-issue-page")}
           >
-            <Text style={styles.reportButtonText}>Report Issue</Text>
+            <Text style={styles.reportButtonText}>{t("reportIssue")}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
             <Text style={styles.logoutButtonText}>
-              {trainId ? "Log Out" : "Back to Login"}
+              {trainId ? t("logout") : t("backToLogin")}
             </Text>
           </TouchableOpacity>
           <Text style={styles.versionText}>App Version 0.0.0 </Text>
