@@ -1,0 +1,16 @@
+{
+  "destinationStation": "Destination Station",
+  "enterTicketCode": "Enter 4-7 digit ticket code",
+  "journeyStartsHere": "Your journey starts here",
+  "searchTrain": "Search Train",
+  "selectDestinationPlaceholder": "Select your destination",
+  "settings": "Settings",
+  "startJourney": "Start Journey",
+  "ticketCode": "Ticket Code",
+  "qrScanner": {
+    "useQRScanner": "Use QR Scanner",
+    "enableCameraToScan": "Enable Camera to Scan Ticket",
+    "verifyingTicket": "Verifying Ticket...",
+    "alignQRCode": "Align QR Code within the frame"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "crowdingCard": {
+    "currentCarriage": "Current carriage",
+    "highCrowding": "High crowding",
+    "lowCrowding": "Low crowding",
+    "normalCrowding": "Normal crowding"
+  },
+  "discoverCard": {
+    "directions": "Directions"
+  },
+  "liveStatusCard": {
+    "minutesDelay": "min delay",
+    "nextStop": "NEXT STOP",
+    "onTime": "On Time",
+    "speed": "SPEED",
+    "trainNumber": "TRAIN"
+  },
+  "weatherCard": {
+    "at": "at",
+    "loadingWeather": "Loading weather..."
+  }
+}

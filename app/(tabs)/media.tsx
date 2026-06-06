@@ -2,9 +2,10 @@ import MovieCard from "@/components/media-components/movieCard";
 import PodcastCard from "@/components/media-components/podcastCard";
 import SectionHeader from "@/components/sectionHeader";
 import { createStyleHook } from "@/hooks/use-theme-color";
-import { FlatList, ScrollView, Text, View } from "react-native";
-import { Redirect } from "expo-router";
 import { useJourneyStore } from "@/store/journeyStore";
+import { Redirect } from "expo-router";
+import { useTranslation } from "react-i18next";
+import { FlatList, ScrollView, Text, View } from "react-native";
 
 //Mockup data films, documentaries and podcasts, API integration later
 const MOVIES_DATA = [
@@ -96,6 +97,7 @@ const DOCUMENTARIES_DATA = [
 
 export default function MediaScreen() {
   const styles = useStyles();
+  const { t } = useTranslation("media");
   const trainId = useJourneyStore((s) => s.trainId);
 
   if (!trainId) return <Redirect href="/login" />;
@@ -103,10 +105,17 @@ export default function MediaScreen() {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.pageHeader}>
-        <Text style={styles.pageTitle}>Featured Entertainment</Text>
-        <Text style={styles.pageSubtitle}>Films, Documentaries, Podcasts.</Text>
+        <Text style={styles.pageTitle}>{t("featuredEntertainment")}</Text>
+        <Text style={styles.pageSubtitle}>
+          {t("filmsDocumentariesPodcasts")}
+        </Text>
       </View>
-      <SectionHeader title="Films" type="media" icon="movie-creation" isFirst />
+      <SectionHeader
+        title={t("films")}
+        type="media"
+        icon="movie-creation"
+        isFirst
+      />
       {/* Film cards */}
       <FlatList
         data={MOVIES_DATA}
@@ -122,7 +131,7 @@ export default function MediaScreen() {
           />
         )}
       />
-      <SectionHeader title="Documentaries" type="media" icon="public" />
+      <SectionHeader title={t("documentaries")} type="media" icon="public" />
       {/* Documentaries cards */}
       <FlatList
         data={DOCUMENTARIES_DATA}
@@ -138,7 +147,7 @@ export default function MediaScreen() {
           />
         )}
       />
-      <SectionHeader title="Podcasts" type="journey" icon="podcasts" />
+      <SectionHeader title={t("podcasts")} type="journey" icon="podcasts" />
       {/* Podcasts cards */}
       {PODCASTS_DATA.map((podcast) => (
         <PodcastCard

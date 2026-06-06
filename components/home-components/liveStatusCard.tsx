@@ -1,8 +1,9 @@
+import Card from "@/components/ui/card";
 import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
 import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
-import Card from "@/components/ui/card";
 
 interface LiveStatusCardProps {
   nextStop: string;
@@ -21,11 +22,12 @@ export default function LiveStatusCard({
 }: LiveStatusCardProps) {
   const styles = useStyles();
   const theme = useTheme();
+  const { t } = useTranslation("home", { keyPrefix: "liveStatusCard" });
 
   return (
     <Card style={styles.card}>
       <View style={styles.topRow}>
-        <Text style={styles.label}>NEXT STOP</Text>
+        <Text style={styles.label}>{t("nextStop")}</Text>
         {delayMinutes > 0 && (
           <View style={styles.delayBadge}>
             <MaterialIcons
@@ -33,14 +35,16 @@ export default function LiveStatusCard({
               size={12}
               color={theme.colors.destructiveForeground}
             />
-            <Text style={styles.delayText}>+ {delayMinutes} min delay</Text>
+            <Text style={styles.delayText}>
+              + {delayMinutes} {t("minutesDelay")}
+            </Text>
           </View>
         )}
         {delayMinutes === 0 && (
           <View
             style={[styles.delayBadge, { backgroundColor: theme.colors.info }]}
           >
-            <Text style={styles.onTimeText}>On Time</Text>
+            <Text style={styles.onTimeText}>{t("onTime")}</Text>
           </View>
         )}
       </View>
@@ -54,7 +58,7 @@ export default function LiveStatusCard({
 
       <View style={styles.bottomRow}>
         <View style={styles.infoBlock}>
-          <Text style={styles.label}>SPEED</Text>
+          <Text style={styles.label}>{t("speed")}</Text>
           <View style={styles.valueRow}>
             <MaterialIcons
               name="speed"
@@ -67,7 +71,7 @@ export default function LiveStatusCard({
         </View>
 
         <View style={styles.infoBlock}>
-          <Text style={styles.label}>TRAIN</Text>
+          <Text style={styles.label}>{t("trainNumber")}</Text>
           <Text style={styles.valueText}>{trainNumber}</Text>
         </View>
       </View>

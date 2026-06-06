@@ -6,7 +6,6 @@
     "title": "Language"
   },
   "logout": "Log Out",
-  "reportIssue": "Report an Issue",
   "notifications": {
     "delayAlerts": {
       "description": "Real-time schedule changes",
@@ -22,6 +21,8 @@
       "title": "Weather & Disruptions"
     }
   },
+  "reportIssue": "Report an Issue",
+  "subtitle": "Manage your app preferences and travel experience",
   "theme": {
     "title": "App Theme",
     "options": {
@@ -30,11 +31,12 @@
       "system": "System"
     }
   },
+  "title": "Settings",
   "travelComfort": {
-    "title": "Travel Comfort",
     "antiSickness": {
-      "label": "Anti-Sickness Mode",
-      "description": "Reduces motion animations and increases contrast to mitigate travel nausea."
-    }
+      "description": "Reduces motion animations and increases contrast to mitigate travel nausea.",
+      "label": "Anti-Sickness Mode"
+    },
+    "title": "Travel Comfort"
   }
 }

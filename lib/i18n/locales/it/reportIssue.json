@@ -1,0 +1,13 @@
+{
+  "actionButtons": {
+    "cancel": "Annulla",
+    "submitReport": "Invia Segnalazione"
+  },
+  "additionalDetails": "Dettagli Aggiuntivi (opzionale)",
+  "detailsInput": {
+    "placeholder": "Descrivi il problema..."
+  },
+  "reportAnIssue": "Segnala un Problema",
+  "reportSubmittedSuccessfully": "Segnalazione inviata con successo!",
+  "whatSeemsToBeTheProblem": "Qual è il problema?"
+}

@@ -1,0 +1,16 @@
+{
+  "destinationStation": "Stazione d'Arrivo",
+  "enterTicketCode": "Inserisci il codice biglietto (4-7 cifre)",
+  "journeyStartsHere": "Il tuo viaggio inizia qui",
+  "searchTrain": "Cerca Treno",
+  "selectDestinationPlaceholder": "Seleziona la stazione di destinazione",
+  "settings": "Impostazioni",
+  "startJourney": "Inizia il Viaggio",
+  "ticketCode": "Codice Biglietto",
+  "qrScanner": {
+    "useQRScanner": "Usa Scansione QR",
+    "enableCameraToScan": "Abilita Fotocamera per Scansionare il Biglietto",
+    "verifyingTicket": "Verifico Biglietto...",
+    "alignQRCode": "Allinea Codice QR all'interno del riquadro"
+  }
+}

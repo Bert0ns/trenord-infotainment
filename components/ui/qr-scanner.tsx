@@ -1,14 +1,15 @@
-import React, { useState } from "react";
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
-import { CameraView, useCameraPermissions } from "expo-camera";
-import { useTheme, createStyleHook } from "@/hooks/use-theme-color";
-import * as Haptics from "expo-haptics";
+import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
 import { MaterialIcons } from "@expo/vector-icons";
+import { CameraView, useCameraPermissions } from "expo-camera";
+import * as Haptics from "expo-haptics";
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
   Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
 } from "react-native-reanimated";
 
 interface QRScannerProps {
@@ -21,6 +22,7 @@ export default function QRScanner({ onScan, style }: QRScannerProps) {
   const [scanned, setScanned] = useState(false);
   const theme = useTheme();
   const styles = useStyles();
+  const { t } = useTranslation("login", { keyPrefix: "qrScanner" });
 
   // Success Animation setup
   const checkScale = useSharedValue(0);
@@ -92,13 +94,15 @@ export default function QRScanner({ onScan, style }: QRScannerProps) {
                     color={theme.colors.primaryForeground}
                     style={{ marginRight: 8 }}
                   />
-                  <Text style={styles.permissionBtnText}>Use QR Scanner</Text>
+                  <Text style={styles.permissionBtnText}>
+                    {t("useQRScanner")}
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>
 
             <Text style={styles.instructionText}>
-              Enable camera to scan ticket
+              {t("enableCameraToScan")}
             </Text>
           </View>
         </View>
@@ -135,7 +139,7 @@ export default function QRScanner({ onScan, style }: QRScannerProps) {
               </Animated.View>
             </View>
 
-            <Text style={styles.instructionText}>Verifying ticket...</Text>
+            <Text style={styles.instructionText}>{t("verifyingTicket")}</Text>
           </View>
         </View>
       </View>
@@ -162,9 +166,7 @@ export default function QRScanner({ onScan, style }: QRScannerProps) {
             <View style={[styles.corner, styles.bottomRightCorner]} />
           </View>
 
-          <Text style={styles.instructionText}>
-            Align QR code within the frame
-          </Text>
+          <Text style={styles.instructionText}>{t("alignQRCode")}</Text>
         </View>
       </CameraView>
     </View>

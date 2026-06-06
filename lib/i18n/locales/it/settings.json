@@ -6,7 +6,6 @@
     "title": "Lingua"
   },
   "logout": "Log Out",
-  "reportIssue": "Segnala un Problema",
   "notifications": {
     "delayAlerts": {
       "description": "Cambiamenti in tempo reale degli orari",
@@ -22,6 +21,8 @@
       "title": "Meteo e Disconnessioni"
     }
   },
+  "reportIssue": "Segnala un Problema",
+  "subtitle": "Gestisci le preferenze della tua app e la tua esperienza di viaggio",
   "theme": {
     "title": "Tema dell'App",
     "options": {
@@ -30,6 +31,7 @@
       "system": "Sistema"
     }
   },
+  "title": "Impostazioni",
   "travelComfort": {
     "antiSickness": {
       "description": "Riduce le animazioni del movimento e aumenta il contrasto per mitigare la nausea da viaggio.",

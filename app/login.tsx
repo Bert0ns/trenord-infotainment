@@ -1,10 +1,14 @@
 import DropDownSelector from "@/components/ui/dropDownSelector";
+import QRScanner from "@/components/ui/qr-scanner";
 import { Fonts } from "@/constants/theme";
+import { useLogin } from "@/hooks/use-login";
 import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import {
+  ActivityIndicator,
   ImageBackground,
   KeyboardAvoidingView,
   Platform,
@@ -14,11 +18,8 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  ActivityIndicator,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import QRScanner from "@/components/ui/qr-scanner";
-import { useLogin } from "@/hooks/use-login";
 
 const BACKGROUND_IMAGE = {
   uri: "https://images.unsplash.com/photo-1474487548417-781cb71495f3?auto=format&fit=crop&w=1400&q=80",
@@ -29,6 +30,7 @@ export default function LoginScreen() {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const { t } = useTranslation("login");
 
   const {
     ticketCode,
@@ -74,7 +76,7 @@ export default function LoginScreen() {
                   <MaterialIcons name="train" size={34} color="#ffffff" />
                 </View>
                 <Text style={styles.title}>Trenord</Text>
-                <Text style={styles.subtitle}>Your journey starts here</Text>
+                <Text style={styles.subtitle}>{t("journeyStartsHere")}</Text>
               </View>
 
               <View style={styles.card}>
@@ -92,7 +94,7 @@ export default function LoginScreen() {
                 )}
 
                 <View style={styles.field}>
-                  <Text style={styles.label}>Ticket code</Text>
+                  <Text style={styles.label}>{t("ticketCode")}</Text>
                   <View style={styles.inputRow}>
                     <MaterialIcons
                       name="confirmation-number"
@@ -101,7 +103,7 @@ export default function LoginScreen() {
                       style={styles.inputIcon}
                     />
                     <TextInput
-                      placeholder="Enter 4-7 digit code"
+                      placeholder={t("enterTicketCode")}
                       placeholderTextColor={theme.colors.mutedForeground}
                       keyboardType="number-pad"
                       maxLength={7}
@@ -126,12 +128,12 @@ export default function LoginScreen() {
 
                 {trainData && stations.length > 0 && (
                   <View style={styles.field}>
-                    <Text style={styles.label}>Destination station</Text>
+                    <Text style={styles.label}>{t("destinationStation")}</Text>
                     <DropDownSelector
                       options={stations.map((s) => s.station_ori_name)}
                       selectedValue={destination}
                       onSelect={setDestination}
-                      placeholder="Select destination"
+                      placeholder={t("selectDestinationPlaceholder")}
                       leadingIconName="place"
                       leadingIconColor={theme.colors.mutedForeground}
                       placeholderTextColor={theme.colors.mutedForeground}
@@ -155,7 +157,9 @@ export default function LoginScreen() {
                       />
                     ) : (
                       <>
-                        <Text style={styles.startButtonText}>Search Train</Text>
+                        <Text style={styles.startButtonText}>
+                          {t("searchTrain")}
+                        </Text>
                         <MaterialIcons
                           name="search"
                           size={20}
@@ -174,7 +178,9 @@ export default function LoginScreen() {
                     onPress={handleStart}
                     disabled={!canStart}
                   >
-                    <Text style={styles.startButtonText}>Start Journey</Text>
+                    <Text style={styles.startButtonText}>
+                      {t("startJourney")}
+                    </Text>
                     <MaterialIcons
                       name="arrow-forward"
                       size={20}
@@ -195,7 +201,7 @@ export default function LoginScreen() {
                   size={18}
                   color={theme.colors.mutedForeground}
                 />
-                <Text style={styles.footerText}>Settings</Text>
+                <Text style={styles.footerText}>{t("settings")}</Text>
               </TouchableOpacity>
             </View>
           </ScrollView>

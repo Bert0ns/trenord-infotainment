@@ -65,10 +65,8 @@ export default function SettingsScreen() {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.pageHeader}>
-        <Text style={styles.pageTitle}>Settings</Text>
-        <Text style={styles.pageSubtitle}>
-          Manage your app preferences and travel experience.
-        </Text>
+        <Text style={styles.pageTitle}>{t("title")}</Text>
+        <Text style={styles.pageSubtitle}>{t("subtitle")}</Text>
       </View>
 
       <SectionCard iconName="palette" title={t("theme.title")}>
