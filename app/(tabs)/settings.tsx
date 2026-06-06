@@ -3,11 +3,11 @@ import SettingSwitch from "@/components/settings-componenents/settingSwitch";
 import DropDownSelector from "@/components/ui/dropDownSelector";
 import { AppSettings, useSettings } from "@/hooks/settings";
 import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
+import { useJourneyStore } from "@/store/journeyStore";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { useJourneyStore } from "@/store/journeyStore";
 
 export default function SettingsScreen() {
   const router = useRouter();
@@ -20,7 +20,7 @@ export default function SettingsScreen() {
   const languages = ["English (UK)", "Italiano"];
 
   const handleLogout = () => {
-    clearJourney();
+    //clearJourney();
     router.replace("/login");
   };
 
@@ -117,7 +117,7 @@ export default function SettingsScreen() {
           <TouchableOpacity
             style={[
               styles.reportButton,
-              { backgroundColor: theme.colors.mutedForeground },
+              { backgroundColor: theme.colors.logout },
             ]}
             onPress={handleLogout}
           >
@@ -209,7 +209,7 @@ const useStyles = createStyleHook((theme) => ({
     marginBottom: theme.spacing.lg,
   },
   reportButtonText: {
-    color: "#ffffff",
+    color: theme.colors.destructiveForeground,
     fontSize: 16,
     fontWeight: "600",
   },

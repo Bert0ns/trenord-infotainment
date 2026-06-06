@@ -12,7 +12,7 @@ interface TimelineCardProps {
   stimatedTime?: string;
   actualTime?: string;
   platform?: string;
-  delayMinutes?: number;
+  delayMinutes: number;
   isCancelled?: boolean;
   isLast?: boolean;
   isFirst?: boolean;
@@ -36,6 +36,16 @@ export default function TimelineCard({
   const isPast = status === "past";
   const isCurrent = status === "current";
   const isFuture = status === "future";
+
+  const currentTime = new Date().toLocaleTimeString("it-IT", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  const toMinutes = (time: string) => {
+    const [h, m] = time.split(":").map(Number);
+    return h * 60 + m;
+  };
 
   return (
     <View style={styles.container}>
@@ -108,12 +118,20 @@ export default function TimelineCard({
                 {/* Arriving + Platform */}
                 {isCurrent && !isFirst && (
                   <Text style={styles.arrivingText}>
-                    Arriving in 5 min • Platform {platform}
+                    Arriving in{" "}
+                    {toMinutes(scheduledTime) -
+                      toMinutes(currentTime) +
+                      delayMinutes}{" "}
+                    min • Platform {platform}
                   </Text>
                 )}
                 {isCurrent && isFirst && (
                   <Text style={styles.arrivingText}>
-                    Departing in 5 min • Platform {platform}
+                    Departing in{" "}
+                    {toMinutes(scheduledTime) -
+                      toMinutes(currentTime) +
+                      delayMinutes}{" "}
+                    min • Platform {platform}
                   </Text>
                 )}
                 {/* Cancelled */}

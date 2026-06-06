@@ -24,12 +24,6 @@ export default function HomeScreen() {
   const trainInfo = trainData[0].journey_list[0].train;
   const passListArray = trainData[0].journey_list[0].pass_list;
 
-  // Find the next stop that is not yet departed, not cancelled
-  /*const nextStop = passListArray.find(
-    (pass: any) =>
-      (!pass.actual_data || pass.actual_data?.dep_actual_time === undefined) &&
-      pass.cancelled !== true,
-  );*/
   // Find the last station departed and return the first successor that is not cancelled
   const nextStop = passListArray
     .slice(
@@ -108,6 +102,7 @@ export default function HomeScreen() {
           origDestData.dep_time ? origDestData.dep_time.slice(0, 5) : "Unknown"
         }
       />
+      {/* Understand if add a new type of crowding in case of unknown crowding */}
       <CrowdingCard
         level={
           trainInfo.crowding

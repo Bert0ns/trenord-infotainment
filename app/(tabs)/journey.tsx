@@ -106,7 +106,7 @@ export default function JourneyScreen() {
               scheduledTime={scheduledTime?.slice(0, 5) || "N/A"}
               actualTime={actualTime?.slice(0, 5) || "N/A"}
               platform={pass.platform ? String(pass.platform) : undefined}
-              delayMinutes={trainInfo.delay}
+              delayMinutes={trainInfo.delay ? trainInfo.delay : 0}
               isCancelled={pass.cancelled}
               isLast={index === passListArray.length - 1}
               isFirst={nextStop.pass_count === 1}
