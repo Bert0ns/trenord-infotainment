@@ -1,9 +1,10 @@
-import React from "react";
-import { render, fireEvent, act } from "@testing-library/react-native";
 import QRScanner from "@/components/ui/qr-scanner";
-import * as Haptics from "expo-haptics";
-import * as expoCamera from "expo-camera";
 import { SettingsProvider } from "@/hooks/settings";
+import enLogin from "@/lib/i18n/locales/en/login.json";
+import { act, fireEvent, render } from "@testing-library/react-native";
+import * as expoCamera from "expo-camera";
+import * as Haptics from "expo-haptics";
+import React from "react";
 
 jest.mock("expo-haptics", () => ({
   notificationAsync: jest.fn(),
@@ -80,9 +81,9 @@ describe("QRScanner component", () => {
       ]);
 
     const { getByText } = renderWithProvider(<QRScanner onScan={mockOnScan} />);
-    expect(getByText("Enable camera to scan ticket")).toBeTruthy();
+    expect(getByText(enLogin.qrScanner.enableCameraToScan)).toBeTruthy();
 
-    fireEvent.press(getByText("Use QR Scanner"));
+    fireEvent.press(getByText(enLogin.qrScanner.useQRScanner));
     expect(mockRequestPermission).toHaveBeenCalledTimes(1);
   });
 
@@ -98,7 +99,7 @@ describe("QRScanner component", () => {
       <QRScanner onScan={mockOnScan} />,
     );
     expect(getByTestId("camera-view")).toBeTruthy();
-    expect(getByText("Align QR code within the frame")).toBeTruthy();
+    expect(getByText(enLogin.qrScanner.alignQRCode)).toBeTruthy();
   });
 
   it("handles successful scan and resets after delay", () => {
@@ -120,7 +121,7 @@ describe("QRScanner component", () => {
     });
 
     expect(Haptics.notificationAsync).toHaveBeenCalled();
-    expect(getByText("Verifying ticket...")).toBeTruthy();
+    expect(getByText(enLogin.qrScanner.verifyingTicket)).toBeTruthy();
 
     act(() => {
       jest.advanceTimersByTime(600);
@@ -132,7 +133,7 @@ describe("QRScanner component", () => {
       jest.advanceTimersByTime(2000);
     });
 
-    expect(getByText("Align QR code within the frame")).toBeTruthy();
+    expect(getByText(enLogin.qrScanner.alignQRCode)).toBeTruthy();
 
     jest.useRealTimers();
   });

@@ -4,6 +4,7 @@ import React from "react";
 
 import ReportIssuePage from "@/app/report-issue-page";
 import { SettingsProvider } from "@/hooks/settings";
+import enReportIssue from "@/lib/i18n/locales/en/reportIssue.json";
 
 declare const global: any;
 
@@ -83,10 +84,12 @@ describe("ReportIssuePage", () => {
       <ReportIssuePage />,
     );
 
-    expect(getByText("Report an Issue")).toBeTruthy();
-    expect(getByText("What seems to be the problem?")).toBeTruthy();
-    expect(getByPlaceholderText("Please provide more context...")).toBeTruthy();
-    expect(getByText("Submit Report")).toBeTruthy();
+    expect(getByText(enReportIssue.reportAnIssue)).toBeTruthy();
+    expect(getByText(enReportIssue.whatSeemsToBeTheProblem)).toBeTruthy();
+    expect(
+      getByPlaceholderText(enReportIssue.detailsInput.placeholder),
+    ).toBeTruthy();
+    expect(getByText(enReportIssue.actionButtons.submitReport)).toBeTruthy();
   });
 
   it("updates the details input text correctly when user types", async () => {
@@ -94,7 +97,7 @@ describe("ReportIssuePage", () => {
       <ReportIssuePage />,
     );
 
-    const input = getByPlaceholderText("Please provide more context...");
+    const input = getByPlaceholderText(enReportIssue.detailsInput.placeholder);
 
     fireEvent.changeText(input, "The AC is broken in carriage 3.");
 
@@ -103,10 +106,12 @@ describe("ReportIssuePage", () => {
 
   it("triggers a success alert on submit", async () => {
     const { getByText } = await renderWithProvider(<ReportIssuePage />);
-    const submitBtn = getByText("Submit Report");
+    const submitBtn = getByText(enReportIssue.actionButtons.submitReport);
 
     fireEvent.press(submitBtn);
 
-    expect(global.alert).toHaveBeenCalledWith("Report submitted successfully!");
+    expect(global.alert).toHaveBeenCalledWith(
+      enReportIssue.reportSubmittedSuccessfully,
+    );
   });
 });

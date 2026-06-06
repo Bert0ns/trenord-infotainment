@@ -1,8 +1,8 @@
-import React from "react";
-import { render } from "@testing-library/react-native";
 import MediaScreen from "@/app/(tabs)/media";
+import enMedia from "@/lib/i18n/locales/en/media.json";
 import { useJourneyStore } from "@/store/journeyStore";
-import { Text } from "react-native";
+import { render } from "@testing-library/react-native";
+import React from "react";
 
 jest.mock("expo-router", () => {
   const React = require("react");
@@ -102,11 +102,11 @@ describe("MediaScreen", () => {
     );
     const { getByText } = render(<MediaScreen />);
 
-    expect(getByText("Featured Entertainment")).toBeTruthy();
-    expect(getByText("Films, Documentaries, Podcasts.")).toBeTruthy();
-    expect(getByText("Films")).toBeTruthy();
-    expect(getByText("Documentaries")).toBeTruthy();
-    expect(getByText("Podcasts")).toBeTruthy();
+    expect(getByText(enMedia.featuredEntertainment)).toBeTruthy();
+    expect(getByText(enMedia.filmsDocumentariesPodcasts)).toBeTruthy();
+    expect(getByText(enMedia.films)).toBeTruthy();
+    expect(getByText(enMedia.documentaries)).toBeTruthy();
+    expect(getByText(enMedia.podcasts)).toBeTruthy();
     expect(getByText("Mountain Silence")).toBeTruthy();
     expect(getByText("Cosmos")).toBeTruthy();
     expect(getByText("Tech Transit Today")).toBeTruthy();
