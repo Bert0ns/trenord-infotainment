@@ -2,7 +2,7 @@ import React from "react";
 import { render } from "@testing-library/react-native";
 
 // Force import the non-iOS implementation
-import { IconSymbol } from "@/components/ui/icon-symbol.tsx";
+import { IconSymbol } from "@/components/ui/icon-symbol";
 
 jest.mock("@expo/vector-icons/MaterialIcons", () => "MaterialIcons");
 jest.mock("expo-symbols", () => ({
