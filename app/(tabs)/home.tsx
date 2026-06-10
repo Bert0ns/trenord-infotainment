@@ -20,9 +20,24 @@ export default function HomeScreen() {
 
   if (!trainId) return <Redirect href="/login" />;
 
-  const origDestData = trainData[0];
-  const trainInfo = trainData[0].journey_list[0].train;
-  const passListArray = trainData[0].journey_list[0].pass_list;
+  const origDestData = trainData?.[0];
+  const trainInfo = origDestData?.journey_list?.[0]?.train;
+  const passListArray = origDestData?.journey_list?.[0]?.pass_list;
+
+  if (!origDestData || !trainInfo || !passListArray) {
+    return (
+      <View
+        style={[
+          styles.container,
+          { alignItems: "center", justifyContent: "center" },
+        ]}
+      >
+        <Text style={styles.pageSubtitle}>
+          Loading or no train data available.
+        </Text>
+      </View>
+    );
+  }
 
   // Find the last station departed and return the first successor that is not cancelled
   const nextStop = passListArray

@@ -53,6 +53,7 @@ export default function TimelineCard({
     const currentMinutes = now.getHours() * 60 + now.getMinutes();
     let diff = getMinutes(scheduledTime) - currentMinutes + delayMinutes;
     if (diff < -720) diff += 1440;
+    if (diff > 720) diff -= 1440;
     return diff;
   };
 

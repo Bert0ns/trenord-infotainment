@@ -12,9 +12,24 @@ export default function JourneyScreen() {
   const trainId = useJourneyStore((s) => s.trainId);
   const destinationStation = useJourneyStore((s) => s.destinationStation);
   const trainData = useJourneyStore((s) => s.trainData);
-  const origDestData = trainData[0];
-  const trainInfo = trainData[0].journey_list[0].train;
-  const passListArray = trainData[0].journey_list[0].pass_list;
+  const origDestData = trainData?.[0];
+  const trainInfo = origDestData?.journey_list?.[0]?.train;
+  const passListArray = origDestData?.journey_list?.[0]?.pass_list;
+
+  if (!origDestData || !trainInfo || !passListArray) {
+    return (
+      <View
+        style={[
+          styles.container,
+          { alignItems: "center", justifyContent: "center" },
+        ]}
+      >
+        <Text style={styles.pageSubtitle}>
+          Loading or no train data available.
+        </Text>
+      </View>
+    );
+  }
 
   if (!trainId) return <Redirect href="/login" />;
 
@@ -77,8 +92,10 @@ export default function JourneyScreen() {
       <View style={styles.timelineContainer}>
         {passListArray.map((pass: any, index: any) => {
           let status: any = "future";
-          if (
-            pass.pass_count < nextStop.pass_count ||
+          if (pass === nextStop) {
+            status = "current";
+          } else if (
+            (nextStop && pass.pass_count < nextStop.pass_count) ||
             (pass.type === "O" &&
               pass.actual_data?.dep_actual_time !== undefined) ||
             (pass.type === "D" &&
@@ -87,8 +104,6 @@ export default function JourneyScreen() {
               pass.actual_data?.dep_actual_time !== undefined)
           ) {
             status = "past";
-          } else if (pass === nextStop) {
-            status = "current";
           }
 
           const scheduledTime =
