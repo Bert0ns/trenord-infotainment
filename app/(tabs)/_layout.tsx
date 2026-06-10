@@ -2,7 +2,10 @@ import Header from "@/components/header";
 import CustomTabBar from "@/components/tabBar";
 import { fetchTrainData } from "@/lib/api/trenord";
 import { logger } from "@/lib/logger";
-import { useJourneyStore } from "@/store/journeyStore";
+import {
+  useJourneyStore,
+  selectIsJourneyCompleted,
+} from "@/store/journeyStore";
 import { Inter_700Bold, useFonts } from "@expo-google-fonts/inter";
 import { Tabs } from "expo-router";
 import { useEffect } from "react";
@@ -22,9 +25,7 @@ export default function TabLayout() {
   const trainData = useJourneyStore((s) => s.trainData);
   const setJourney = useJourneyStore((s) => s.setJourney);
 
-  const isJourneyCompleted =
-    trainData?.[0]?.journey_list?.[0]?.pass_list?.slice(-1)[0]?.actual_data
-      ?.arr_actual_time !== undefined;
+  const isJourneyCompleted = useJourneyStore(selectIsJourneyCompleted);
 
   useEffect(() => {
     if (!trainId || !destinationStation || isJourneyCompleted) return;

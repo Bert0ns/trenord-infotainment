@@ -1,6 +1,12 @@
 import TimelineCard from "@/components/journey-components/timelineCard";
 import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
-import { useJourneyStore } from "@/store/journeyStore";
+import {
+  useJourneyStore,
+  selectOrigDestData,
+  selectTrainInfo,
+  selectPassList,
+  selectNextStop,
+} from "@/store/journeyStore";
 import { capitalizeWords } from "@/utils/string";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Redirect } from "expo-router";
@@ -15,13 +21,12 @@ export default function JourneyScreen() {
   const theme = useTheme();
   const trainId = useJourneyStore((s) => s.trainId);
   const destinationStation = useJourneyStore((s) => s.destinationStation);
-  const trainData = useJourneyStore((s) => s.trainData);
+  const origDestData = useJourneyStore(selectOrigDestData);
+  const trainInfo = useJourneyStore(selectTrainInfo);
+  const passListArray = useJourneyStore(selectPassList);
+  const nextStop = useJourneyStore(selectNextStop);
 
   if (!trainId) return <Redirect href="/login" />;
-
-  const origDestData = trainData?.[0];
-  const trainInfo = origDestData?.journey_list?.[0]?.train;
-  const passListArray = origDestData?.journey_list?.[0]?.pass_list;
 
   if (!origDestData || !trainInfo || !passListArray) {
     return (
@@ -35,17 +40,6 @@ export default function JourneyScreen() {
       </View>
     );
   }
-
-  if (!trainId) return <Redirect href="/login" />;
-
-  const nextStop = passListArray
-    .slice(
-      passListArray.findLastIndex(
-        (pass: any) => pass.actual_data?.dep_actual_time !== undefined,
-      ) + 1,
-    )
-    .find((pass: any) => pass.cancelled !== true);
-
   logger.log(
     `[Journey Screen] Rendering timeline for train ${trainId}. ${passListArray.length} stations loaded.`,
   );

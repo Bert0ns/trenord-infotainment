@@ -79,6 +79,7 @@ jest.mock("@/hooks/use-theme-color", () => ({
 }));
 
 jest.mock("@/store/journeyStore", () => ({
+  ...jest.requireActual("@/store/journeyStore"),
   useJourneyStore: jest.fn(),
 }));
 
