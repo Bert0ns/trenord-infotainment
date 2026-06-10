@@ -5,9 +5,12 @@ import { capitalizeWords } from "@/utils/string";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Redirect } from "expo-router";
 import { ScrollView, Text, View } from "react-native";
+
 import { logger } from "@/lib/logger";
+import { useTranslation } from "react-i18next";
 
 export default function JourneyScreen() {
+  const { t } = useTranslation("common");
   const styles = useStyles();
   const theme = useTheme();
   const trainId = useJourneyStore((s) => s.trainId);
@@ -25,9 +28,7 @@ export default function JourneyScreen() {
           { alignItems: "center", justifyContent: "center" },
         ]}
       >
-        <Text style={styles.pageSubtitle}>
-          Loading or no train data available.
-        </Text>
+        <Text style={styles.pageSubtitle}>{t("loadingTrainData")}</Text>
       </View>
     );
   }
