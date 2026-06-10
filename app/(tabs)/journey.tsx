@@ -5,6 +5,7 @@ import { capitalizeWords } from "@/utils/string";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Redirect } from "expo-router";
 import { ScrollView, Text, View } from "react-native";
+import { logger } from "@/lib/logger";
 
 export default function JourneyScreen() {
   const styles = useStyles();
@@ -40,6 +41,10 @@ export default function JourneyScreen() {
       ) + 1,
     )
     .find((pass: any) => pass.cancelled !== true);
+
+  logger.log(
+    `[Journey Screen] Rendering timeline for train ${trainId}. ${passListArray.length} stations loaded.`,
+  );
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>

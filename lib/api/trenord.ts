@@ -1,4 +1,5 @@
 import { KJUR, KEYUTIL } from "jsrsasign";
+import { logger } from "@/lib/logger";
 
 // In Expo, EXPO_PUBLIC variables are stringified into the bundle
 const clientId = process.env.EXPO_PUBLIC_TRENORD_CLIENT_ID!;
@@ -25,13 +26,13 @@ function getJwk() {
     cachedJwk = JSON.parse(jwkRaw);
     return cachedJwk;
   } catch (error) {
-    console.error("Failed to parse JWK string", error);
+    logger.error("Failed to parse JWK string", error);
     throw new Error("Invalid JWK JSON format");
   }
 }
 
 async function getAccessToken(): Promise<string> {
-  console.log("[Trenord API] Getting private JWK for authentication...");
+  logger.log("[Trenord API] Getting private JWK for authentication...");
   const jwk = getJwk();
 
   // Parse JWK into an RSA key object compatible with jsrsasign
@@ -71,7 +72,7 @@ async function getAccessToken(): Promise<string> {
     "token_endpoint_auth_method=private_key_jwt",
   ].join("&");
 
-  console.log(
+  logger.log(
     "[Trenord API] Requesting Bearer Access Token from Trenord IDP...",
   );
   const tokenResponse = await fetch(tokenUrl, {
@@ -82,7 +83,7 @@ async function getAccessToken(): Promise<string> {
 
   if (!tokenResponse.ok) {
     const errText = await tokenResponse.text();
-    console.error(
+    logger.error(
       `[Trenord API] Token Request Failed! Status: ${tokenResponse.status}`,
       errText,
     );
@@ -90,7 +91,7 @@ async function getAccessToken(): Promise<string> {
   }
 
   const tokenData = await tokenResponse.json();
-  console.log("[Trenord API] Access Token acquired successfully!)");
+  logger.log("[Trenord API] Access Token acquired successfully!");
   return tokenData.access_token;
 }
 
@@ -98,7 +99,7 @@ export async function fetchTrainData(trainId: string) {
   const accessToken = await getAccessToken();
   const url = `${apiUrl}/train/${trainId}`;
 
-  console.log(`[Trenord API] Fetching live data for train ${trainId}...`);
+  logger.log(`[Trenord API] Fetching live data for train ${trainId}...`);
   const response = await fetch(url, {
     method: "GET",
     headers: {
@@ -107,13 +108,13 @@ export async function fetchTrainData(trainId: string) {
   });
 
   if (!response.ok) {
-    console.error(
+    logger.error(
       `[Trenord API] Train fetch failed with status ${response.status}`,
     );
     throw new Error(`Train API Call failed with status ${response.status}`);
   }
 
-  console.log(
+  logger.log(
     `[Trenord API] Train data retrieved successfully for train ${trainId}.`,
   );
   return response.json();

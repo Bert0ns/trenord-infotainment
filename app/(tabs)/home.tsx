@@ -10,6 +10,7 @@ import { capitalizeWords } from "@/utils/string";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Redirect } from "expo-router";
 import { FlatList, ScrollView, Text, View } from "react-native";
+import { logger } from "@/lib/logger";
 
 export default function HomeScreen() {
   const styles = useStyles();
@@ -55,6 +56,10 @@ export default function HomeScreen() {
     nextStop?.actual_data?.arr_actual_time !== undefined &&
     nextStop?.actual_data?.dep_actual_time === undefined &&
     !isJourneyCompleted;
+
+  logger.log(
+    `[Home Screen] Render train ${trainId}. Next stop: ${nextStop?.station?.station_ori_name || "None"}`,
+  );
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
