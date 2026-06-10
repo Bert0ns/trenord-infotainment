@@ -16,6 +16,9 @@ export default function JourneyScreen() {
   const trainId = useJourneyStore((s) => s.trainId);
   const destinationStation = useJourneyStore((s) => s.destinationStation);
   const trainData = useJourneyStore((s) => s.trainData);
+
+  if (!trainId) return <Redirect href="/login" />;
+
   const origDestData = trainData?.[0];
   const trainInfo = origDestData?.journey_list?.[0]?.train;
   const passListArray = origDestData?.journey_list?.[0]?.pass_list;

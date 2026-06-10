@@ -1,6 +1,6 @@
 import React from "react";
 import { render } from "@testing-library/react-native";
-import HomeScreen from "@/app/(tabs)/home";
+import JourneyScreen from "@/app/(tabs)/journey";
 import { useJourneyStore } from "@/store/journeyStore";
 
 jest.mock("expo-router", () => {
@@ -17,61 +17,20 @@ jest.mock("@expo/vector-icons", () => ({
 
 jest.mock("@/hooks/use-theme-color", () => ({
   createStyleHook: () => () => ({
-    iconColor: { color: "#000" },
-    titleHome: {},
-    title: {},
-    seeAll: {},
-    seeMore: {},
     container: {},
     content: {},
     pageHeader: {},
     pageTitle: {},
     pageSubtitle: {},
-    themeRow: {},
-    themeBox: {},
-    themeBoxActive: {},
-    themeBoxText: {},
-    themeBoxTextActive: {},
-    dropdown: {},
-    dropdownText: {},
-    footer: {},
-    reportButton: {},
-    reportButtonText: {},
-    versionText: {},
-    linksRow: {},
-    link: {},
-    card: {},
     timelineContainer: {},
-    newsCard: {},
-    tag: {},
-    newsText: {},
-    discoverCard: {},
-    image: {},
-    info: {},
-    discoverTitle: {},
-    discoverSubtitle: {},
-    button: {},
-    buttonText: {},
-    timelineItem: {},
-    timelineContent: {},
-    timelineTimeContainer: {},
-    timeText: {},
-    stationText: {},
-    delayText: {},
-    platformText: {},
-    timelineDot: {},
-    timelineLine: {},
   }),
   useTheme: () => ({
     colors: {
       primary: "#000",
       mutedForeground: "#555",
-      primaryForeground: "#fff",
       background: "#fff",
       border: "#eee",
       foreground: "#000",
-      muted: "#ccc",
-      destructive: "#f00",
     },
     spacing: { sm: 4, md: 8, lg: 16 },
     borderRadius: { sm: 4, md: 8, lg: 16, xl: 24 },
@@ -82,7 +41,7 @@ jest.mock("@/store/journeyStore", () => ({
   useJourneyStore: jest.fn(),
 }));
 
-describe("HomeScreen", () => {
+describe("JourneyScreen", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -91,39 +50,54 @@ describe("HomeScreen", () => {
     (useJourneyStore as unknown as jest.Mock).mockImplementation(
       (selector: any) => selector({ trainId: null }),
     );
-    const { getByText } = render(<HomeScreen />);
+    const { getByText } = render(<JourneyScreen />);
     expect(getByText("Redirected to login")).toBeTruthy();
   });
 
-  it("renders train info and destination successfully", () => {
+  it("renders the timeline correctly with train data", () => {
     (useJourneyStore as unknown as jest.Mock).mockImplementation(
       (selector: any) =>
         selector({
-          trainId: "1234",
-          destinationStation: { station_ori_name: "Milano Centrale" },
+          trainId: "4567",
+          destinationStation: { station_ori_name: "Bergamo" },
           trainData: [
             {
-              dep_time: "08:00:00",
-              arr_time: "09:00:00",
+              dep_time: "10:00:00",
+              arr_time: "11:00:00",
               journey_list: [
                 {
                   train: {
-                    train_category: "REG",
-                    delay: 5,
-                    crowding: { level: "low" },
+                    train_category: "RE",
+                    delay: 2,
                   },
                   pass_list: [
                     {
-                      station: { station_ori_name: "Como" },
-                      actual_data: { dep_actual_time: "08:05:00" },
+                      station: {
+                        station_id: "S1",
+                        station_ori_name: "Milano Porta Garibaldi",
+                      },
+                      actual_data: { dep_actual_time: "10:02:00" },
                       cancelled: false,
                       pass_count: 1,
+                      type: "O",
+                      dep_time: "10:00:00",
                     },
                     {
-                      station: { station_ori_name: "Milano Centrale" },
-                      arr_time: "09:00:00",
+                      station: { station_id: "S2", station_ori_name: "Monza" },
                       actual_data: {},
                       cancelled: false,
+                      type: "F",
+                      arr_time: "10:20:00",
+                    },
+                    {
+                      station: {
+                        station_id: "S3",
+                        station_ori_name: "Bergamo",
+                      },
+                      actual_data: {},
+                      cancelled: false,
+                      type: "D",
+                      arr_time: "11:00:00",
                     },
                   ],
                 },
@@ -132,8 +106,13 @@ describe("HomeScreen", () => {
           ],
         }),
     );
-    const { getByText } = render(<HomeScreen />);
-    expect(getByText("Milano Centrale - REG 1234")).toBeTruthy();
-    expect(getByText("08:00 - 09:00")).toBeTruthy();
+
+    const { getByText, getAllByText } = render(<JourneyScreen />);
+    expect(getByText("Bergamo - RE 4567")).toBeTruthy();
+    expect(getByText("10:00 - 11:00")).toBeTruthy();
+    expect(getByText("Milano Porta Garibaldi")).toBeTruthy();
+    expect(getByText("Monza")).toBeTruthy();
+    // Use getAllByText because it appears in the header and timeline
+    expect(getAllByText("Bergamo").length).toBeGreaterThan(0);
   });
 });
