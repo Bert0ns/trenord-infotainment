@@ -31,8 +31,8 @@ export default function LiveStatusCard({
   return (
     <Card style={styles.card}>
       <View style={styles.topRow}>
-        {isFirst && <Text style={styles.label}>t("startingFrom")</Text>}
-        {!isFirst && <Text style={styles.label}>t("nextStop")</Text>}
+        {isFirst && <Text style={styles.label}>{t("startingFrom")}</Text>}
+        {!isFirst && <Text style={styles.label}>{t("nextStop")}</Text>}
         {delayMinutes > 0 && (
           <View style={styles.delayBadge}>
             <MaterialIcons

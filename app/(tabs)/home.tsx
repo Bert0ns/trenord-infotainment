@@ -15,11 +15,11 @@ export default function HomeScreen() {
   const styles = useStyles();
   const theme = useTheme();
   const trainId = useJourneyStore((s) => s.trainId);
+  const destinationStation = useJourneyStore((s) => s.destinationStation);
+  const trainData = useJourneyStore((s) => s.trainData);
 
   if (!trainId) return <Redirect href="/login" />;
 
-  const destinationStation = useJourneyStore((s) => s.destinationStation);
-  const trainData = useJourneyStore((s) => s.trainData);
   const origDestData = trainData[0];
   const trainInfo = trainData[0].journey_list[0].train;
   const passListArray = trainData[0].journey_list[0].pass_list;

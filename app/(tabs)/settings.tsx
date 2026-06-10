@@ -18,7 +18,7 @@ export default function SettingsScreen() {
   const { t } = useTranslation("settings");
 
   const { settings, set } = useSettings();
-  const { trainId, clearJourney } = useJourneyStore();
+  const { trainId } = useJourneyStore();
 
   const languages: Record<LanguageCode, string> = {
     en: "English (UK)",

@@ -9,7 +9,7 @@ export type NodeStatus = "past" | "current" | "future";
 interface TimelineCardProps {
   status: NodeStatus;
   stationName: string;
-  scheduledTime?: string;
+  scheduledTime: string;
   estimatedTime?: string;
   actualTime?: string;
   platform?: string;
@@ -122,20 +122,20 @@ export default function TimelineCard({
                 {/* Arriving + Platform */}
                 {isCurrent && !isFirst && (
                   <Text style={styles.arrivingText}>
-                    Arriving in{" "}
+                    {t("arrivingIn")}{" "}
                     {toMinutes(scheduledTime) -
                       toMinutes(currentTime) +
                       delayMinutes}{" "}
-                    min • Platform {platform}
+                    {t("min") + " • " + t("platform")} {platform}
                   </Text>
                 )}
                 {isCurrent && isFirst && (
                   <Text style={styles.arrivingText}>
-                    t("departingIn"){" "}
+                    {t("departingIn")}{" "}
                     {toMinutes(scheduledTime) -
                       toMinutes(currentTime) +
                       delayMinutes}{" "}
-                    t("min") • t("platform") {platform}
+                    {t("min") + " • " + t("platform")} {platform}
                   </Text>
                 )}
                 {/* Cancelled */}

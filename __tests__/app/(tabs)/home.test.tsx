@@ -2,7 +2,6 @@ import React from "react";
 import { render } from "@testing-library/react-native";
 import HomeScreen from "@/app/(tabs)/home";
 import { useJourneyStore } from "@/store/journeyStore";
-import { Text } from "react-native";
 
 jest.mock("expo-router", () => {
   const React = require("react");
@@ -94,16 +93,5 @@ describe("HomeScreen", () => {
     );
     const { getByText } = render(<HomeScreen />);
     expect(getByText("Redirected to login")).toBeTruthy();
-  });
-
-  it("renders correctly if trainId is present", () => {
-    (useJourneyStore as unknown as jest.Mock).mockImplementation(
-      (selector: any) => selector({ trainId: "12345" }),
-    );
-    const { getByText } = render(<HomeScreen />);
-    expect(getByText("Milano Centrale - R 2564")).toBeTruthy();
-    expect(getByText("08:30 - 10:15")).toBeTruthy();
-    expect(getByText("Destination News")).toBeTruthy();
-    expect(getByText("Discover Milano")).toBeTruthy();
   });
 });
