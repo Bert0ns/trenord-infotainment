@@ -56,12 +56,6 @@ export default function HomeScreen() {
     nextStop?.actual_data?.dep_actual_time === undefined &&
     !isJourneyCompleted;
 
-  console.log(
-    "Crowding level:",
-    trainInfo.crowding ? trainInfo.crowding.level : "Unknown",
-  );
-  console.log("is First: " + (nextStop?.pass_count === 1));
-
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.pageHeader}>

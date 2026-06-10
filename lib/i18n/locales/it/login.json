@@ -7,6 +7,7 @@
   "settings": "Impostazioni",
   "startJourney": "Inizia il Viaggio",
   "ticketCode": "Codice Biglietto",
+  "or": "OPPURE",
   "qrScanner": {
     "useQRScanner": "Usa Scansione QR",
     "enableCameraToScan": "Abilita Fotocamera per Scansionare il Biglietto",

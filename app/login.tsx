@@ -87,7 +87,7 @@ export default function LoginScreen() {
                     </View>
                     <View style={styles.dividerContainer}>
                       <View style={styles.dividerLine} />
-                      <Text style={styles.dividerText}>OR</Text>
+                      <Text style={styles.dividerText}>{t("or")}</Text>
                       <View style={styles.dividerLine} />
                     </View>
                   </>

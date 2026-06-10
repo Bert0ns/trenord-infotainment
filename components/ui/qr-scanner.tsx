@@ -155,11 +155,12 @@ export default function QRScanner({ onScan, style }: QRScannerProps) {
           barcodeTypes: ["qr"],
         }}
         onBarcodeScanned={handleBarcodeScanned}
-      >
+      />
+      <View style={StyleSheet.absoluteFill} pointerEvents="box-none">
         <View style={styles.overlay}>
           <View style={styles.maskHole} pointerEvents="none" />
 
-          <View style={styles.cutout}>
+          <View style={styles.cutout} pointerEvents="none">
             <View style={[styles.corner, styles.topLeftCorner]} />
             <View style={[styles.corner, styles.topRightCorner]} />
             <View style={[styles.corner, styles.bottomLeftCorner]} />
@@ -168,7 +169,7 @@ export default function QRScanner({ onScan, style }: QRScannerProps) {
 
           <Text style={styles.instructionText}>{t("alignQRCode")}</Text>
         </View>
-      </CameraView>
+      </View>
     </View>
   );
 }

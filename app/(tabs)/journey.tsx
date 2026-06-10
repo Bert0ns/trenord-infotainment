@@ -41,27 +41,6 @@ export default function JourneyScreen() {
     )
     .find((pass: any) => pass.cancelled !== true);
 
-  /*passListArray.forEach((pass: any) => {
-    console.log({
-      station_name: pass.station.station_ori_name,
-      //station_id: pass.station.station_id,
-      //dep_time: pass.dep_time,
-      dep_actual_time: pass.actual_data
-        ? pass.actual_data.dep_actual_time
-        : null,
-      //arr_time: pass.arr_time,
-      arr_actual_time: pass.actual_data
-        ? pass.actual_data.arr_actual_time
-        : null,
-      //pass_type: pass.type,
-    });
-  });*/
-
-  console.log(
-    "Next Stop: ",
-    nextStop ? nextStop.station.station_ori_name : "Unknown",
-  );
-
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.pageHeader}>
@@ -137,40 +116,6 @@ export default function JourneyScreen() {
             />
           );
         })}
-        {/*
-        <TimelineCard
-          status="past"
-          stationName="Milano Centrale"
-          scheduledTime="11:15"
-          //estimatedTime="11:17"
-          platform="8"
-        />
-
-        <TimelineCard
-          status="current"
-          stationName="Monza"
-          scheduledTime="10:28"
-          actualTime="10:28"
-          platform="10"
-          delayMinutes={2}
-        />
-
-        <TimelineCard
-          status="future"
-          stationName="Milano Greco Pirelli"
-          scheduledTime="11:06"
-          estimatedTime="11:06"
-          platform="3"
-        />
-
-        <TimelineCard
-          status="future"
-          stationName="Lecco"
-          scheduledTime="11:15"
-          //estimatedTime="11:17"
-          isCancelled={true}
-          isLast={true}
-        />*/}
       </View>
     </ScrollView>
   );
