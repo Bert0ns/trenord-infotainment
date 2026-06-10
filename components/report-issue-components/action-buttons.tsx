@@ -1,6 +1,7 @@
-import { Ionicons } from "@expo/vector-icons";
-import { Pressable, Text, View } from "react-native";
 import { createStyleHook } from "@/hooks/use-theme-color";
+import { Ionicons } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
+import { Pressable, Text, View } from "react-native";
 
 type ActionButtonsProps = {
   onSubmit: () => void;
@@ -9,6 +10,7 @@ type ActionButtonsProps = {
 
 export function ActionButtons({ onSubmit, onCancel }: ActionButtonsProps) {
   const styles = useStyles();
+  const { t } = useTranslation("reportIssue", { keyPrefix: "actionButtons" });
 
   return (
     <View>
@@ -17,7 +19,7 @@ export function ActionButtons({ onSubmit, onCancel }: ActionButtonsProps) {
         accessibilityRole="button"
         onPress={onSubmit}
       >
-        <Text style={styles.submitLabel}>Submit Report</Text>
+        <Text style={styles.submitLabel}>{t("submitReport")}</Text>
         <Ionicons
           name="arrow-forward"
           size={18}
@@ -33,7 +35,7 @@ export function ActionButtons({ onSubmit, onCancel }: ActionButtonsProps) {
           pressed && styles.cancelPressed,
         ]}
       >
-        <Text style={styles.cancelLabel}>Cancel</Text>
+        <Text style={styles.cancelLabel}>{t("cancel")}</Text>
       </Pressable>
     </View>
   );

@@ -1,0 +1,42 @@
+{
+  "backToLogin": "Back to Login",
+  "language": {
+    "default": "System Default",
+    "placeholder": "Select language",
+    "title": "Language"
+  },
+  "logout": "Log Out",
+  "notifications": {
+    "delayAlerts": {
+      "description": "Real-time schedule changes",
+      "title": "Delay Alerts"
+    },
+    "journeyProgress": {
+      "description": "Updates on approaching stops",
+      "title": "Journey Progress"
+    },
+    "title": "Notifications",
+    "weatherAlerts": {
+      "description": "Major network issues",
+      "title": "Weather & Disruptions"
+    }
+  },
+  "reportIssue": "Report an Issue",
+  "subtitle": "Manage your app preferences and travel experience",
+  "theme": {
+    "title": "App Theme",
+    "options": {
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    }
+  },
+  "title": "Settings",
+  "travelComfort": {
+    "antiSickness": {
+      "description": "Reduces motion animations and increases contrast to mitigate travel nausea.",
+      "label": "Anti-Sickness Mode"
+    },
+    "title": "Travel Comfort"
+  }
+}

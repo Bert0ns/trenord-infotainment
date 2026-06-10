@@ -14,10 +14,13 @@ import {
   type SheetHandle,
   issueOptions,
 } from "@/components/report-issue-components";
+import { logger } from "@/lib/logger";
+import { useTranslation } from "react-i18next";
 
 export default function ReportIssuePage() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const { t } = useTranslation("reportIssue");
   const sheetRef = useRef<SheetHandle | null>(null);
   const [selectedIssues, setSelectedIssues] = useState<Set<string>>(
     () => new Set(["other-issue"]),
@@ -49,11 +52,11 @@ export default function ReportIssuePage() {
   };
 
   const onSubmitReportIssue = () => {
-    alert("Report submitted successfully!");
-    console.log("Report Issue form Data:", {
+    logger.log("Report Issue form Data:", {
       selectedIssues: Array.from(selectedIssues),
       details,
     });
+    alert(t("reportSubmittedSuccessfully"));
     requestClose();
   };
 
@@ -63,13 +66,13 @@ export default function ReportIssuePage() {
       bottomInset={insets.bottom}
       onClose={() => router.back()}
     >
-      <ReportHeader title="Report an Issue" onClose={requestClose} />
+      <ReportHeader title={t("reportAnIssue")} onClose={requestClose} />
 
       <ScrollView
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <SectionTitle>What seems to be the problem?</SectionTitle>
+        <SectionTitle>{t("whatSeemsToBeTheProblem")}</SectionTitle>
         <IssueGrid
           options={primaryOptions}
           selectedIds={selectedIssues}
@@ -83,7 +86,7 @@ export default function ReportIssuePage() {
           variant="wide"
         />
 
-        <SectionTitle>Additional details (Optional)</SectionTitle>
+        <SectionTitle>{t("additionalDetails")}</SectionTitle>
         <DetailsInput value={details} onChange={setDetails} />
 
         <ActionButtons onSubmit={onSubmitReportIssue} onCancel={requestClose} />

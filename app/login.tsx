@@ -1,10 +1,14 @@
 import DropDownSelector from "@/components/ui/dropDownSelector";
+import QRScanner from "@/components/ui/qr-scanner";
 import { Fonts } from "@/constants/theme";
+import { useLogin } from "@/hooks/use-login";
 import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React, { useState, useEffect } from "react";
+import React from "react";
+import { useTranslation } from "react-i18next";
 import {
+  ActivityIndicator,
   ImageBackground,
   KeyboardAvoidingView,
   Platform,
@@ -14,11 +18,8 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  ActivityIndicator,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { fetchTrainData } from "@/lib/api/trenord";
-import { useJourneyStore, Station } from "@/store/journeyStore";
 
 const BACKGROUND_IMAGE = {
   uri: "https://images.unsplash.com/photo-1474487548417-781cb71495f3?auto=format&fit=crop&w=1400&q=80",
@@ -29,105 +30,23 @@ export default function LoginScreen() {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const { t } = useTranslation("login");
 
-  const [ticketCode, setTicketCode] = useState("");
-  const [destination, setDestination] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [trainData, setTrainData] = useState<any>(null);
-  const [stations, setStations] = useState<Station[]>([]);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
-
-  const setJourney = useJourneyStore((state) => state.setJourney);
-
-  useEffect(() => {
-    // Only clear on initial mount if they arrive here already logged in
-    const checkAndClear = () => {
-      if (useJourneyStore.getState().trainId) {
-        useJourneyStore.getState().clearJourney();
-      }
-    };
-
-    if (useJourneyStore.persist.hasHydrated()) {
-      checkAndClear();
-    } else {
-      const unsub = useJourneyStore.persist.onFinishHydration(() => {
-        checkAndClear();
-      });
-      return () => {
-        unsub();
-      };
-    }
-  }, []);
-
-  const canSearch = ticketCode.length >= 4 && ticketCode.length <= 7;
-  const canStart = destination.length > 0;
-
-  function handleCodeChange(value: string) {
-    const digitsOnly = value.replace(/\D/g, "");
-    setTicketCode(digitsOnly);
-    if (errorMsg) setErrorMsg(null);
-    // Reset data if code changes
-    if (trainData) {
-      setTrainData(null);
-      setDestination("");
-      setStations([]);
-    }
-  }
-
-  async function handleSearch() {
-    if (!canSearch) return;
-    console.log(`[Login UI] Searching for train code: ${ticketCode}...`);
-    setIsLoading(true);
-    setErrorMsg(null);
-
-    // Yield to the UI thread so the spinner renders BEFORE the heavy crypto blocks the JS thread
-    await new Promise((resolve) => setTimeout(resolve, 50));
-
-    try {
-      const data = await fetchTrainData(ticketCode);
-      if (!data || data.length === 0 || !data[0].journey_list) {
-        console.warn("[Login UI] Train not found or empty response returned.");
-        setErrorMsg(
-          "We couldn't find any active train with this code. Please verify the number.",
-        );
-        setIsLoading(false);
-        return;
-      }
-      const passList = data[0].journey_list[0].pass_list || [];
-      console.log(
-        `[Login UI] Train found! Parsed ${passList.length} stations from the journey.`,
-      );
-
-      const parsedStations = passList.map((p: any) => ({
-        station_id: p.station.station_id,
-        station_ori_name: p.station.station_ori_name,
-      }));
-      setStations(parsedStations);
-      setTrainData(data);
-      console.log(
-        `[Login UI] Dropdown populated, waiting for user to select destination...`,
-      );
-    } catch (err: any) {
-      console.error("[Login UI] Connection Error:", err.message);
-      setErrorMsg("Connection error. Could not reach the server.");
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  function handleStart() {
-    if (!canStart) return;
-    const destStation = stations.find(
-      (s) => s.station_ori_name === destination,
-    );
-    if (destStation) {
-      console.log(
-        `[Login UI] Starting journey! Train: ${ticketCode}, Destination: ${destStation.station_ori_name} (${destStation.station_id})`,
-      );
-      setJourney(ticketCode, destStation, trainData);
-      router.replace("/(tabs)/home");
-    }
-  }
+  const {
+    ticketCode,
+    destination,
+    isLoading,
+    trainData,
+    stations,
+    errorMsg,
+    canSearch,
+    canStart,
+    setDestination,
+    handleCodeChange,
+    handleSearch,
+    handleQRScan,
+    handleStart,
+  } = useLogin();
 
   return (
     <View style={styles.container}>
@@ -157,12 +76,25 @@ export default function LoginScreen() {
                   <MaterialIcons name="train" size={34} color="#ffffff" />
                 </View>
                 <Text style={styles.title}>Trenord</Text>
-                <Text style={styles.subtitle}>Your journey starts here</Text>
+                <Text style={styles.subtitle}>{t("journeyStartsHere")}</Text>
               </View>
 
               <View style={styles.card}>
+                {!trainData && (
+                  <>
+                    <View style={styles.scannerWrapper}>
+                      <QRScanner onScan={handleQRScan} style={styles.scanner} />
+                    </View>
+                    <View style={styles.dividerContainer}>
+                      <View style={styles.dividerLine} />
+                      <Text style={styles.dividerText}>OR</Text>
+                      <View style={styles.dividerLine} />
+                    </View>
+                  </>
+                )}
+
                 <View style={styles.field}>
-                  <Text style={styles.label}>Ticket code</Text>
+                  <Text style={styles.label}>{t("ticketCode")}</Text>
                   <View style={styles.inputRow}>
                     <MaterialIcons
                       name="confirmation-number"
@@ -171,7 +103,7 @@ export default function LoginScreen() {
                       style={styles.inputIcon}
                     />
                     <TextInput
-                      placeholder="Enter 4-7 digit code"
+                      placeholder={t("enterTicketCode")}
                       placeholderTextColor={theme.colors.mutedForeground}
                       keyboardType="number-pad"
                       maxLength={7}
@@ -196,12 +128,12 @@ export default function LoginScreen() {
 
                 {trainData && stations.length > 0 && (
                   <View style={styles.field}>
-                    <Text style={styles.label}>Destination station</Text>
+                    <Text style={styles.label}>{t("destinationStation")}</Text>
                     <DropDownSelector
                       options={stations.map((s) => s.station_ori_name)}
                       selectedValue={destination}
                       onSelect={setDestination}
-                      placeholder="Select destination"
+                      placeholder={t("selectDestinationPlaceholder")}
                       leadingIconName="place"
                       leadingIconColor={theme.colors.mutedForeground}
                       placeholderTextColor={theme.colors.mutedForeground}
@@ -225,7 +157,9 @@ export default function LoginScreen() {
                       />
                     ) : (
                       <>
-                        <Text style={styles.startButtonText}>Search Train</Text>
+                        <Text style={styles.startButtonText}>
+                          {t("searchTrain")}
+                        </Text>
                         <MaterialIcons
                           name="search"
                           size={20}
@@ -244,7 +178,9 @@ export default function LoginScreen() {
                     onPress={handleStart}
                     disabled={!canStart}
                   >
-                    <Text style={styles.startButtonText}>Start Journey</Text>
+                    <Text style={styles.startButtonText}>
+                      {t("startJourney")}
+                    </Text>
                     <MaterialIcons
                       name="arrow-forward"
                       size={20}
@@ -265,7 +201,7 @@ export default function LoginScreen() {
                   size={18}
                   color={theme.colors.mutedForeground}
                 />
-                <Text style={styles.footerText}>Settings</Text>
+                <Text style={styles.footerText}>{t("settings")}</Text>
               </TouchableOpacity>
             </View>
           </ScrollView>
@@ -345,6 +281,30 @@ const useStyles = createStyleHook((theme) => ({
     shadowRadius: 12,
     shadowOffset: { width: 0, height: 8 },
     elevation: 10,
+  },
+  scannerWrapper: {
+    width: "100%",
+    alignItems: "center",
+  },
+  scanner: {
+    width: "100%",
+    height: 280,
+  },
+  dividerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 4,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: theme.colors.borderTransparent,
+  },
+  dividerText: {
+    marginHorizontal: 12,
+    fontSize: 12,
+    fontWeight: "700",
+    color: theme.colors.mutedForeground,
   },
   field: {
     gap: 8,

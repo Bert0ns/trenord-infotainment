@@ -2,6 +2,7 @@ import { createStyleHook } from "@/hooks/use-theme-color";
 import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
+import Card from "@/components/ui/card";
 
 interface PodcastCardProps {
   imageSource: any;
@@ -17,7 +18,7 @@ export default function PodcastCard({
   const styles = useStyles();
 
   return (
-    <View style={styles.container}>
+    <Card variant="muted" style={styles.container}>
       <Image source={imageSource} style={styles.image} />
 
       <View style={styles.textContainer}>
@@ -36,7 +37,7 @@ export default function PodcastCard({
           color={styles.iconColor.color}
         />
       </TouchableOpacity>
-    </View>
+    </Card>
   );
 }
 
@@ -44,9 +45,6 @@ const useStyles = createStyleHook((theme) => ({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: theme.colors.muted, // Grigio chiaro (#f3f3f8)
-    borderRadius: theme.borderRadius.lg,
-    padding: theme.spacing.sm + 2,
     marginBottom: theme.spacing.sm,
   },
   image: {

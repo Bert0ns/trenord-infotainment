@@ -1,4 +1,7 @@
+import { i18n } from "@/lib/i18n";
+import { logger } from "@/lib/logger";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getLocales } from "expo-localization";
 import React, {
   createContext,
   useCallback,
@@ -6,6 +9,11 @@ import React, {
   useEffect,
   useState,
 } from "react";
+
+/**
+ * Language codes supported by the app. The "--" code represents the system default language.
+ */
+export type LanguageCode = "en" | "it" | "--";
 
 /**
  * Shape for the global app settings.
@@ -17,7 +25,7 @@ export type AppSettings = {
   journeyProgress: boolean;
   delayAlerts: boolean;
   weatherAlerts: boolean;
-  language: string;
+  language: LanguageCode;
 };
 
 /**
@@ -29,7 +37,7 @@ const DEFAULTS: AppSettings = {
   journeyProgress: true,
   delayAlerts: true,
   weatherAlerts: false,
-  language: "English (UK)",
+  language: "--",
 };
 
 const KEY = "app:settings";
@@ -54,14 +62,28 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const [settings, setSettings] = useState<AppSettings>(DEFAULTS);
 
   useEffect(() => {
+    if (["en", "it"].includes(settings.language)) {
+      i18n.changeLanguage(settings.language);
+    } else {
+      i18n.changeLanguage(getLocales()[0].languageTag);
+    }
+  }, [settings.language]);
+
+  useEffect(() => {
     AsyncStorage.getItem(KEY).then((raw) => {
-      if (raw) setSettings({ ...DEFAULTS, ...JSON.parse(raw) });
+      if (raw) {
+        try {
+          setSettings({ ...DEFAULTS, ...JSON.parse(raw) });
+        } catch (e) {
+          logger.error("Failed to parse settings:", e);
+        }
+      }
     });
   }, []);
 
   const set = useCallback(
     <K extends keyof AppSettings>(key: K, val: AppSettings[K]) => {
-      console.log(`Setting ${key} to`, val);
+      logger.log(`Setting ${key} to ${val}`);
       setSettings((prev) => {
         const next = { ...prev, [key]: val };
         AsyncStorage.setItem(KEY, JSON.stringify(next));

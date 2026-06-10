@@ -1,6 +1,8 @@
+import Card from "@/components/ui/card";
 import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
 import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
 
 export interface WeatherData {
@@ -13,12 +15,13 @@ export interface WeatherData {
 export default function WeatherCard({ data }: { data: WeatherData | null }) {
   const styles = useStyles();
   const theme = useTheme();
+  const { t } = useTranslation("home", { keyPrefix: "weatherCard" });
 
   if (!data)
     return (
-      <View style={styles.card}>
-        <Text style={styles.label}>Loading weather...</Text>
-      </View>
+      <Card variant="muted" style={styles.card}>
+        <Text style={styles.label}>{t("loadingWeather")}</Text>
+      </Card>
     );
 
   const getIcon = () => {
@@ -34,7 +37,7 @@ export default function WeatherCard({ data }: { data: WeatherData | null }) {
   const iconInfo = getIcon();
 
   return (
-    <View style={styles.card}>
+    <Card variant="muted" style={styles.card}>
       <MaterialIcons
         name={iconInfo.name as any}
         size={40}
@@ -43,13 +46,13 @@ export default function WeatherCard({ data }: { data: WeatherData | null }) {
       />
       <View>
         <Text style={styles.label}>
-          {data.city} at {data.time}
+          {data.city} {t("at")} {data.time}
         </Text>
         <Text style={styles.value}>
           {data.temperature}°C, {data.condition}
         </Text>
       </View>
-    </View>
+    </Card>
   );
 }
 
@@ -57,9 +60,6 @@ const useStyles = createStyleHook((theme) => ({
   card: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: theme.colors.muted,
-    padding: theme.spacing.md,
-    borderRadius: theme.borderRadius.lg,
     marginBottom: theme.spacing.lg,
   },
   icon: { marginRight: theme.spacing.md },

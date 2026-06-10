@@ -1,0 +1,287 @@
+import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
+import { MaterialIcons } from "@expo/vector-icons";
+import { CameraView, useCameraPermissions } from "expo-camera";
+import * as Haptics from "expo-haptics";
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
+
+interface QRScannerProps {
+  onScan: (data: string) => void;
+  style?: any;
+}
+
+export default function QRScanner({ onScan, style }: QRScannerProps) {
+  const [permission, requestPermission] = useCameraPermissions();
+  const [scanned, setScanned] = useState(false);
+  const theme = useTheme();
+  const styles = useStyles();
+  const { t } = useTranslation("login", { keyPrefix: "qrScanner" });
+
+  // Success Animation setup
+  const checkScale = useSharedValue(0);
+  const checkOpacity = useSharedValue(0);
+
+  const checkStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: checkScale.value }],
+    opacity: checkOpacity.value,
+  }));
+
+  if (!permission) {
+    return <View />;
+  }
+
+  const handleBarcodeScanned = ({ data }: any) => {
+    if (!scanned) {
+      setScanned(true);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+
+      // Animate checkmark
+      checkScale.value = withTiming(1, {
+        duration: 400,
+        easing: Easing.out(Easing.back(1.5)),
+      });
+      checkOpacity.value = withTiming(1, { duration: 200 });
+
+      // Delay onScan slightly to let user see the checkmark popup
+      setTimeout(() => {
+        onScan(data);
+      }, 600);
+
+      // Reset after a bit
+      setTimeout(() => {
+        setScanned(false);
+        checkScale.value = 0;
+        checkOpacity.value = 0;
+      }, 2500);
+    }
+  };
+
+  if (!permission.granted) {
+    return (
+      <View style={[styles.container, style]}>
+        <View style={styles.mockCameraBackground}>
+          <MaterialIcons
+            name="qr-code-scanner"
+            size={120}
+            color="rgba(255,255,255,0.05)"
+          />
+        </View>
+        <View style={StyleSheet.absoluteFill}>
+          <View style={styles.overlay}>
+            <View style={styles.maskHole} pointerEvents="none" />
+
+            <View style={styles.cutout}>
+              <View style={[styles.corner, styles.topLeftCorner]} />
+              <View style={[styles.corner, styles.topRightCorner]} />
+              <View style={[styles.corner, styles.bottomLeftCorner]} />
+              <View style={[styles.corner, styles.bottomRightCorner]} />
+
+              <View style={styles.permissionBlockedContent}>
+                <TouchableOpacity
+                  style={styles.permissionBtn}
+                  onPress={requestPermission}
+                >
+                  <MaterialIcons
+                    name="camera-alt"
+                    size={20}
+                    color={theme.colors.primaryForeground}
+                    style={{ marginRight: 8 }}
+                  />
+                  <Text style={styles.permissionBtnText}>
+                    {t("useQRScanner")}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            <Text style={styles.instructionText}>
+              {t("enableCameraToScan")}
+            </Text>
+          </View>
+        </View>
+      </View>
+    );
+  }
+
+  if (scanned) {
+    return (
+      <View style={[styles.container, style]}>
+        <View style={styles.mockCameraBackground}>
+          <MaterialIcons
+            name="qr-code-scanner"
+            size={120}
+            color="rgba(255,255,255,0.05)"
+          />
+        </View>
+        <View style={StyleSheet.absoluteFill}>
+          <View style={styles.overlay}>
+            <View style={styles.maskHole} pointerEvents="none" />
+
+            <View style={styles.cutout}>
+              <View style={[styles.corner, styles.topLeftCorner]} />
+              <View style={[styles.corner, styles.topRightCorner]} />
+              <View style={[styles.corner, styles.bottomLeftCorner]} />
+              <View style={[styles.corner, styles.bottomRightCorner]} />
+
+              <Animated.View style={[styles.successPopup, checkStyle]}>
+                <MaterialIcons
+                  name="check-circle"
+                  size={80}
+                  color={theme.colors.primary}
+                />
+              </Animated.View>
+            </View>
+
+            <Text style={styles.instructionText}>{t("verifyingTicket")}</Text>
+          </View>
+        </View>
+      </View>
+    );
+  }
+
+  return (
+    <View style={[styles.container, style]}>
+      <CameraView
+        style={styles.camera}
+        facing="back"
+        barcodeScannerSettings={{
+          barcodeTypes: ["qr"],
+        }}
+        onBarcodeScanned={handleBarcodeScanned}
+      >
+        <View style={styles.overlay}>
+          <View style={styles.maskHole} pointerEvents="none" />
+
+          <View style={styles.cutout}>
+            <View style={[styles.corner, styles.topLeftCorner]} />
+            <View style={[styles.corner, styles.topRightCorner]} />
+            <View style={[styles.corner, styles.bottomLeftCorner]} />
+            <View style={[styles.corner, styles.bottomRightCorner]} />
+          </View>
+
+          <Text style={styles.instructionText}>{t("alignQRCode")}</Text>
+        </View>
+      </CameraView>
+    </View>
+  );
+}
+
+const useStyles = createStyleHook((theme) => ({
+  container: {
+    overflow: "hidden",
+    borderRadius: 18,
+    backgroundColor: theme.colors.backgroundTransparent,
+    borderWidth: 1,
+    borderColor: theme.colors.borderTransparent,
+  },
+  mockCameraBackground: {
+    ...StyleSheet.absoluteFill,
+    backgroundColor: "#1c1c1e",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  permissionBlockedContent: {
+    ...StyleSheet.absoluteFill,
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 20,
+  },
+  permissionBtn: {
+    backgroundColor: theme.colors.primary,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 24,
+    shadowColor: theme.colors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  permissionBtnText: {
+    color: theme.colors.primaryForeground,
+    fontWeight: "700",
+    fontSize: 14,
+  },
+  camera: {
+    flex: 1,
+  },
+  overlay: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  maskHole: {
+    position: "absolute",
+    width: 1000,
+    height: 1000,
+    borderRadius: 416, // 16 inner radius + 400 border width
+    borderWidth: 400,
+    borderColor: "rgba(0,0,0,0.5)",
+  },
+  cutout: {
+    width: 200,
+    height: 200,
+    backgroundColor: "transparent",
+    position: "relative",
+  },
+  instructionText: {
+    position: "absolute",
+    bottom: 16,
+    color: "rgba(255,255,255,0.9)",
+    fontSize: 13,
+    fontWeight: "600",
+    letterSpacing: 0.5,
+  },
+  corner: {
+    position: "absolute",
+    width: 40,
+    height: 40,
+    borderColor: theme.colors.primary,
+    borderWidth: 5,
+  },
+  topLeftCorner: {
+    top: 0,
+    left: 0,
+    borderRightWidth: 0,
+    borderBottomWidth: 0,
+    borderTopLeftRadius: 16,
+  },
+  topRightCorner: {
+    top: 0,
+    right: 0,
+    borderLeftWidth: 0,
+    borderBottomWidth: 0,
+    borderTopRightRadius: 16,
+  },
+  bottomLeftCorner: {
+    bottom: 0,
+    left: 0,
+    borderRightWidth: 0,
+    borderTopWidth: 0,
+    borderBottomLeftRadius: 16,
+  },
+  bottomRightCorner: {
+    bottom: 0,
+    right: 0,
+    borderLeftWidth: 0,
+    borderTopWidth: 0,
+    borderBottomRightRadius: 16,
+  },
+  successPopup: {
+    ...StyleSheet.absoluteFill,
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 30,
+    backgroundColor: "rgba(0,0,0,0)",
+    borderRadius: 16,
+  },
+}));

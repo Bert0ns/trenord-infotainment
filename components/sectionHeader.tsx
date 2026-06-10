@@ -1,6 +1,7 @@
 import { createStyleHook } from "@/hooks/use-theme-color";
 import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Text, TouchableOpacity, View } from "react-native";
 
 interface SectionHeaderProps {
@@ -17,6 +18,7 @@ export default function SectionHeader({
   isFirst,
 }: SectionHeaderProps) {
   const styles = useStyles();
+  const { t } = useTranslation("common", { keyPrefix: "sectionHeader" });
 
   return (
     <View style={isFirst ? styles.firstContainer : styles.container}>
@@ -41,12 +43,12 @@ export default function SectionHeader({
       )}
       {type === "media" && (
         <TouchableOpacity>
-          <Text style={styles.seeAll}>See all</Text>
+          <Text style={styles.seeAll}>{t("seeAll")}</Text>
         </TouchableOpacity>
       )}
       {type === "home" && (
         <TouchableOpacity>
-          <Text style={styles.seeAll}>See more</Text>
+          <Text style={styles.seeAll}>{t("seeMore")}</Text>
         </TouchableOpacity>
       )}
     </View>

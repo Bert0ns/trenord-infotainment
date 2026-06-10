@@ -1,6 +1,8 @@
+import Card from "@/components/ui/card";
 import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
 import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Dimensions, Image, Text, TouchableOpacity, View } from "react-native";
 
 interface DiscoveryCardProps {
@@ -18,9 +20,10 @@ export default function DiscoverCard({
 }: DiscoveryCardProps) {
   const styles = useStyles();
   const theme = useTheme();
+  const { t } = useTranslation("home", { keyPrefix: "discoverCard" });
 
   return (
-    <View style={styles.discoverCard}>
+    <Card variant="outline" style={[styles.discoverCard, { padding: 0 }]}>
       <Image source={imageSource} style={styles.image} />
       <View style={styles.info}>
         <Text style={styles.discoverTitle}>{title}</Text>
@@ -33,10 +36,10 @@ export default function DiscoverCard({
             size={16}
             color={theme.colors.primaryForeground}
           />
-          <Text style={styles.buttonText}>Directions</Text>
+          <Text style={styles.buttonText}>{t("directions")}</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </Card>
   );
 }
 
@@ -60,10 +63,6 @@ const useStyles = createStyleHook((theme) => ({
 
   discoverCard: {
     width: width * 0.55,
-    backgroundColor: theme.colors.background,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-    borderRadius: theme.borderRadius.md,
     marginRight: theme.spacing.sm,
     overflow: "hidden",
   },

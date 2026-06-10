@@ -2,6 +2,7 @@ import { createStyleHook } from "@/hooks/use-theme-color";
 import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
 import { Text, View } from "react-native";
+import Card from "@/components/ui/card";
 
 interface SectionCardProps {
   iconName: keyof typeof MaterialIcons.glyphMap;
@@ -17,7 +18,7 @@ export default function SectionCard({
   const styles = useStyles();
 
   return (
-    <View style={styles.card}>
+    <Card variant="muted" style={styles.card}>
       <View style={styles.header}>
         <View style={styles.iconContainer}>
           <MaterialIcons
@@ -29,15 +30,13 @@ export default function SectionCard({
         <Text style={styles.title}>{title}</Text>
       </View>
       {children}
-    </View>
+    </Card>
   );
 }
 
 const useStyles = createStyleHook((theme) => ({
   card: {
-    backgroundColor: theme.colors.muted,
     borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing.md,
     marginBottom: theme.spacing.md,
   },
   header: {

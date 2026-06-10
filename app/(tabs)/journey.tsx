@@ -117,8 +117,8 @@ export default function JourneyScreen() {
         <TimelineCard
           status="past"
           stationName="Milano Centrale"
-          scheduledTime="10:15"
-          actualTime="10:15"
+          scheduledTime="11:15"
+          //estimatedTime="11:17"
           platform="8"
         />
 
@@ -133,17 +133,17 @@ export default function JourneyScreen() {
 
         <TimelineCard
           status="future"
-          stationName="Calolziocorte-Olginate"
-          scheduledTime="11:04"
-          stimatedTime="11:06"
-          platform="1"
+          stationName="Milano Greco Pirelli"
+          scheduledTime="11:06"
+          estimatedTime="11:06"
+          platform="3"
         />
 
         <TimelineCard
           status="future"
           stationName="Lecco"
           scheduledTime="11:15"
-          //stimatedTime="11:17"
+          //estimatedTime="11:17"
           isCancelled={true}
           isLast={true}
         />*/}
