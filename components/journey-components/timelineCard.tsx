@@ -17,6 +17,8 @@ interface TimelineCardProps {
   isCancelled?: boolean;
   isLast?: boolean;
   isFirst?: boolean;
+  isCompleted?: boolean;
+  isAtStation?: boolean;
 }
 
 export default function TimelineCard({
@@ -30,6 +32,8 @@ export default function TimelineCard({
   isCancelled,
   isLast,
   isFirst,
+  isCompleted,
+  isAtStation,
 }: TimelineCardProps) {
   const styles = useStyles();
   const theme = useTheme();
@@ -124,15 +128,21 @@ export default function TimelineCard({
                   </Text>
                 )}
                 {/* Arriving / Departing + Platform */}
-                {isCurrent && !isFirst && (
+                {isCurrent && isCompleted && (
                   <Text style={styles.arrivingText}>
-                    {t("arrivingIn", { minutes: calculatedTime })}
+                    {t("arrived")}
                     {platform ? ` • ${t("platform", { platform })}` : ""}
                   </Text>
                 )}
-                {isCurrent && isFirst && (
+                {isCurrent && !isCompleted && (isFirst || isAtStation) && (
                   <Text style={styles.arrivingText}>
                     {t("departingIn", { minutes: calculatedTime })}
+                    {platform ? ` • ${t("platform", { platform })}` : ""}
+                  </Text>
+                )}
+                {isCurrent && !isCompleted && !isFirst && !isAtStation && (
+                  <Text style={styles.arrivingText}>
+                    {t("arrivingIn", { minutes: calculatedTime })}
                     {platform ? ` • ${t("platform", { platform })}` : ""}
                   </Text>
                 )}

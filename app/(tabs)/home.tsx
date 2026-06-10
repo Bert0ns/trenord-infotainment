@@ -33,11 +33,19 @@ export default function HomeScreen() {
     )
     .find((pass: any) => pass.cancelled !== true);
 
+  const isJourneyCompleted =
+    passListArray[passListArray.length - 1]?.actual_data?.arr_actual_time !==
+    undefined;
+  const isAtStation =
+    nextStop?.actual_data?.arr_actual_time !== undefined &&
+    nextStop?.actual_data?.dep_actual_time === undefined &&
+    !isJourneyCompleted;
+
   console.log(
     "Crowding level:",
     trainInfo.crowding ? trainInfo.crowding.level : "Unknown",
   );
-  console.log("is First: " + (nextStop.pass_count === 1));
+  console.log("is First: " + (nextStop?.pass_count === 1));
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -72,15 +80,23 @@ export default function HomeScreen() {
             : "Unknown"
         }
         arrivalTime={
-          nextStop.arr_time ? nextStop.arr_time.slice(0, 5) : "Unknown"
+          nextStop?.arr_time ? nextStop.arr_time.slice(0, 5) : "Unknown"
         }
         speed="120 km/h"
         trainNumber={`${trainInfo.train_category} ${trainId}`}
         delayMinutes={trainInfo.delay}
-        isFirst={nextStop.pass_count === 1}
+        isFirst={nextStop?.pass_count === 1}
         departureTime={
-          origDestData.dep_time ? origDestData.dep_time.slice(0, 5) : "Unknown"
+          isAtStation
+            ? nextStop?.dep_time
+              ? nextStop.dep_time.slice(0, 5)
+              : "Unknown"
+            : origDestData.dep_time
+              ? origDestData.dep_time.slice(0, 5)
+              : "Unknown"
         }
+        isCompleted={isJourneyCompleted}
+        isAtStation={isAtStation}
       />
 
       <CrowdingCard

@@ -134,7 +134,7 @@ export default function SettingsScreen() {
 
           <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
             <Text style={styles.logoutButtonText}>
-              {trainId ? t("logout") : t("backToLogin")}
+              {trainId ? t("endJourney") : t("backToLogin")}
             </Text>
           </TouchableOpacity>
           <Text style={styles.versionText}>App Version 0.0.0 </Text>

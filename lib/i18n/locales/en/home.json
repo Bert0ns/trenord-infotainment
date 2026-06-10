@@ -12,6 +12,8 @@
     "minutesDelay": "min delay",
     "nextStop": "NEXT STOP",
     "startingFrom": "STARTING FROM",
+    "journeyCompleted": "JOURNEY COMPLETED",
+    "currentlyAt": "CURRENTLY AT",
     "onTime": "On Time",
     "speed": "SPEED",
     "trainNumber": "TRAIN"

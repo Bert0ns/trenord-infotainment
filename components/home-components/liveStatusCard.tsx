@@ -13,6 +13,8 @@ interface LiveStatusCardProps {
   delayMinutes: number;
   isFirst?: boolean;
   departureTime?: string;
+  isCompleted?: boolean;
+  isAtStation?: boolean;
 }
 
 export default function LiveStatusCard({
@@ -23,6 +25,8 @@ export default function LiveStatusCard({
   delayMinutes,
   isFirst,
   departureTime,
+  isCompleted,
+  isAtStation,
 }: LiveStatusCardProps) {
   const styles = useStyles();
   const theme = useTheme();
@@ -31,8 +35,18 @@ export default function LiveStatusCard({
   return (
     <Card style={styles.card}>
       <View style={styles.topRow}>
-        {isFirst && <Text style={styles.label}>{t("startingFrom")}</Text>}
-        {!isFirst && <Text style={styles.label}>{t("nextStop")}</Text>}
+        {isCompleted && (
+          <Text style={styles.label}>{t("journeyCompleted")}</Text>
+        )}
+        {!isCompleted && isAtStation && (
+          <Text style={styles.label}>{t("currentlyAt")}</Text>
+        )}
+        {!isCompleted && !isAtStation && isFirst && (
+          <Text style={styles.label}>{t("startingFrom")}</Text>
+        )}
+        {!isCompleted && !isAtStation && !isFirst && (
+          <Text style={styles.label}>{t("nextStop")}</Text>
+        )}
         {delayMinutes > 0 && (
           <View style={styles.delayBadge}>
             <MaterialIcons
@@ -45,7 +59,7 @@ export default function LiveStatusCard({
             </Text>
           </View>
         )}
-        {delayMinutes === 0 && (
+        {delayMinutes === 0 && !isCompleted && (
           <View
             style={[styles.delayBadge, { backgroundColor: theme.colors.info }]}
           >
@@ -56,8 +70,13 @@ export default function LiveStatusCard({
 
       <View>
         <Text style={styles.stationName}>{nextStop}</Text>
-        {isFirst && <Text style={styles.arrTime}>Dep: {departureTime}</Text>}
-        {!isFirst && <Text style={styles.arrTime}>Arr: {arrivalTime}</Text>}
+        {isCompleted && <Text style={styles.arrTime}>Arr: {arrivalTime}</Text>}
+        {!isCompleted && (isAtStation || isFirst) && (
+          <Text style={styles.arrTime}>Dep: {departureTime}</Text>
+        )}
+        {!isCompleted && !isAtStation && !isFirst && (
+          <Text style={styles.arrTime}>Arr: {arrivalTime}</Text>
+        )}
       </View>
 
       <View style={styles.divider} />

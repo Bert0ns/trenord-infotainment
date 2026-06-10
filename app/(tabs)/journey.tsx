@@ -109,7 +109,16 @@ export default function JourneyScreen() {
               delayMinutes={trainInfo.delay ? trainInfo.delay : 0}
               isCancelled={pass.cancelled}
               isLast={index === passListArray.length - 1}
-              isFirst={nextStop.pass_count === 1}
+              isFirst={nextStop?.pass_count === 1}
+              isCompleted={
+                pass.type === "D" &&
+                pass.actual_data?.arr_actual_time !== undefined
+              }
+              isAtStation={
+                pass.actual_data?.arr_actual_time !== undefined &&
+                pass.actual_data?.dep_actual_time === undefined &&
+                pass.type !== "D"
+              }
             />
           );
         })}
