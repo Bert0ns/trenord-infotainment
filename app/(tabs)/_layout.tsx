@@ -49,7 +49,7 @@ export default function TabLayout() {
       isMounted = false;
       clearInterval(interval);
     };
-  }, [trainId, destinationStation, setJourney]);
+  }, [trainId, destinationStation, isJourneyCompleted, setJourney]);
 
   if (!fontsLoaded) {
     return (

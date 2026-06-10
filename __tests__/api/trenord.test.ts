@@ -11,7 +11,10 @@ process.env.EXPO_PUBLIC_TRENORD_PRIVATE_JWK = JSON.stringify({
 });
 
 // Use require to ensure env variables are set before execution
-const { fetchTrainData } = require("../../lib/api/trenord");
+const {
+  fetchTrainData,
+  clearTrenordApiCache,
+} = require("../../lib/api/trenord");
 
 // Mock `jsrsasign` package to avoid real crypto in tests
 jest.mock("jsrsasign", () => {
@@ -33,6 +36,7 @@ describe("Trenord API", () => {
   let fetchMock: jest.Mock;
 
   beforeEach(() => {
+    clearTrenordApiCache();
     fetchMock = jest.fn();
     global.fetch = fetchMock;
     jest.clearAllMocks();

@@ -17,27 +17,51 @@ if (!tokenUrl) throw new Error("Missing EXPO_PUBLIC_TRENORD_TOKEN_URL");
 if (!apiUrl) throw new Error("Missing EXPO_PUBLIC_TRENORD_API_URL");
 if (!jwkRaw) throw new Error("Missing EXPO_PUBLIC_TRENORD_PRIVATE_JWK");
 
-let cachedJwk: any = null;
+let cachedPrivateKey: any = null;
+let cachedAccessToken: string | null = null;
+let tokenExpirationTime: number = 0;
 
-function getJwk() {
-  if (cachedJwk) return cachedJwk;
+try {
+  // Eagerly compute the crypto key on app boot so the first login is instant
+  const jwk = JSON.parse(jwkRaw);
+  cachedPrivateKey = KEYUTIL.getKey(jwk);
+} catch (error) {
+  logger.error("Failed to eagerly parse JWK string or generate key", error);
+}
+
+export function clearTrenordApiCache() {
+  cachedPrivateKey = null;
+  cachedAccessToken = null;
+  tokenExpirationTime = 0;
+}
+
+function getPrivateKey() {
+  if (cachedPrivateKey) return cachedPrivateKey;
+
   if (!jwkRaw)
     throw new Error("Missing EXPO_PUBLIC_TRENORD_PRIVATE_JWK in environment");
   try {
-    cachedJwk = JSON.parse(jwkRaw);
-    return cachedJwk;
+    const jwk = JSON.parse(jwkRaw);
+    cachedPrivateKey = KEYUTIL.getKey(jwk);
+    return cachedPrivateKey;
   } catch (error) {
-    logger.error("Failed to parse JWK string", error);
+    logger.error("Failed to parse JWK string or generate key", error);
     throw new Error("Invalid JWK JSON format");
   }
 }
 
 async function getAccessToken(): Promise<string> {
-  logger.log("[Trenord API] Getting private JWK for authentication...");
-  const jwk = getJwk();
+  const now = Math.floor(Date.now() / 1000);
 
-  // Parse JWK into an RSA key object compatible with jsrsasign
-  const privateKey = KEYUTIL.getKey(jwk);
+  // Reuse token if it's still valid for at least 30 more seconds
+  if (cachedAccessToken && now < tokenExpirationTime - 30) {
+    return cachedAccessToken;
+  }
+
+  if (!cachedPrivateKey) {
+    logger.log("[Trenord API] Getting private JWK for authentication...");
+  }
+  const privateKey = getPrivateKey();
 
   // Generate a random UUID for the JWT ID
   const jti =
@@ -92,8 +116,14 @@ async function getAccessToken(): Promise<string> {
   }
 
   const tokenData = await tokenResponse.json();
-  logger.log("[Trenord API] Access Token acquired successfully!");
-  return tokenData.access_token;
+
+  cachedAccessToken = tokenData.access_token;
+  const expiresIn = tokenData.expires_in || 300;
+  tokenExpirationTime = now + expiresIn;
+  logger.log(
+    `[Trenord API] Access Token acquired successfully, expires in ${expiresIn} seconds.`,
+  );
+  return cachedAccessToken!;
 }
 
 export async function fetchTrainData(
