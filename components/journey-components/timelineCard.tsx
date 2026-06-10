@@ -39,15 +39,20 @@ export default function TimelineCard({
   const isCurrent = status === "current";
   const isFuture = status === "future";
 
-  const currentTime = new Date().toLocaleTimeString("it-IT", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-
-  const toMinutes = (time: string) => {
-    const [h, m] = time.split(":").map(Number);
+  const getMinutes = (timeString: string) => {
+    const [h, m] = timeString.split(":").map(Number);
     return h * 60 + m;
   };
+
+  const getCalculatedTime = () => {
+    const now = new Date();
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+    let diff = getMinutes(scheduledTime) - currentMinutes + delayMinutes;
+    if (diff < -720) diff += 1440;
+    return diff;
+  };
+
+  const calculatedTime = getCalculatedTime();
 
   return (
     <View style={styles.container}>
@@ -58,10 +63,9 @@ export default function TimelineCard({
             style={[
               styles.line,
               {
-                backgroundColor:
-                  isFuture || isCurrent
-                    ? theme.colors.border
-                    : theme.colors.primary,
+                backgroundColor: isFuture
+                  ? theme.colors.border
+                  : theme.colors.primary,
               },
             ]}
           />
@@ -119,23 +123,17 @@ export default function TimelineCard({
                     {t("platform", { platform })}
                   </Text>
                 )}
-                {/* Arriving + Platform */}
+                {/* Arriving / Departing + Platform */}
                 {isCurrent && !isFirst && (
                   <Text style={styles.arrivingText}>
-                    {t("arrivingIn")}{" "}
-                    {toMinutes(scheduledTime) -
-                      toMinutes(currentTime) +
-                      delayMinutes}{" "}
-                    {t("min") + " • " + t("platform")} {platform}
+                    {t("arrivingIn", { minutes: calculatedTime })}
+                    {platform ? ` • ${t("platform", { platform })}` : ""}
                   </Text>
                 )}
                 {isCurrent && isFirst && (
                   <Text style={styles.arrivingText}>
-                    {t("departingIn")}{" "}
-                    {toMinutes(scheduledTime) -
-                      toMinutes(currentTime) +
-                      delayMinutes}{" "}
-                    {t("min") + " • " + t("platform")} {platform}
+                    {t("departingIn", { minutes: calculatedTime })}
+                    {platform ? ` • ${t("platform", { platform })}` : ""}
                   </Text>
                 )}
                 {/* Cancelled */}

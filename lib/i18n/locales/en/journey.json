@@ -1,6 +1,7 @@
 {
   "timelineCard": {
     "arrivingIn": "Arriving in {{minutes}} minutes",
+    "departingIn": "Departing in {{minutes}} minutes",
     "cancelled": "Cancelled",
     "departedAt": "Departed at {{time}}",
     "minutesDelay": "+{{minutes}} min delay",

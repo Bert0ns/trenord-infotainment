@@ -18,7 +18,7 @@ export default function SettingsScreen() {
   const { t } = useTranslation("settings");
 
   const { settings, set } = useSettings();
-  const { trainId } = useJourneyStore();
+  const { trainId, clearJourney } = useJourneyStore();
 
   const languages: Record<LanguageCode, string> = {
     en: "English (UK)",
@@ -31,7 +31,7 @@ export default function SettingsScreen() {
     (settings.language === "--" ? ` (${getLocales()[0].languageTag})` : "");
 
   const handleLogout = () => {
-    //clearJourney();
+    clearJourney();
     router.replace("/login");
   };
 

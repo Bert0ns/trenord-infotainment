@@ -11,6 +11,7 @@
   "liveStatusCard": {
     "minutesDelay": "min delay",
     "nextStop": "NEXT STOP",
+    "startingFrom": "STARTING FROM",
     "onTime": "On Time",
     "speed": "SPEED",
     "trainNumber": "TRAIN"

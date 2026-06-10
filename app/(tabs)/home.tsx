@@ -33,26 +33,6 @@ export default function HomeScreen() {
     )
     .find((pass: any) => pass.cancelled !== true);
 
-  /*passListArray.forEach((pass: any) => {
-    console.log({
-      station_name: pass.station.station_ori_name,
-      //station_id: pass.station.station_id,
-      //dep_time: pass.dep_time,
-      /*dep_actual_time: pass.actual_data
-        ? pass.actual_data.dep_actual_time
-        : null,*/
-  //arr_time: pass.arr_time,
-  /*arr_actual_time: pass.actual_data
-        ? pass.actual_data.arr_actual_time
-        : null,*/
-  /*pass_count: pass.pass_count,
-    });
-  });*/
-
-  console.log(
-    "Next Stop: ",
-    nextStop ? nextStop.station.station_ori_name : "Unknown",
-  );
   console.log(
     "Crowding level:",
     trainInfo.crowding ? trainInfo.crowding.level : "Unknown",
@@ -102,7 +82,7 @@ export default function HomeScreen() {
           origDestData.dep_time ? origDestData.dep_time.slice(0, 5) : "Unknown"
         }
       />
-      {/* Understand if add a new type of crowding in case of unknown crowding */}
+
       <CrowdingCard
         level={
           trainInfo.crowding
