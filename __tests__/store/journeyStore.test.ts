@@ -27,7 +27,7 @@ describe("JourneyStore", () => {
 
     useJourneyStore
       .getState()
-      .setJourney(mockTrainId, mockStation, mockTrainData);
+      .setJourney(mockTrainId, mockStation, mockTrainData as any);
 
     const state = useJourneyStore.getState();
     expect(state.trainId).toBe(mockTrainId);
@@ -43,7 +43,7 @@ describe("JourneyStore", () => {
     };
 
     // First set the data
-    useJourneyStore.getState().setJourney(mockTrainId, mockStation, {});
+    useJourneyStore.getState().setJourney(mockTrainId, mockStation, {} as any);
     expect(useJourneyStore.getState().trainId).toBe(mockTrainId);
 
     // Then clear it

@@ -115,9 +115,9 @@ export default function HomeScreen() {
 
       <CrowdingCard
         level={
-          trainInfo.crowding
+          (trainInfo.crowding
             ? trainInfo.crowding.level.slice(0).toLowerCase()
-            : "low"
+            : "low") as any
         }
       />
       <WeatherCard

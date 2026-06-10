@@ -3,6 +3,7 @@ import { useRouter } from "expo-router";
 import { fetchTrainData } from "@/lib/api/trenord";
 import { useJourneyStore, Station } from "@/store/journeyStore";
 import { logger } from "@/lib/logger";
+import { TrainInfoResponse } from "@/lib/api/types";
 
 export function useLogin() {
   const router = useRouter();
@@ -10,7 +11,7 @@ export function useLogin() {
   const [ticketCode, setTicketCode] = useState("");
   const [destination, setDestination] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [trainData, setTrainData] = useState<any>(null);
+  const [trainData, setTrainData] = useState<TrainInfoResponse | null>(null);
   const [stations, setStations] = useState<Station[]>([]);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -170,7 +171,7 @@ export function useLogin() {
       logger.log(
         `[Login UI] Starting journey! Train: ${ticketCode}, Destination: ${destStation.station_ori_name}`,
       );
-      setJourney(ticketCode, destStation, trainData);
+      setJourney(ticketCode, destStation, trainData!);
       router.replace("/(tabs)/home");
     }
   }

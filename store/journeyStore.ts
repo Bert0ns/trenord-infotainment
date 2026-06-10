@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { TrainInfoResponse } from "@/lib/api/types";
 
 export interface Station {
   station_id: string;
@@ -10,11 +11,11 @@ export interface Station {
 export interface JourneyStore {
   trainId: string | null;
   destinationStation: Station | null;
-  trainData: any | null;
+  trainData: TrainInfoResponse | null;
   setJourney: (
     trainId: string,
     destinationStation: Station,
-    trainData: any,
+    trainData: TrainInfoResponse,
   ) => void;
   clearJourney: () => void;
 }

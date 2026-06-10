@@ -1,5 +1,6 @@
 import { KJUR, KEYUTIL } from "jsrsasign";
 import { logger } from "@/lib/logger";
+import { TrainInfoResponse } from "./types";
 
 // In Expo, EXPO_PUBLIC variables are stringified into the bundle
 const clientId = process.env.EXPO_PUBLIC_TRENORD_CLIENT_ID!;
@@ -95,7 +96,9 @@ async function getAccessToken(): Promise<string> {
   return tokenData.access_token;
 }
 
-export async function fetchTrainData(trainId: string) {
+export async function fetchTrainData(
+  trainId: string,
+): Promise<TrainInfoResponse> {
   const accessToken = await getAccessToken();
   const url = `${apiUrl}/train/${trainId}`;
 
