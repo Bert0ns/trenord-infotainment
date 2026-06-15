@@ -39,6 +39,8 @@ export type Colors = {
   cloud: string;
   /** Background for live status card */
   homeLiveStatus: string;
+  /** Background logout botton */
+  logout: string;
 };
 
 export type Sizes = {

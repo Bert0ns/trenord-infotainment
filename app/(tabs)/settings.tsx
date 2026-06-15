@@ -10,6 +10,7 @@ import { useRouter } from "expo-router";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { logger } from "@/lib/logger";
 
 export default function SettingsScreen() {
   const router = useRouter();
@@ -31,6 +32,9 @@ export default function SettingsScreen() {
     (settings.language === "--" ? ` (${getLocales()[0].languageTag})` : "");
 
   const handleLogout = () => {
+    logger.log(
+      "[Settings Screen] User requested to end journey. Clearing state...",
+    );
     clearJourney();
     router.replace("/login");
   };
@@ -134,7 +138,7 @@ export default function SettingsScreen() {
 
           <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
             <Text style={styles.logoutButtonText}>
-              {trainId ? t("logout") : t("backToLogin")}
+              {trainId ? t("endJourney") : t("backToLogin")}
             </Text>
           </TouchableOpacity>
           <Text style={styles.versionText}>App Version 0.0.0 </Text>

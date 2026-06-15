@@ -2,7 +2,6 @@ import React from "react";
 import { render } from "@testing-library/react-native";
 import HomeScreen from "@/app/(tabs)/home";
 import { useJourneyStore } from "@/store/journeyStore";
-import { Text } from "react-native";
 
 jest.mock("expo-router", () => {
   const React = require("react");
@@ -80,6 +79,7 @@ jest.mock("@/hooks/use-theme-color", () => ({
 }));
 
 jest.mock("@/store/journeyStore", () => ({
+  ...jest.requireActual("@/store/journeyStore"),
   useJourneyStore: jest.fn(),
 }));
 
@@ -96,14 +96,45 @@ describe("HomeScreen", () => {
     expect(getByText("Redirected to login")).toBeTruthy();
   });
 
-  it("renders correctly if trainId is present", () => {
+  it("renders train info and destination successfully", () => {
     (useJourneyStore as unknown as jest.Mock).mockImplementation(
-      (selector: any) => selector({ trainId: "12345" }),
+      (selector: any) =>
+        selector({
+          trainId: "1234",
+          destinationStation: { station_ori_name: "Milano Centrale" },
+          trainData: [
+            {
+              dep_time: "08:00:00",
+              arr_time: "09:00:00",
+              journey_list: [
+                {
+                  train: {
+                    train_category: "REG",
+                    delay: 5,
+                    crowding: { level: "low" },
+                  },
+                  pass_list: [
+                    {
+                      station: { station_ori_name: "Como" },
+                      actual_data: { dep_actual_time: "08:05:00" },
+                      cancelled: false,
+                      pass_count: 1,
+                    },
+                    {
+                      station: { station_ori_name: "Milano Centrale" },
+                      arr_time: "09:00:00",
+                      actual_data: {},
+                      cancelled: false,
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        }),
     );
     const { getByText } = render(<HomeScreen />);
-    expect(getByText("Milano Centrale - R 2564")).toBeTruthy();
-    expect(getByText("08:30 - 10:15")).toBeTruthy();
-    expect(getByText("Destination News")).toBeTruthy();
-    expect(getByText("Discover Milano")).toBeTruthy();
+    expect(getByText("Milano Centrale - REG 1234")).toBeTruthy();
+    expect(getByText("08:00 - 09:00")).toBeTruthy();
   });
 });

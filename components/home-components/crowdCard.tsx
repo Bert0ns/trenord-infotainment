@@ -5,7 +5,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
 
-export type CrowdingLevel = "low" | "normal" | "high";
+export type CrowdingLevel = "low" | "moderate" | "high";
 
 export default function CrowdingCard({ level }: { level: CrowdingLevel }) {
   const styles = useStyles();
@@ -21,7 +21,7 @@ export default function CrowdingCard({ level }: { level: CrowdingLevel }) {
           label: t("lowCrowding"),
           icon: "groups",
         };
-      case "normal":
+      case "moderate":
         return {
           bg: theme.colors.warning,
           text: theme.colors.warningForeground,

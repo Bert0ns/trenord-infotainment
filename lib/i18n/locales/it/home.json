@@ -11,6 +11,9 @@
   "liveStatusCard": {
     "minutesDelay": "min di ritardo",
     "nextStop": "PROSSIMA FERMATA",
+    "startingFrom": "IN PARTENZA DA",
+    "journeyCompleted": "VIAGGIO COMPLETATO",
+    "currentlyAt": "ATTUALMENTE A",
     "onTime": "In Orario",
     "speed": "VELOCITÀ",
     "trainNumber": "TRENO"

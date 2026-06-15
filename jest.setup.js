@@ -1,4 +1,11 @@
 /* global jest */
+process.env.EXPO_PUBLIC_TRENORD_CLIENT_ID = "mock_client_id";
+process.env.EXPO_PUBLIC_TRENORD_ISSUER = "mock_issuer";
+process.env.EXPO_PUBLIC_TRENORD_AUDIENCE = "mock_audience";
+process.env.EXPO_PUBLIC_TRENORD_TOKEN_URL = "mock_token_url";
+process.env.EXPO_PUBLIC_TRENORD_API_URL = "mock_api_url";
+process.env.EXPO_PUBLIC_TRENORD_PRIVATE_JWK = "{}";
+
 jest.mock("@react-native-async-storage/async-storage", () =>
   require("@react-native-async-storage/async-storage/jest/async-storage-mock"),
 );

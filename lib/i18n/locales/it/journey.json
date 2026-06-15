@@ -1,6 +1,8 @@
 {
   "timelineCard": {
+    "arrived": "Arrivato",
     "arrivingIn": "Arrivo tra {{minutes}} minuti",
+    "departingIn": "Partenza tra {{minutes}} minuti",
     "cancelled": "Cancellato",
     "departedAt": "Partito alle {{time}}",
     "minutesDelay": "+{{minutes}} min di ritardo",

@@ -88,7 +88,6 @@ export default function CustomTabBar({
                     : styles.iconUnfocused.color
                 }
                 style={[
-                  ,
                   styles.icon,
                   isFocused ? styles.iconFocused : styles.iconUnfocused,
                 ]}

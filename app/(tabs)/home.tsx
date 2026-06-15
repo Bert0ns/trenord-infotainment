@@ -5,40 +5,114 @@ import WeatherCard from "@/components/home-components/weatherCard";
 import NewsCard from "@/components/newsCard";
 import SectionHeader from "@/components/sectionHeader";
 import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
+import {
+  useJourneyStore,
+  selectOrigDestData,
+  selectTrainInfo,
+  selectPassList,
+  selectNextStop,
+  selectIsJourneyCompleted,
+  selectIsAtStation,
+} from "@/store/journeyStore";
+import { capitalizeWords } from "@/utils/string";
 import { MaterialIcons } from "@expo/vector-icons";
-import { FlatList, ScrollView, Text, View } from "react-native";
 import { Redirect } from "expo-router";
-import { useJourneyStore } from "@/store/journeyStore";
+import { FlatList, ScrollView, Text, View } from "react-native";
+
+import { logger } from "@/lib/logger";
+import { useTranslation } from "react-i18next";
 
 export default function HomeScreen() {
+  const { t } = useTranslation("common");
   const styles = useStyles();
   const theme = useTheme();
   const trainId = useJourneyStore((s) => s.trainId);
+  const destinationStation = useJourneyStore((s) => s.destinationStation);
+  const origDestData = useJourneyStore(selectOrigDestData);
+  const trainInfo = useJourneyStore(selectTrainInfo);
+  const passListArray = useJourneyStore(selectPassList);
+  const nextStop = useJourneyStore(selectNextStop);
+  const isJourneyCompleted = useJourneyStore(selectIsJourneyCompleted);
+  const isAtStation = useJourneyStore(selectIsAtStation);
 
   if (!trainId) return <Redirect href="/login" />;
+
+  if (!origDestData || !trainInfo || !passListArray) {
+    return (
+      <View
+        style={[
+          styles.container,
+          { alignItems: "center", justifyContent: "center" },
+        ]}
+      >
+        <Text style={styles.pageSubtitle}>{t("loadingTrainData")}</Text>
+      </View>
+    );
+  }
+
+  logger.log(
+    `[Home Screen] Render train ${trainId}. Next stop: ${nextStop?.station?.station_ori_name || "None"}`,
+  );
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.pageHeader}>
-        <Text style={styles.pageTitle}>Milano Centrale - R 2564</Text>
+        <Text style={styles.pageTitle}>
+          {destinationStation
+            ? capitalizeWords(destinationStation.station_ori_name)
+            : "Unknown"}{" "}
+          - {trainInfo.train_category} {trainId}
+        </Text>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
           <MaterialIcons
             name="access-time"
             size={16}
             color={theme.colors.mutedForeground}
           />
-          <Text style={styles.pageSubtitle}>08:30 - 10:15</Text>
+          <Text style={styles.pageSubtitle}>
+            {origDestData.dep_time
+              ? origDestData.dep_time.slice(0, 5)
+              : "Unknown"}{" "}
+            -{" "}
+            {origDestData.dep_time
+              ? origDestData.arr_time.slice(0, 5)
+              : "Unknown"}
+          </Text>
         </View>
       </View>
       <LiveStatusCard
-        nextStop="Monza"
-        arrivalTime="10:45"
+        nextStop={
+          nextStop
+            ? capitalizeWords(nextStop.station.station_ori_name)
+            : "Unknown"
+        }
+        arrivalTime={
+          nextStop?.arr_time ? nextStop.arr_time.slice(0, 5) : "Unknown"
+        }
         speed="120 km/h"
-        trainNumber="R 2564"
-        delayMinutes={5}
+        trainNumber={`${trainInfo.train_category} ${trainId}`}
+        delayMinutes={trainInfo.delay}
+        isFirst={nextStop?.pass_count === 1}
+        departureTime={
+          isAtStation
+            ? nextStop?.dep_time
+              ? nextStop.dep_time.slice(0, 5)
+              : "Unknown"
+            : origDestData.dep_time
+              ? origDestData.dep_time.slice(0, 5)
+              : "Unknown"
+        }
+        isCompleted={isJourneyCompleted}
+        isAtStation={isAtStation}
       />
 
-      <CrowdingCard level="low" />
+      <CrowdingCard
+        level={
+          (trainInfo.crowding
+            ? trainInfo.crowding.level.slice(0).toLowerCase()
+            : "low") as any
+        }
+      />
       <WeatherCard
         data={{
           city: "Milan",

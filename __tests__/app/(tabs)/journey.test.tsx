@@ -2,7 +2,6 @@ import React from "react";
 import { render } from "@testing-library/react-native";
 import JourneyScreen from "@/app/(tabs)/journey";
 import { useJourneyStore } from "@/store/journeyStore";
-import { Text } from "react-native";
 
 jest.mock("expo-router", () => {
   const React = require("react");
@@ -18,50 +17,12 @@ jest.mock("@expo/vector-icons", () => ({
 
 jest.mock("@/hooks/use-theme-color", () => ({
   createStyleHook: () => () => ({
-    iconColor: { color: "#000" },
-    titleHome: {},
-    title: {},
-    seeAll: {},
-    seeMore: {},
     container: {},
     content: {},
     pageHeader: {},
     pageTitle: {},
     pageSubtitle: {},
-    themeRow: {},
-    themeBox: {},
-    themeBoxActive: {},
-    themeBoxText: {},
-    themeBoxTextActive: {},
-    dropdown: {},
-    dropdownText: {},
-    footer: {},
-    reportButton: {},
-    reportButtonText: {},
-    versionText: {},
-    linksRow: {},
-    link: {},
-    card: {},
     timelineContainer: {},
-    newsCard: {},
-    tag: {},
-    newsText: {},
-    discoverCard: {},
-    image: {},
-    info: {},
-    discoverTitle: {},
-    discoverSubtitle: {},
-    button: {},
-    buttonText: {},
-    timelineItem: {},
-    timelineContent: {},
-    timelineTimeContainer: {},
-    timeText: {},
-    stationText: {},
-    delayText: {},
-    platformText: {},
-    timelineDot: {},
-    timelineLine: {},
   }),
   useTheme: () => ({
     colors: {
@@ -70,7 +31,6 @@ jest.mock("@/hooks/use-theme-color", () => ({
       background: "#fff",
       border: "#eee",
       foreground: "#000",
-      muted: "#ccc",
     },
     spacing: { sm: 4, md: 8, lg: 16 },
     borderRadius: { sm: 4, md: 8, lg: 16, xl: 24 },
@@ -78,6 +38,7 @@ jest.mock("@/hooks/use-theme-color", () => ({
 }));
 
 jest.mock("@/store/journeyStore", () => ({
+  ...jest.requireActual("@/store/journeyStore"),
   useJourneyStore: jest.fn(),
 }));
 
@@ -94,15 +55,65 @@ describe("JourneyScreen", () => {
     expect(getByText("Redirected to login")).toBeTruthy();
   });
 
-  it("renders correctly if trainId is present", () => {
+  it("renders the timeline correctly with train data", () => {
     (useJourneyStore as unknown as jest.Mock).mockImplementation(
-      (selector: any) => selector({ trainId: "12345" }),
+      (selector: any) =>
+        selector({
+          trainId: "4567",
+          destinationStation: { station_ori_name: "Bergamo" },
+          trainData: [
+            {
+              dep_time: "10:00:00",
+              arr_time: "11:00:00",
+              journey_list: [
+                {
+                  train: {
+                    train_category: "RE",
+                    delay: 2,
+                  },
+                  pass_list: [
+                    {
+                      station: {
+                        station_id: "S1",
+                        station_ori_name: "Milano Porta Garibaldi",
+                      },
+                      actual_data: { dep_actual_time: "10:02:00" },
+                      cancelled: false,
+                      pass_count: 1,
+                      type: "O",
+                      dep_time: "10:00:00",
+                    },
+                    {
+                      station: { station_id: "S2", station_ori_name: "Monza" },
+                      actual_data: {},
+                      cancelled: false,
+                      type: "F",
+                      arr_time: "10:20:00",
+                    },
+                    {
+                      station: {
+                        station_id: "S3",
+                        station_ori_name: "Bergamo",
+                      },
+                      actual_data: {},
+                      cancelled: false,
+                      type: "D",
+                      arr_time: "11:00:00",
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        }),
     );
-    const { getByText } = render(<JourneyScreen />);
 
-    expect(getByText("Lecco - R 2564")).toBeTruthy();
-    expect(getByText("08:30 - 10:15")).toBeTruthy();
-    expect(getByText("Milano Centrale")).toBeTruthy();
+    const { getByText, getAllByText } = render(<JourneyScreen />);
+    expect(getByText("Bergamo - RE 4567")).toBeTruthy();
+    expect(getByText("10:00 - 11:00")).toBeTruthy();
+    expect(getByText("Milano Porta Garibaldi")).toBeTruthy();
     expect(getByText("Monza")).toBeTruthy();
+    // Use getAllByText because it appears in the header and timeline
+    expect(getAllByText("Bergamo").length).toBeGreaterThan(0);
   });
 });

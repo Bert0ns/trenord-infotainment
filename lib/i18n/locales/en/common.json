@@ -8,5 +8,7 @@
     "journey": "Journey",
     "media": "Media",
     "settings": "Settings"
-  }
+  },
+  "loading": "Loading...",
+  "loadingTrainData": "Loading or no train data available."
 }

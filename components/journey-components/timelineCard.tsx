@@ -9,13 +9,16 @@ export type NodeStatus = "past" | "current" | "future";
 interface TimelineCardProps {
   status: NodeStatus;
   stationName: string;
-  scheduledTime?: string;
+  scheduledTime: string;
   estimatedTime?: string;
   actualTime?: string;
   platform?: string;
-  delayMinutes?: number;
+  delayMinutes: number;
   isCancelled?: boolean;
   isLast?: boolean;
+  isFirst?: boolean;
+  isCompleted?: boolean;
+  isAtStation?: boolean;
 }
 
 export default function TimelineCard({
@@ -28,6 +31,9 @@ export default function TimelineCard({
   delayMinutes,
   isCancelled,
   isLast,
+  isFirst,
+  isCompleted,
+  isAtStation,
 }: TimelineCardProps) {
   const styles = useStyles();
   const theme = useTheme();
@@ -36,6 +42,22 @@ export default function TimelineCard({
   const isPast = status === "past";
   const isCurrent = status === "current";
   const isFuture = status === "future";
+
+  const getMinutes = (timeString: string) => {
+    const [h, m] = timeString.split(":").map(Number);
+    return h * 60 + m;
+  };
+
+  const getCalculatedTime = () => {
+    const now = new Date();
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+    let diff = getMinutes(scheduledTime) - currentMinutes + delayMinutes;
+    if (diff < -720) diff += 1440;
+    if (diff > 720) diff -= 1440;
+    return diff;
+  };
+
+  const calculatedTime = getCalculatedTime();
 
   return (
     <View style={styles.container}>
@@ -106,11 +128,23 @@ export default function TimelineCard({
                     {t("platform", { platform })}
                   </Text>
                 )}
-                {/* Arriving + Platform */}
-                {isCurrent && (
+                {/* Arriving / Departing + Platform */}
+                {isCurrent && isCompleted && (
                   <Text style={styles.arrivingText}>
-                    {t("arrivingIn", { minutes: delayMinutes })} •{" "}
-                    {t("platform", { platform })}
+                    {t("arrived")}
+                    {platform ? ` • ${t("platform", { platform })}` : ""}
+                  </Text>
+                )}
+                {isCurrent && !isCompleted && (isFirst || isAtStation) && (
+                  <Text style={styles.arrivingText}>
+                    {t("departingIn", { minutes: calculatedTime })}
+                    {platform ? ` • ${t("platform", { platform })}` : ""}
+                  </Text>
+                )}
+                {isCurrent && !isCompleted && !isFirst && !isAtStation && (
+                  <Text style={styles.arrivingText}>
+                    {t("arrivingIn", { minutes: calculatedTime })}
+                    {platform ? ` • ${t("platform", { platform })}` : ""}
                   </Text>
                 )}
                 {/* Cancelled */}
