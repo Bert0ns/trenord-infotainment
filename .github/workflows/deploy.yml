@@ -26,13 +26,15 @@ jobs:
         with:
           ref: ${{ github.event_name == 'workflow_dispatch' && 'main' || github.ref }}
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.5.0
+
       - name: Setup Node.js
         uses: actions/setup-node@v5
         with:
           node-version: "22"
-
-      - name: Enable Corepack (pnpm)
-        run: corepack enable pnpm
 
       - name: Install dependencies
         run: pnpm install
@@ -53,13 +55,15 @@ jobs:
         with:
           ref: ${{ github.event_name == 'workflow_dispatch' && 'main' || github.ref }}
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.5.0
+
       - name: Setup Node.js
         uses: actions/setup-node@v5
         with:
           node-version: "22"
-
-      - name: Enable Corepack (pnpm)
-        run: corepack enable pnpm
 
       - name: Install dependencies
         run: pnpm install
@@ -83,13 +87,15 @@ jobs:
         with:
           ref: ${{ github.event_name == 'workflow_dispatch' && 'main' || github.ref }}
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.5.0
+
       - name: Setup Node.js
         uses: actions/setup-node@v5
         with:
           node-version: "22"
-
-      - name: Enable Corepack (pnpm)
-        run: corepack enable pnpm
 
       - name: Setup Java
         uses: actions/setup-java@v5
