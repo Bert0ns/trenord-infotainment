@@ -10,7 +10,8 @@ import {
 import { capitalizeWords } from "@/utils/string";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Redirect } from "expo-router";
-import { ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View, RefreshControl } from "react-native";
+import { useRefreshTrainData } from "@/hooks/use-refresh-train-data";
 
 import { logger } from "@/lib/logger";
 import { useTranslation } from "react-i18next";
@@ -25,6 +26,7 @@ export default function JourneyScreen() {
   const trainInfo = useJourneyStore(selectTrainInfo);
   const passListArray = useJourneyStore(selectPassList);
   const nextStop = useJourneyStore(selectNextStop);
+  const { isRefreshing, onRefresh } = useRefreshTrainData();
 
   if (!trainId) return <Redirect href="/login" />;
 
@@ -45,7 +47,17 @@ export default function JourneyScreen() {
   );
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.content}
+      refreshControl={
+        <RefreshControl
+          refreshing={isRefreshing}
+          onRefresh={onRefresh}
+          tintColor={theme.colors.primary}
+        />
+      }
+    >
       <View style={styles.pageHeader}>
         <Text style={styles.pageTitle}>
           {destinationStation
