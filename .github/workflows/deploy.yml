@@ -1,0 +1,63 @@
+name: Deploy Android and Web
+
+on:
+  push:
+    branches:
+      - deploy
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          # If manually triggered, force main branch. Otherwise, use the branch pushed (deploy).
+          ref: ${{ github.event_name == 'workflow_dispatch' && 'main' || github.ref }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Enable Corepack (pnpm)
+        run: corepack enable pnpm
+
+      - name: Setup Java (for Android Build)
+        uses: actions/setup-java@v4
+        with:
+          distribution: "zulu"
+          java-version: "17"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Quality Gates (Lint & Test)
+        run: |
+          pnpm lint
+          pnpm exec jest --watchAll=false
+
+      - name: Build Web
+        run: pnpm exec expo export -p web
+
+      - name: Upload Web Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-build
+          path: dist
+
+      - name: Prebuild Android
+        run: pnpm exec expo prebuild --platform android --no-install
+
+      - name: Build Android APK
+        run: |
+          cd android
+          ./gradlew assembleRelease
+
+      - name: Upload Android APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: android/app/build/outputs/apk/release/app-release.apk
