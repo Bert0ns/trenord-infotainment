@@ -13,7 +13,6 @@
 
 - Build a reliable, polished onboard app with a **Premium Look & Feel ✨**
 - Responsive design, the app must be usable and accessible on all devices and screen sizes.
-- The app must support offline resilience and remain demoable even if APIs fail (using caching and mocking).
 - Support English and Italian (localization) using `react-i18next`.
 - Ensure high test coverage for all non-UI logic. Each core feature must have at least one business-logic unit test.
 
@@ -52,16 +51,19 @@ All code written for this project must strictly respect **SOLID principles**:
 - **Hooks & Utils:** Custom hooks go in `hooks/` and helper functions go in `utils/`.
 - **Testing:** Place tests either in the `__tests__` directory or alongside the files using `.test.ts` / `.test.tsx`.
 
-## 6. Effectively Using AI Agents
+## 6. Effectively Using Your AI Agent abilities
 
-_(From Design Document Section 4)_
+Do not start mindlessly writing code! Develop a full-fledged plan first.
+Put it in `docs/plans`, you can either choose to write a `.md` file or an `.html` file.
 
-- **Role:** AI agents should be used for narrow, testable tasks with explicit interfaces (e.g., parsers, hooks, view-model helpers). Humans are responsible for product decisions.
-- **Testing:** Generated code must include tests for core logic paths.
-- **Constraints:**
-  - Provide strict input/output expectations.
-  - Do not use agents for vague, cross-cutting product decisions.
-  - Review all generated code for API assumptions and error handling.
+- **Precision & Exhaustiveness:** The plan should always describe all features and changes with precision.
+- **Task Tracking:** If you have to do a lot of work, split it into smaller tasks (Divide et impera principle). Use Markdown checkboxes (`[ ]` and `[x]`) in your plan file to track progress. Update the file as you complete each step.
+- **Tests in Plan:** Always include a sketch of the required unit tests as part of your implementation plan. They should be written, but can be done at the end of the coding phase.
+- **Confirmation:** After writing a first version of the plan, always ask for confirmation from the human. If there are ambiguities, do not invent a solution by yourself, but ask the human.
+- **Simplicity:** Always prefer elegant simple solutions that achieve 95% of the goal, rather than complex and hard to understand solutions that might achieve 100% of the goal.
+- **Verification:** After completing a coding task, always verify your work by running `pnpm lint`, `pnpm format`, `pnpm typecheck`, and/or the relevant tests to ensure you haven't broken existing features.
+- **Subagents for Research:** If a task requires extensive reading of the codebase or searching the web, delegate the research phase to a background subagent to keep your main context clean and focused.
+- **Feedback:** If the human is making a mistake, tell him what he is doing wrong and why, and propose a better solution.
 
 ## 7. Domain Knowledge & APIs
 
