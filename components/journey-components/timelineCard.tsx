@@ -123,7 +123,7 @@ export default function TimelineCard({
               {/* Info */}
               <View style={styles.subInfoRow}>
                 {/* Platform */}
-                {platform && !isCurrent && (
+                {!!platform && !isCurrent && (
                   <Text style={styles.subInfoText}>
                     {t("platform", { platform })}
                   </Text>
@@ -163,7 +163,7 @@ export default function TimelineCard({
               </View>
 
               {/* Delay Badge */}
-              {isCurrent && delayMinutes && delayMinutes > 0 && (
+              {isCurrent && delayMinutes > 0 && (
                 <View style={styles.delayBadge}>
                   <MaterialIcons
                     name="warning"
@@ -190,7 +190,7 @@ export default function TimelineCard({
                 {scheduledTime}
               </Text>
               {/* Actual depearted time */}
-              {actualTime && isPast && (
+              {!!actualTime && isPast && (
                 <Text
                   style={[styles.statusText, { color: theme.colors.primary }]}
                 >

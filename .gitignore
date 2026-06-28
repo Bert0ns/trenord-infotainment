@@ -50,6 +50,5 @@ token.json
 *jwt.json
 .env
 
-.agents
 graphify-out/
 graphify-out/cost.json 
