@@ -1,6 +1,25 @@
 import { KJUR, KEYUTIL } from "jsrsasign";
+import { Platform } from "react-native";
 import { logger } from "@/lib/logger";
 import { TrainInfoResponse } from "./types";
+
+async function proxiedFetch(url: string, options: RequestInit = {}) {
+  if (Platform.OS === "web") {
+    return fetch("/api/proxy", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        url,
+        method: options.method || "GET",
+        headers: options.headers || {},
+        body: options.body || undefined,
+      }),
+    });
+  }
+  return fetch(url, options);
+}
 
 // In Expo, EXPO_PUBLIC variables are stringified into the bundle
 const clientId = process.env.EXPO_PUBLIC_TRENORD_CLIENT_ID!;
@@ -100,7 +119,7 @@ async function getAccessToken(): Promise<string> {
   logger.log(
     "[Trenord API] Requesting Bearer Access Token from Trenord IDP...",
   );
-  const tokenResponse = await fetch(tokenUrl, {
+  const tokenResponse = await proxiedFetch(tokenUrl, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: params,
@@ -133,7 +152,7 @@ export async function fetchTrainData(
   const url = `${apiUrl}/train/${trainId}`;
 
   logger.log(`[Trenord API] Fetching live data for train ${trainId}...`);
-  const response = await fetch(url, {
+  const response = await proxiedFetch(url, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${accessToken}`,
