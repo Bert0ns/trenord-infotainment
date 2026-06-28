@@ -22,7 +22,6 @@ export default function TabLayout() {
 
   const trainId = useJourneyStore((s) => s.trainId);
   const destinationStation = useJourneyStore((s) => s.destinationStation);
-  const trainData = useJourneyStore((s) => s.trainData);
   const setJourney = useJourneyStore((s) => s.setJourney);
 
   const isJourneyCompleted = useJourneyStore(selectIsJourneyCompleted);

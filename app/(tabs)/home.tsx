@@ -17,7 +17,8 @@ import {
 import { capitalizeWords } from "@/utils/string";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Redirect } from "expo-router";
-import { FlatList, ScrollView, Text, View } from "react-native";
+import { FlatList, ScrollView, Text, View, RefreshControl } from "react-native";
+import { useRefreshTrainData } from "@/hooks/use-refresh-train-data";
 
 import { logger } from "@/lib/logger";
 import { useTranslation } from "react-i18next";
@@ -34,6 +35,7 @@ export default function HomeScreen() {
   const nextStop = useJourneyStore(selectNextStop);
   const isJourneyCompleted = useJourneyStore(selectIsJourneyCompleted);
   const isAtStation = useJourneyStore(selectIsAtStation);
+  const { isRefreshing, onRefresh } = useRefreshTrainData();
 
   if (!trainId) return <Redirect href="/login" />;
 
@@ -55,7 +57,17 @@ export default function HomeScreen() {
   );
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.content}
+      refreshControl={
+        <RefreshControl
+          refreshing={isRefreshing}
+          onRefresh={onRefresh}
+          tintColor={theme.colors.primary}
+        />
+      }
+    >
       <View style={styles.pageHeader}>
         <Text style={styles.pageTitle}>
           {destinationStation
