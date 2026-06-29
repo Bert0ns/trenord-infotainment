@@ -57,15 +57,22 @@ export const selectTrainInfo = (state: JourneyStore) =>
 export const selectPassList = (state: JourneyStore) =>
   selectOrigDestData(state)?.journey_list?.[0]?.pass_list;
 
-export const selectIsJourneyCompleted = (state: JourneyStore) => {
+export const selectDestinationPass = (state: JourneyStore) => {
   const passList = selectPassList(state);
-  if (!passList || passList.length === 0) return false;
-  return (
-    passList[passList.length - 1]?.actual_data?.arr_actual_time !== undefined
-  );
+  const destId = state.destinationStation?.station_id;
+  if (!passList || !destId) return undefined;
+  return passList.find((pass) => pass.station.station_id === destId);
+};
+
+export const selectIsJourneyCompleted = (state: JourneyStore) => {
+  const destPass = selectDestinationPass(state);
+  if (!destPass) return false;
+  return destPass.actual_data?.arr_actual_time !== undefined;
 };
 
 export const selectNextStop = (state: JourneyStore) => {
+  if (selectIsJourneyCompleted(state)) return undefined;
+
   const passList = selectPassList(state);
   if (!passList) return undefined;
 

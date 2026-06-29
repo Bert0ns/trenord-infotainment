@@ -4,21 +4,22 @@ import LiveStatusCard from "@/components/home-components/liveStatusCard";
 import WeatherCard from "@/components/home-components/weatherCard";
 import NewsCard from "@/components/newsCard";
 import SectionHeader from "@/components/sectionHeader";
+import { useRefreshTrainData } from "@/hooks/use-refresh-train-data";
 import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
 import {
-  useJourneyStore,
-  selectOrigDestData,
-  selectTrainInfo,
-  selectPassList,
-  selectNextStop,
-  selectIsJourneyCompleted,
   selectIsAtStation,
+  selectIsJourneyCompleted,
+  selectNextStop,
+  selectOrigDestData,
+  selectDestinationPass,
+  selectPassList,
+  selectTrainInfo,
+  useJourneyStore,
 } from "@/store/journeyStore";
 import { capitalizeWords } from "@/utils/string";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Redirect } from "expo-router";
-import { FlatList, ScrollView, Text, View, RefreshControl } from "react-native";
-import { useRefreshTrainData } from "@/hooks/use-refresh-train-data";
+import { FlatList, RefreshControl, ScrollView, Text, View } from "react-native";
 
 import { logger } from "@/lib/logger";
 import { useTranslation } from "react-i18next";
@@ -34,6 +35,7 @@ export default function HomeScreen() {
   const origDestData = useJourneyStore(selectOrigDestData);
   const trainInfo = useJourneyStore(selectTrainInfo);
   const passListArray = useJourneyStore(selectPassList);
+  const destinationPass = useJourneyStore(selectDestinationPass);
   const nextStop = useJourneyStore(selectNextStop);
   const isJourneyCompleted = useJourneyStore(selectIsJourneyCompleted);
   const isAtStation = useJourneyStore(selectIsAtStation);
@@ -86,10 +88,10 @@ export default function HomeScreen() {
           <Text style={styles.pageSubtitle}>
             {origDestData.dep_time
               ? origDestData.dep_time.slice(0, 5)
-              : "Unknown"}{" "}
-            -{" "}
-            {origDestData.dep_time
-              ? origDestData.arr_time.slice(0, 5)
+              : "Unknown"}
+            {" - "}
+            {destinationPass?.arr_time
+              ? destinationPass.arr_time.slice(0, 5)
               : "Unknown"}
           </Text>
         </View>
@@ -103,18 +105,16 @@ export default function HomeScreen() {
         arrivalTime={
           nextStop?.arr_time ? nextStop.arr_time.slice(0, 5) : "Unknown"
         }
-        speed="120 km/h"
+        speed="N/A"
         trainNumber={`${trainInfo.train_category} ${trainId}`}
         delayMinutes={trainInfo.delay}
         isFirst={nextStop?.pass_count === 1}
         departureTime={
-          isAtStation
+          isAtStation || nextStop?.pass_count === 1
             ? nextStop?.dep_time
               ? nextStop.dep_time.slice(0, 5)
               : "Unknown"
-            : origDestData.dep_time
-              ? origDestData.dep_time.slice(0, 5)
-              : "Unknown"
+            : undefined
         }
         isCompleted={isJourneyCompleted}
         isAtStation={isAtStation}

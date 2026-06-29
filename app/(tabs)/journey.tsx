@@ -5,6 +5,7 @@ import {
   selectOrigDestData,
   selectTrainInfo,
   selectPassList,
+  selectDestinationPass,
   selectNextStop,
 } from "@/store/journeyStore";
 import { capitalizeWords } from "@/utils/string";
@@ -27,6 +28,7 @@ export default function JourneyScreen() {
   const origDestData = useJourneyStore(selectOrigDestData);
   const trainInfo = useJourneyStore(selectTrainInfo);
   const passListArray = useJourneyStore(selectPassList);
+  const destinationPass = useJourneyStore(selectDestinationPass);
   const nextStop = useJourneyStore(selectNextStop);
   const { isRefreshing, onRefresh } = useRefreshTrainData();
 
@@ -78,8 +80,8 @@ export default function JourneyScreen() {
               ? origDestData.dep_time.slice(0, 5)
               : "Unknown"}{" "}
             -{" "}
-            {origDestData.dep_time
-              ? origDestData.arr_time.slice(0, 5)
+            {destinationPass?.arr_time
+              ? destinationPass.arr_time.slice(0, 5)
               : "Unknown"}
           </Text>
         </View>

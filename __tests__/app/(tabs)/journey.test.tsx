@@ -60,7 +60,7 @@ describe("JourneyScreen", () => {
       (selector: any) =>
         selector({
           trainId: "4567",
-          destinationStation: { station_ori_name: "Bergamo" },
+          destinationStation: { station_id: "S3", station_ori_name: "Bergamo" },
           trainData: [
             {
               dep_time: "10:00:00",
