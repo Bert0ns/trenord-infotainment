@@ -9,9 +9,12 @@ jest.mock("@/lib/api/trenord", () => ({
 
 jest.mock("@/lib/logger", () => {
   const mLogger = {
+    trace: jest.fn(),
+    debug: jest.fn(),
+    info: jest.fn(),
     log: jest.fn(),
-    error: jest.fn(),
     warn: jest.fn(),
+    error: jest.fn(),
   };
   return {
     logger: {
