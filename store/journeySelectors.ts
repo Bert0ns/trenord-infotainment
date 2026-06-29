@@ -1,4 +1,4 @@
-import { JourneyStore } from "./journeyStore";
+import type { JourneyStore } from "./journeyStore";
 
 export const selectOrigDestData = (state: JourneyStore) => state.trainData?.[0];
 

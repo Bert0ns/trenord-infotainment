@@ -100,79 +100,19 @@ export default function TimelineCard({
 
   return (
     <View style={styles.container}>
-      <View style={styles.timelineColumn}>
-        {/* Vertical Line */}
-        {!isLast && (
-          <View style={styles.lineContainer}>
-            <View
-              style={[
-                styles.lineHalf,
-                {
-                  backgroundColor:
-                    lineFill === "none"
-                      ? theme.colors.border
-                      : theme.colors.primary,
-                },
-              ]}
-            />
-            <View
-              style={[
-                styles.lineHalf,
-                {
-                  backgroundColor:
-                    lineFill === "full"
-                      ? theme.colors.primary
-                      : theme.colors.border,
-                },
-              ]}
-            />
-          </View>
-        )}
-        {/* Dot */}
-        {isCancelled === true && (
-          <MaterialIcons
-            name="cancel"
-            size={14}
-            color={theme.colors.destructive}
-            style={{
-              position: "absolute",
-              zIndex: 3,
-              marginTop: theme.spacing.sm + 4,
-            }}
-          />
-        )}
-        {!isCancelled && (
-          <Animated.View
-            style={[
-              styles.dot,
-              isCurrent && styles.dotCurrent,
-              isUserDestination && styles.dotDestination,
-              isFuture && {
-                backgroundColor: theme.colors.border,
-                borderColor: theme.colors.background,
-              },
-              (isPast || isCurrent) && {
-                backgroundColor: theme.colors.primary,
-                borderColor: theme.colors.background,
-              },
-              (isPast || (isPastDestination && !isCurrent)) && {
-                opacity: 0.4,
-              },
-              isCurrent && {
-                opacity: pulseAnim,
-                transform: [
-                  {
-                    scale: pulseAnim.interpolate({
-                      inputRange: [0.5, 1],
-                      outputRange: [0.85, 1],
-                    }),
-                  },
-                ],
-              },
-            ]}
-          />
-        )}
-      </View>
+      <TimelineColumn
+        isLast={isLast}
+        lineFill={lineFill}
+        isCancelled={isCancelled}
+        isCurrent={isCurrent}
+        isUserDestination={isUserDestination}
+        isFuture={isFuture}
+        isPast={isPast}
+        isPastDestination={isPastDestination}
+        pulseAnim={pulseAnim}
+        theme={theme}
+        styles={styles}
+      />
 
       <View
         style={[
@@ -180,140 +120,333 @@ export default function TimelineCard({
           (isPast || (isPastDestination && !isCurrent)) && { opacity: 0.4 },
         ]}
       >
-        <View
+        <CardContent
+          stationName={stationName}
+          scheduledTime={scheduledTime}
+          estimatedTime={estimatedTime}
+          actualTime={actualTime}
+          platform={platform}
+          delayMinutes={delayMinutes}
+          isCancelled={isCancelled}
+          isFirst={isFirst}
+          isCompleted={isCompleted}
+          isAtStation={isAtStation}
+          isUserDestination={isUserDestination}
+          isPastDestination={isPastDestination}
+          isCurrent={isCurrent}
+          isFuture={isFuture}
+          isPast={isPast}
+          calculatedTime={calculatedTime}
+          t={t}
+          theme={theme}
+          styles={styles}
+        />
+      </View>
+    </View>
+  );
+}
+
+// --- Extracted Components to reduce cognitive load ---
+
+function TimelineColumn({
+  isLast,
+  lineFill,
+  isCancelled,
+  isCurrent,
+  isUserDestination,
+  isFuture,
+  isPast,
+  isPastDestination,
+  pulseAnim,
+  theme,
+  styles,
+}: any) {
+  return (
+    <View style={styles.timelineColumn}>
+      {/* Vertical Line */}
+      {!isLast && (
+        <View style={styles.lineContainer}>
+          <View
+            style={[
+              styles.lineHalf,
+              {
+                backgroundColor:
+                  lineFill === "none"
+                    ? theme.colors.border
+                    : theme.colors.primary,
+              },
+            ]}
+          />
+          <View
+            style={[
+              styles.lineHalf,
+              {
+                backgroundColor:
+                  lineFill === "full"
+                    ? theme.colors.primary
+                    : theme.colors.border,
+              },
+            ]}
+          />
+        </View>
+      )}
+      {/* Dot */}
+      {isCancelled === true && (
+        <MaterialIcons
+          name="cancel"
+          size={14}
+          color={theme.colors.destructive}
+          style={{
+            position: "absolute",
+            zIndex: 3,
+            marginTop: theme.spacing.sm + 4,
+          }}
+        />
+      )}
+      {!isCancelled && (
+        <Animated.View
           style={[
-            styles.card,
-            isCurrent && styles.currentCard,
-            isUserDestination && styles.destinationCard,
+            styles.dot,
+            isCurrent && styles.dotCurrent,
+            isUserDestination && styles.dotDestination,
+            isFuture && {
+              backgroundColor: theme.colors.border,
+              borderColor: theme.colors.background,
+            },
+            (isPast || isCurrent) && {
+              backgroundColor: theme.colors.primary,
+              borderColor: theme.colors.background,
+            },
+            (isPast || (isPastDestination && !isCurrent)) && {
+              opacity: 0.4,
+            },
+            isCurrent && {
+              opacity: pulseAnim,
+              transform: [
+                {
+                  scale: pulseAnim.interpolate({
+                    inputRange: [0.5, 1],
+                    outputRange: [0.85, 1],
+                  }),
+                },
+              ],
+            },
           ]}
-        >
-          <View style={styles.headerRow}>
-            <View style={{ flex: 1 }}>
-              {isUserDestination && (
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    marginBottom: 2,
-                  }}
-                >
-                  <Text
-                    style={[
-                      styles.subInfoText,
-                      {
-                        color: theme.colors.primary,
-                        fontWeight: "700",
-                        fontSize: 11,
-                        letterSpacing: 1,
-                      },
-                    ]}
-                  >
-                    {t("destination").toUpperCase()}
-                  </Text>
-                </View>
-              )}
-              <Text
-                style={[
-                  styles.stationName,
-                  isCurrent && styles.currentStationName,
-                  isUserDestination && styles.destinationStationName,
-                  isFuture && styles.textMuted,
-                ]}
+        />
+      )}
+    </View>
+  );
+}
+
+function CardContent({
+  stationName,
+  scheduledTime,
+  estimatedTime,
+  actualTime,
+  platform,
+  delayMinutes,
+  isCancelled,
+  isFirst,
+  isCompleted,
+  isAtStation,
+  isUserDestination,
+  isPastDestination,
+  isCurrent,
+  isFuture,
+  isPast,
+  calculatedTime,
+  t,
+  theme,
+  styles,
+}: any) {
+  return (
+    <View
+      style={[
+        styles.contentColumn,
+        (isPast || (isPastDestination && !isCurrent)) && { opacity: 0.4 },
+      ]}
+    >
+      <View
+        style={[
+          styles.card,
+          isCurrent && styles.currentCard,
+          isUserDestination && styles.destinationCard,
+        ]}
+      >
+        <View style={styles.headerRow}>
+          <View style={{ flex: 1 }}>
+            {isUserDestination && (
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginBottom: 2,
+                }}
               >
-                {stationName}
-              </Text>
-
-              {/* Info */}
-              <View style={styles.subInfoRow}>
-                {/* Platform */}
-                {!!platform && !isCurrent && (
-                  <Text style={styles.subInfoText}>
-                    {t("platform", { platform })}
-                  </Text>
-                )}
-                {/* Arriving / Departing + Platform */}
-                {isCurrent && isCompleted && (
-                  <Text style={styles.arrivingText}>
-                    {t("arrived")}
-                    {platform ? ` • ${t("platform", { platform })}` : ""}
-                  </Text>
-                )}
-                {isCurrent && !isCompleted && (isFirst || isAtStation) && (
-                  <Text style={styles.arrivingText}>
-                    {t("departingIn", { minutes: calculatedTime })}
-                    {platform ? ` • ${t("platform", { platform })}` : ""}
-                  </Text>
-                )}
-                {isCurrent && !isCompleted && !isFirst && !isAtStation && (
-                  <Text style={styles.arrivingText}>
-                    {t("arrivingIn", { minutes: calculatedTime })}
-                    {platform ? ` • ${t("platform", { platform })}` : ""}
-                  </Text>
-                )}
-                {/* Cancelled */}
-                {isCancelled && (
-                  <View style={styles.onTimeRow}>
-                    <Text
-                      style={[
-                        styles.subInfoText,
-                        { color: theme.colors.destructive },
-                      ]}
-                    >
-                      {t("cancelled")}
-                    </Text>
-                  </View>
-                )}
-              </View>
-
-              {/* Delay Badge */}
-              {isCurrent && delayMinutes > 0 && (
-                <View style={styles.delayBadge}>
-                  <MaterialIcons
-                    name="warning"
-                    size={12}
-                    color={theme.colors.destructiveForeground}
-                  />
-                  <Text style={styles.delayText}>
-                    {t("minutesDelay", { minutes: delayMinutes })}
-                  </Text>
-                </View>
-              )}
-            </View>
-
-            {/* Time */}
-            <View style={styles.timeContainer}>
-              {/* Scheduled Time */}
-              <Text
-                style={[
-                  styles.scheduledTime,
-                  isPast && styles.timeStrikethrough,
-                  isCurrent && styles.timeCurrent,
-                ]}
-              >
-                {scheduledTime}
-              </Text>
-              {/* Actual departed/arrived time */}
-              {!!actualTime && isPast && (
                 <Text
-                  style={[styles.statusText, { color: theme.colors.primary }]}
+                  style={[
+                    styles.subInfoText,
+                    {
+                      color: theme.colors.primary,
+                      fontWeight: "700",
+                      fontSize: 11,
+                      letterSpacing: 1,
+                    },
+                  ]}
                 >
-                  {isUserDestination
-                    ? `Arrived at ${actualTime}`
-                    : t("departedAt", { time: actualTime })}
+                  {t("destination").toUpperCase()}
                 </Text>
-              )}
-              {/* Estimated time */}
-              {isFuture && (
-                <Text style={styles.subInfoText}>{estimatedTime}</Text>
-              )}
-            </View>
+              </View>
+            )}
+            <Text
+              style={[
+                styles.stationName,
+                isCurrent && styles.currentStationName,
+                isUserDestination && styles.destinationStationName,
+                isFuture && styles.textMuted,
+              ]}
+            >
+              {stationName}
+            </Text>
+
+            <SubInfoRow
+              platform={platform}
+              isCurrent={isCurrent}
+              isCompleted={isCompleted}
+              isFirst={isFirst}
+              isAtStation={isAtStation}
+              calculatedTime={calculatedTime}
+              isCancelled={isCancelled}
+              delayMinutes={delayMinutes}
+              t={t}
+              theme={theme}
+              styles={styles}
+            />
           </View>
+
+          <TimeContainer
+            scheduledTime={scheduledTime}
+            actualTime={actualTime}
+            estimatedTime={estimatedTime}
+            isPast={isPast}
+            isCurrent={isCurrent}
+            isFuture={isFuture}
+            isUserDestination={isUserDestination}
+            t={t}
+            theme={theme}
+            styles={styles}
+          />
         </View>
       </View>
     </View>
   );
 }
 
+function SubInfoRow({
+  platform,
+  isCurrent,
+  isCompleted,
+  isFirst,
+  isAtStation,
+  calculatedTime,
+  isCancelled,
+  delayMinutes,
+  t,
+  theme,
+  styles,
+}: any) {
+  return (
+    <>
+      <View style={styles.subInfoRow}>
+        {/* Platform */}
+        {!!platform && !isCurrent && (
+          <Text style={styles.subInfoText}>{t("platform", { platform })}</Text>
+        )}
+        {/* Arriving / Departing + Platform */}
+        {isCurrent && isCompleted && (
+          <Text style={styles.arrivingText}>
+            {t("arrived")}
+            {platform ? ` • ${t("platform", { platform })}` : ""}
+          </Text>
+        )}
+        {isCurrent && !isCompleted && (isFirst || isAtStation) && (
+          <Text style={styles.arrivingText}>
+            {t("departingIn", { minutes: calculatedTime })}
+            {platform ? ` • ${t("platform", { platform })}` : ""}
+          </Text>
+        )}
+        {isCurrent && !isCompleted && !isFirst && !isAtStation && (
+          <Text style={styles.arrivingText}>
+            {t("arrivingIn", { minutes: calculatedTime })}
+            {platform ? ` • ${t("platform", { platform })}` : ""}
+          </Text>
+        )}
+        {/* Cancelled */}
+        {isCancelled && (
+          <View style={styles.onTimeRow}>
+            <Text
+              style={[styles.subInfoText, { color: theme.colors.destructive }]}
+            >
+              {t("cancelled")}
+            </Text>
+          </View>
+        )}
+      </View>
+
+      {/* Delay Badge */}
+      {isCurrent && delayMinutes > 0 && (
+        <View style={styles.delayBadge}>
+          <MaterialIcons
+            name="warning"
+            size={12}
+            color={theme.colors.destructiveForeground}
+          />
+          <Text style={styles.delayText}>
+            {t("minutesDelay", { minutes: delayMinutes })}
+          </Text>
+        </View>
+      )}
+    </>
+  );
+}
+
+function TimeContainer({
+  scheduledTime,
+  actualTime,
+  estimatedTime,
+  isPast,
+  isCurrent,
+  isFuture,
+  isUserDestination,
+  t,
+  theme,
+  styles,
+}: any) {
+  return (
+    <View style={styles.timeContainer}>
+      {/* Scheduled Time */}
+      <Text
+        style={[
+          styles.scheduledTime,
+          isPast && styles.timeStrikethrough,
+          isCurrent && styles.timeCurrent,
+        ]}
+      >
+        {scheduledTime}
+      </Text>
+      {/* Actual departed/arrived time */}
+      {!!actualTime && isPast && (
+        <Text style={[styles.statusText, { color: theme.colors.primary }]}>
+          {isUserDestination
+            ? `Arrived at ${actualTime}`
+            : t("departedAt", { time: actualTime })}
+        </Text>
+      )}
+      {/* Estimated time */}
+      {isFuture && <Text style={styles.subInfoText}>{estimatedTime}</Text>}
+    </View>
+  );
+}
 const useStyles = createStyleHook((theme) => ({
   container: {
     flexDirection: "row",

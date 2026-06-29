@@ -10,6 +10,50 @@ interface JourneyTimelineProps {
   trainInfo: any;
 }
 
+// --- Helpers to reduce cognitive complexity ---
+
+function getPassStatus(
+  pass: any,
+  nextStop: any,
+): "future" | "current" | "past" {
+  if (pass === nextStop) return "current";
+  if (
+    (nextStop && pass.pass_count < nextStop.pass_count) ||
+    (pass.type === "O" && pass.actual_data?.dep_actual_time !== undefined) ||
+    (pass.type === "D" && pass.actual_data?.arr_actual_time !== undefined) ||
+    (pass.actual_data?.arr_actual_time !== undefined &&
+      pass.actual_data?.dep_actual_time !== undefined)
+  ) {
+    return "past";
+  }
+  return "future";
+}
+
+function getIsAtStation(pass: any): boolean {
+  return (
+    pass.actual_data?.arr_actual_time !== undefined &&
+    pass.actual_data?.dep_actual_time === undefined &&
+    pass.type !== "D"
+  );
+}
+
+function getLineFill(
+  index: number,
+  passListArray: any[],
+  nextStop: any,
+): "full" | "half" | "none" {
+  if (index >= passListArray.length - 1) return "none";
+
+  const nextPass = passListArray[index + 1];
+  const nextStatus = getPassStatus(nextPass, nextStop);
+
+  if (nextStatus === "past") return "full";
+  if (nextStatus === "current") {
+    return getIsAtStation(nextPass) ? "full" : "half";
+  }
+  return "none";
+}
+
 export default function JourneyTimeline({
   passListArray,
   destinationStation,
@@ -27,51 +71,8 @@ export default function JourneyTimeline({
         const isPastDestination =
           destinationIndex !== -1 && index > destinationIndex;
 
-        let status: any = "future";
-        if (pass === nextStop) {
-          status = "current";
-        } else if (
-          (nextStop && pass.pass_count < nextStop.pass_count) ||
-          (pass.type === "O" &&
-            pass.actual_data?.dep_actual_time !== undefined) ||
-          (pass.type === "D" &&
-            pass.actual_data?.arr_actual_time !== undefined) ||
-          (pass.actual_data?.arr_actual_time !== undefined &&
-            pass.actual_data?.dep_actual_time !== undefined)
-        ) {
-          status = "past";
-        }
-
-        let lineFill: "full" | "half" | "none" = "none";
-        if (index < passListArray.length - 1) {
-          const nextPass = passListArray[index + 1];
-          let nextStatus = "future";
-          if (nextPass === nextStop) {
-            nextStatus = "current";
-          } else if (
-            (nextStop && nextPass.pass_count < nextStop.pass_count) ||
-            (nextPass.type === "O" &&
-              nextPass.actual_data?.dep_actual_time !== undefined) ||
-            (nextPass.type === "D" &&
-              nextPass.actual_data?.arr_actual_time !== undefined) ||
-            (nextPass.actual_data?.arr_actual_time !== undefined &&
-              nextPass.actual_data?.dep_actual_time !== undefined)
-          ) {
-            nextStatus = "past";
-          }
-
-          if (nextStatus === "past") {
-            lineFill = "full";
-          } else if (nextStatus === "current") {
-            const isNextAtStation =
-              nextPass.actual_data?.arr_actual_time !== undefined &&
-              nextPass.actual_data?.dep_actual_time === undefined &&
-              nextPass.type !== "D";
-            lineFill = isNextAtStation ? "full" : "half";
-          } else {
-            lineFill = "none";
-          }
-        }
+        const status = getPassStatus(pass, nextStop);
+        const lineFill = getLineFill(index, passListArray, nextStop);
 
         const scheduledTime = pass.type === "O" ? pass.dep_time : pass.arr_time;
         const actualTime =
@@ -95,11 +96,7 @@ export default function JourneyTimeline({
               pass.type === "D" &&
               pass.actual_data?.arr_actual_time !== undefined
             }
-            isAtStation={
-              pass.actual_data?.arr_actual_time !== undefined &&
-              pass.actual_data?.dep_actual_time === undefined &&
-              pass.type !== "D"
-            }
+            isAtStation={getIsAtStation(pass)}
             isUserDestination={isUserDestination}
             isPastDestination={isPastDestination}
             lineFill={lineFill}
