@@ -139,7 +139,7 @@ async function getAccessToken(): Promise<string> {
   cachedAccessToken = tokenData.access_token;
   const expiresIn = tokenData.expires_in || 300;
   tokenExpirationTime = now + expiresIn;
-  apiLogger.log(
+  apiLogger.trace(
     `Access Token acquired successfully, expires in ${expiresIn} seconds.`,
   );
   return cachedAccessToken!;
@@ -151,7 +151,7 @@ export async function fetchTrainData(
   const accessToken = await getAccessToken();
   const url = `${apiUrl}/train/${trainId}`;
 
-  apiLogger.log(`Fetching live data for train ${trainId}...`);
+  apiLogger.trace(`Fetching live data for train ${trainId}...`);
   const response = await proxiedFetch(url, {
     method: "GET",
     headers: {
@@ -164,6 +164,6 @@ export async function fetchTrainData(
     throw new Error(`Train API Call failed with status ${response.status}`);
   }
 
-  apiLogger.log(`Train data retrieved successfully for train ${trainId}.`);
+  apiLogger.trace(`Train data retrieved successfully for train ${trainId}.`);
   return response.json();
 }

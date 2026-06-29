@@ -29,6 +29,7 @@ const config = {
       UI: "grey" as const,
       Report: "red" as const,
       Settings: "white" as const,
+      Store: "magentaBright" as const,
     },
   },
   async: process.env.NODE_ENV !== "test",

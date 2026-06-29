@@ -54,7 +54,7 @@ export default function HomeScreen() {
     );
   }
 
-  uiLogger.log(
+  uiLogger.trace(
     `Render train ${trainId}. Next stop: ${nextStop?.station?.station_ori_name || "None"}`,
   );
 

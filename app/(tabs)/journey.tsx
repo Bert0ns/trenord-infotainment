@@ -44,7 +44,7 @@ export default function JourneyScreen() {
       </View>
     );
   }
-  uiLogger.log(
+  uiLogger.trace(
     `Rendering timeline for train ${trainId}. ${passListArray.length} stations loaded.`,
   );
 

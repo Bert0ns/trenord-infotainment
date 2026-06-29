@@ -14,7 +14,7 @@ import { Text, View } from "react-native";
 
 const pollingLogger = logger.extend("Polling");
 
-const FETCH_TRAIN_POLLING_RATE = 90000;
+const FETCH_TRAIN_POLLING_RATE = 120000; //2 min
 
 export default function TabLayout() {
   const [fontsLoaded] = useFonts({
@@ -35,7 +35,7 @@ export default function TabLayout() {
 
     const pollTrainData = async () => {
       try {
-        pollingLogger.log(`Background fetch for train ${trainId}...`);
+        pollingLogger.trace(`Background fetch for train ${trainId}...`);
         const data = await fetchTrainData(trainId);
         if (isMounted && data && data.length > 0) {
           setJourney(trainId, destinationStation, data);
