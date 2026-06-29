@@ -14,12 +14,10 @@ import { Redirect } from "expo-router";
 import { RefreshControl, ScrollView } from "react-native";
 
 import { logger } from "@/lib/logger";
-import { useTranslation } from "react-i18next";
 
 const uiLogger = logger.extend("UI");
 
 export default function JourneyScreen() {
-  const { t } = useTranslation("common");
   const styles = useScreenStyles();
   const theme = useTheme();
   const trainId = useJourneyStore((s) => s.trainId);
