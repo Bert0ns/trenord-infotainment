@@ -1,23 +1,22 @@
-import { useEffect } from "react";
-import { fetchTrainData } from "@/lib/api/trenord";
 import { logger } from "@/lib/logger";
 import {
-  useJourneyStore,
+  selectIsAtStation,
   selectIsJourneyCompleted,
   selectNextStop,
   selectTrainInfo,
-  selectIsAtStation,
+  useJourneyStore,
 } from "@/store/journeyStore";
 import { parseAndAddDelay } from "@/utils/time";
+import { useEffect } from "react";
+import { useSyncJourney } from "./use-sync-journey";
 
 const pollingLogger = logger.extend("Polling");
 export const FETCH_TRAIN_POLLING_RATE = 120000; // 2 min (exported for tests)
 export const MICRO_RETRY_RATE = 30000; // 30s
 
 export function useTrainPolling() {
-  const trainId = useJourneyStore((s) => s.trainId);
-  const destinationStation = useJourneyStore((s) => s.destinationStation);
-  const setJourney = useJourneyStore((s) => s.setJourney);
+  const { trainId, destinationStation, setJourney, syncJourney } =
+    useSyncJourney();
   const isJourneyCompleted = useJourneyStore(selectIsJourneyCompleted);
 
   const nextStop = useJourneyStore(selectNextStop);
@@ -40,11 +39,7 @@ export function useTrainPolling() {
 
     const pollTrainData = async () => {
       try {
-        pollingLogger.trace(`Background fetch for train ${trainId}...`);
-        const data = await fetchTrainData(trainId);
-        if (isMounted && data && data.length > 0) {
-          setJourney(trainId, destinationStation, data);
-        }
+        await syncJourney();
       } catch (err) {
         pollingLogger.error(`Failed to fetch train data:`, err);
         if (isMounted) scheduleNextFetch(FETCH_TRAIN_POLLING_RATE);
@@ -98,5 +93,6 @@ export function useTrainPolling() {
     nextStop,
     trainInfo?.delay,
     isAtStation,
+    syncJourney,
   ]);
 }
