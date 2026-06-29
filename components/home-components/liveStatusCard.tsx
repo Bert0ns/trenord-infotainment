@@ -83,7 +83,7 @@ export default function LiveStatusCard({
               </Text>
             </View>
           )}
-          {delayMinutes === 0 && !isCompleted && (
+          {delayMinutes <= 0 && (
             <View
               style={[
                 styles.delayBadge,

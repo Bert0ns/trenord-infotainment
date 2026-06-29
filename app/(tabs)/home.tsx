@@ -68,10 +68,16 @@ export default function HomeScreen() {
         nextStop={
           nextStop
             ? capitalizeWords(nextStop.station.station_ori_name)
-            : "Unknown"
+            : isJourneyCompleted && destinationStation
+              ? capitalizeWords(destinationStation.station_ori_name)
+              : "Unknown"
         }
         arrivalTime={
-          nextStop?.arr_time ? nextStop.arr_time.slice(0, 5) : "Unknown"
+          nextStop?.arr_time
+            ? nextStop.arr_time.slice(0, 5)
+            : isJourneyCompleted && destinationPass?.arr_time
+              ? destinationPass.arr_time.slice(0, 5)
+              : "Unknown"
         }
         destination={
           destinationStation
