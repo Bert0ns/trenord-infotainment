@@ -41,41 +41,4 @@ const useStyles = createStyleHook((theme) => ({
     color: theme.colors.mutedForeground,
     lineHeight: 20,
   },
-
-  discoverCard: {
-    width: width * 0.55,
-    backgroundColor: theme.colors.background,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-    borderRadius: theme.borderRadius.md,
-    marginRight: theme.spacing.sm,
-    overflow: "hidden",
-  },
-  image: { width: "100%", height: 120 },
-  info: { padding: theme.spacing.md },
-  discoverTitle: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: theme.colors.foreground,
-    marginBottom: 2,
-  },
-  discoverSubtitle: {
-    fontSize: 12,
-    color: theme.colors.mutedForeground,
-    marginBottom: theme.spacing.md,
-  },
-  button: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: theme.colors.muted,
-    paddingVertical: 8,
-    borderRadius: 9999,
-    gap: 4,
-  },
-  buttonText: {
-    fontSize: 13,
-    fontWeight: "500",
-    color: theme.colors.foreground,
-  },
 }));

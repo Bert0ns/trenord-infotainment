@@ -73,36 +73,25 @@ export default function QRScanner({ onScan, style }: QRScannerProps) {
             color="rgba(255,255,255,0.05)"
           />
         </View>
-        <View style={StyleSheet.absoluteFill}>
-          <View style={styles.overlay}>
-            <View style={styles.maskHole} pointerEvents="none" />
-
-            <View style={styles.cutout}>
-              <ScannerCorners />
-
-              <View style={styles.permissionBlockedContent}>
-                <TouchableOpacity
-                  style={styles.permissionBtn}
-                  onPress={requestPermission}
-                >
-                  <MaterialIcons
-                    name="camera-alt"
-                    size={20}
-                    color={theme.colors.primaryForeground}
-                    style={{ marginRight: 8 }}
-                  />
-                  <Text style={styles.permissionBtnText}>
-                    {t("useQRScanner")}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-
-            <Text style={styles.instructionText}>
-              {t("enableCameraToScan")}
-            </Text>
+        <ScannerOverlay
+          instructionText={t("enableCameraToScan")}
+          pointerEvents="auto"
+        >
+          <View style={styles.permissionBlockedContent}>
+            <TouchableOpacity
+              style={styles.permissionBtn}
+              onPress={requestPermission}
+            >
+              <MaterialIcons
+                name="camera-alt"
+                size={20}
+                color={theme.colors.primaryForeground}
+                style={{ marginRight: 8 }}
+              />
+              <Text style={styles.permissionBtnText}>{t("useQRScanner")}</Text>
+            </TouchableOpacity>
           </View>
-        </View>
+        </ScannerOverlay>
       </View>
     );
   }
@@ -117,25 +106,18 @@ export default function QRScanner({ onScan, style }: QRScannerProps) {
             color="rgba(255,255,255,0.05)"
           />
         </View>
-        <View style={StyleSheet.absoluteFill}>
-          <View style={styles.overlay}>
-            <View style={styles.maskHole} pointerEvents="none" />
-
-            <View style={styles.cutout}>
-              <ScannerCorners />
-
-              <Animated.View style={[styles.successPopup, checkStyle]}>
-                <MaterialIcons
-                  name="check-circle"
-                  size={80}
-                  color={theme.colors.primary}
-                />
-              </Animated.View>
-            </View>
-
-            <Text style={styles.instructionText}>{t("verifyingTicket")}</Text>
-          </View>
-        </View>
+        <ScannerOverlay
+          instructionText={t("verifyingTicket")}
+          pointerEvents="auto"
+        >
+          <Animated.View style={[styles.successPopup, checkStyle]}>
+            <MaterialIcons
+              name="check-circle"
+              size={80}
+              color={theme.colors.primary}
+            />
+          </Animated.View>
+        </ScannerOverlay>
       </View>
     );
   }
@@ -150,16 +132,37 @@ export default function QRScanner({ onScan, style }: QRScannerProps) {
         }}
         onBarcodeScanned={handleBarcodeScanned}
       />
-      <View style={StyleSheet.absoluteFill} pointerEvents="box-none">
-        <View style={styles.overlay}>
-          <View style={styles.maskHole} pointerEvents="none" />
+      <ScannerOverlay
+        instructionText={t("alignQRCode")}
+        cutoutPointerEvents="none"
+      />
+    </View>
+  );
+}
 
-          <View style={styles.cutout} pointerEvents="none">
-            <ScannerCorners />
-          </View>
+function ScannerOverlay({
+  children,
+  instructionText,
+  pointerEvents = "box-none",
+  cutoutPointerEvents = "auto",
+}: {
+  children?: React.ReactNode;
+  instructionText: string;
+  pointerEvents?: "box-none" | "none" | "auto" | "box-only";
+  cutoutPointerEvents?: "box-none" | "none" | "auto" | "box-only";
+}) {
+  const styles = useStyles();
+  return (
+    <View style={StyleSheet.absoluteFill} pointerEvents={pointerEvents}>
+      <View style={styles.overlay}>
+        <View style={styles.maskHole} pointerEvents="none" />
 
-          <Text style={styles.instructionText}>{t("alignQRCode")}</Text>
+        <View style={styles.cutout} pointerEvents={cutoutPointerEvents}>
+          <ScannerCorners />
+          {children}
         </View>
+
+        <Text style={styles.instructionText}>{instructionText}</Text>
       </View>
     </View>
   );

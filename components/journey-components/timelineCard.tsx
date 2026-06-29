@@ -4,7 +4,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Animated, Text, View } from "react-native";
 
-export type NodeStatus = "past" | "current" | "future";
+type NodeStatus = "past" | "current" | "future";
 
 interface TimelineCardProps {
   status: NodeStatus;
