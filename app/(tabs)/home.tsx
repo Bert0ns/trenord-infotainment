@@ -23,6 +23,8 @@ import { useRefreshTrainData } from "@/hooks/use-refresh-train-data";
 import { logger } from "@/lib/logger";
 import { useTranslation } from "react-i18next";
 
+const uiLogger = logger.extend("UI");
+
 export default function HomeScreen() {
   const { t } = useTranslation("common");
   const styles = useStyles();
@@ -52,8 +54,8 @@ export default function HomeScreen() {
     );
   }
 
-  logger.log(
-    `[Home Screen] Render train ${trainId}. Next stop: ${nextStop?.station?.station_ori_name || "None"}`,
+  uiLogger.trace(
+    `Render train ${trainId}. Next stop: ${nextStop?.station?.station_ori_name || "None"}`,
   );
 
   return (

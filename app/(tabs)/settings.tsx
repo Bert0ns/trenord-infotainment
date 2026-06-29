@@ -12,6 +12,8 @@ import { useTranslation } from "react-i18next";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { logger } from "@/lib/logger";
 
+const uiLogger = logger.extend("UI");
+
 export default function SettingsScreen() {
   const router = useRouter();
   const styles = useStyles();
@@ -32,9 +34,7 @@ export default function SettingsScreen() {
     (settings.language === "--" ? ` (${getLocales()[0].languageTag})` : "");
 
   const handleLogout = () => {
-    logger.log(
-      "[Settings Screen] User requested to end journey. Clearing state...",
-    );
+    uiLogger.log("User requested to end journey. Clearing state...");
     clearJourney();
     router.replace("/login");
   };

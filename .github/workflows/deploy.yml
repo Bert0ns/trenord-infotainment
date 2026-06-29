@@ -37,12 +37,14 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
-
+      - name: FormatCheck
+        run: pnpm format:check
       - name: Lint
         run: pnpm lint
-
+      - name: Typecheck
+        run: pnpm typecheck
       - name: Test
-        run: pnpm exec jest --watchAll=false
+        run: pnpm test
 
   build-web:
     name: Build Web

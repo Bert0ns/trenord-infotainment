@@ -17,6 +17,8 @@ import {
 import { logger } from "@/lib/logger";
 import { useTranslation } from "react-i18next";
 
+const reportLogger = logger.extend("Report");
+
 export default function ReportIssuePage() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
@@ -52,7 +54,7 @@ export default function ReportIssuePage() {
   };
 
   const onSubmitReportIssue = () => {
-    logger.log("Report Issue form Data:", {
+    reportLogger.log("Report Issue form Data:", {
       selectedIssues: Array.from(selectedIssues),
       details,
     });

@@ -2,6 +2,9 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TrainInfoResponse } from "@/lib/api/types";
+import { logger } from "@/lib/logger";
+
+const storeLogger = logger.extend("Store");
 
 export interface Station {
   station_id: string;
@@ -26,10 +29,16 @@ export const useJourneyStore = create<JourneyStore>()(
       trainId: null,
       destinationStation: null,
       trainData: null,
-      setJourney: (trainId, destinationStation, trainData) =>
-        set({ trainId, destinationStation, trainData }),
-      clearJourney: () =>
-        set({ trainId: null, destinationStation: null, trainData: null }),
+      setJourney: (trainId, destinationStation, trainData) => {
+        storeLogger.info(
+          `Setting journey to train ${trainId} towards ${destinationStation.station_ori_name}`,
+        );
+        set({ trainId, destinationStation, trainData });
+      },
+      clearJourney: () => {
+        storeLogger.info("Clearing journey data");
+        set({ trainId: null, destinationStation: null, trainData: null });
+      },
     }),
     {
       name: "journey-storage",
