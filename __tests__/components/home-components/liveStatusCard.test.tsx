@@ -51,10 +51,10 @@ describe("LiveStatusCard", () => {
       />,
     );
     expect(getByText("Milano Centrale")).toBeTruthy();
-    expect(getByText("Arr: 10:30")).toBeTruthy();
+    expect(getByText("10:30")).toBeTruthy();
     expect(getByText("+ 5 min delay")).toBeTruthy();
     expect(getByText("Rome")).toBeTruthy();
-    expect(getByText("Arr: 11:30")).toBeTruthy();
+    expect(getByText("11:30")).toBeTruthy();
     expect(getByText("120 km/h")).toBeTruthy();
     expect(getByText("1234")).toBeTruthy();
   });
@@ -72,8 +72,10 @@ describe("LiveStatusCard", () => {
       />,
     );
     expect(getByText("Lecco")).toBeTruthy();
-    expect(getByText("Arr: 11:15")).toBeTruthy();
+    expect(getByText("11:15")).toBeTruthy();
     expect(getByText("On Time")).toBeTruthy();
+    expect(getByText("Sondrio")).toBeTruthy();
+    expect(getByText("12:00")).toBeTruthy();
     expect(queryByText("delay")).toBeFalsy();
   });
 });

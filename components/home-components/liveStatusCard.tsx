@@ -135,21 +135,55 @@ export default function LiveStatusCard({
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <View style={{ flex: 1 }}>
             {isCompleted && (
-              <Text style={styles.arrTime}>Arr: {arrivalTime}</Text>
+              <View style={styles.timeRow}>
+                <MaterialIcons
+                  name="place"
+                  size={16}
+                  color={theme.colors.destructiveForeground}
+                  style={{ opacity: 0.9 }}
+                />
+                <Text style={styles.timeText}>{arrivalTime}</Text>
+              </View>
             )}
             {!isCompleted && (isAtStation || isFirst) && (
-              <Text style={styles.arrTime}>Dep: {departureTime}</Text>
+              <View style={styles.timeRow}>
+                <MaterialIcons
+                  name="trip-origin"
+                  size={16}
+                  color={theme.colors.destructiveForeground}
+                  style={{ opacity: 0.9 }}
+                />
+                <Text style={styles.timeText}>{departureTime}</Text>
+              </View>
             )}
             {!isCompleted && !isAtStation && !isFirst && (
-              <Text style={styles.arrTime}>Arr: {arrivalTime}</Text>
+              <View style={styles.timeRow}>
+                <MaterialIcons
+                  name="place"
+                  size={16}
+                  color={theme.colors.destructiveForeground}
+                  style={{ opacity: 0.9 }}
+                />
+                <Text style={styles.timeText}>{arrivalTime}</Text>
+              </View>
             )}
           </View>
 
           {!isCompleted && (
-            <View style={{ flex: 1 }}>
-              <Text style={[styles.arrTime, { textAlign: "right" }]}>
-                {destinationArrivalTime ? `Arr: ${destinationArrivalTime}` : ""}
-              </Text>
+            <View style={{ flex: 1, alignItems: "flex-end" }}>
+              {destinationArrivalTime && (
+                <View style={styles.timeRow}>
+                  <MaterialIcons
+                    name="place"
+                    size={16}
+                    color={theme.colors.destructiveForeground}
+                    style={{ opacity: 0.9 }}
+                  />
+                  <Text style={[styles.timeText, { textAlign: "right" }]}>
+                    {destinationArrivalTime}
+                  </Text>
+                </View>
+              )}
             </View>
           )}
         </View>
@@ -227,11 +261,16 @@ const useStyles = createStyleHook((theme) => ({
     fontSize: 32,
     fontWeight: "800",
   },
-  arrTime: {
+  timeRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    marginBottom: theme.spacing.md,
+  },
+  timeText: {
     color: theme.colors.destructiveForeground,
     fontSize: 14,
     opacity: 0.9,
-    marginBottom: theme.spacing.md,
   },
   divider: {
     height: 1,
