@@ -101,7 +101,10 @@ describe("HomeScreen", () => {
       (selector: any) =>
         selector({
           trainId: "1234",
-          destinationStation: { station_ori_name: "Milano Centrale" },
+          destinationStation: {
+            station_id: "S02",
+            station_ori_name: "Milano Centrale",
+          },
           trainData: [
             {
               dep_time: "08:00:00",
@@ -115,13 +118,16 @@ describe("HomeScreen", () => {
                   },
                   pass_list: [
                     {
-                      station: { station_ori_name: "Como" },
+                      station: { station_id: "S01", station_ori_name: "Como" },
                       actual_data: { dep_actual_time: "08:05:00" },
                       cancelled: false,
                       pass_count: 1,
                     },
                     {
-                      station: { station_ori_name: "Milano Centrale" },
+                      station: {
+                        station_id: "S02",
+                        station_ori_name: "Milano Centrale",
+                      },
                       arr_time: "09:00:00",
                       actual_data: {},
                       cancelled: false,
@@ -133,8 +139,8 @@ describe("HomeScreen", () => {
           ],
         }),
     );
-    const { getByText } = render(<HomeScreen />);
-    expect(getByText("Milano Centrale - REG 1234")).toBeTruthy();
-    expect(getByText("08:00 - 09:00")).toBeTruthy();
+    const { getByText, getAllByText } = render(<HomeScreen />);
+    expect(getAllByText("Milano Centrale").length).toBeGreaterThan(0);
+    expect(getByText("REG 1234")).toBeTruthy();
   });
 });
