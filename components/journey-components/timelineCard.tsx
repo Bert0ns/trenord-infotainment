@@ -21,6 +21,7 @@ interface TimelineCardProps {
   isAtStation?: boolean;
   isUserDestination?: boolean;
   isPastDestination?: boolean;
+  lineFill?: "full" | "half" | "none";
 }
 
 export default function TimelineCard({
@@ -38,6 +39,7 @@ export default function TimelineCard({
   isAtStation,
   isUserDestination,
   isPastDestination,
+  lineFill = "none",
 }: TimelineCardProps) {
   const styles = useStyles();
   const theme = useTheme();
@@ -89,16 +91,30 @@ export default function TimelineCard({
       <View style={styles.timelineColumn}>
         {/* Vertical Line */}
         {!isLast && (
-          <View
-            style={[
-              styles.line,
-              {
-                backgroundColor: isFuture
-                  ? theme.colors.border
-                  : theme.colors.primary,
-              },
-            ]}
-          />
+          <View style={styles.lineContainer}>
+            <View
+              style={[
+                styles.lineHalf,
+                {
+                  backgroundColor:
+                    lineFill === "none"
+                      ? theme.colors.border
+                      : theme.colors.primary,
+                },
+              ]}
+            />
+            <View
+              style={[
+                styles.lineHalf,
+                {
+                  backgroundColor:
+                    lineFill === "full"
+                      ? theme.colors.primary
+                      : theme.colors.border,
+                },
+              ]}
+            />
+          </View>
         )}
         {/* Dot */}
         {isCancelled === true && (
@@ -295,12 +311,16 @@ const useStyles = createStyleHook((theme) => ({
     width: 30,
     alignItems: "center",
   },
-  line: {
+  lineContainer: {
     position: "absolute",
     top: 24,
     bottom: -5,
     width: 2,
     zIndex: 1,
+  },
+  lineHalf: {
+    flex: 1,
+    width: "100%",
   },
   dot: {
     width: 14,

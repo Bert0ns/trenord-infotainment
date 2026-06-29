@@ -87,6 +87,37 @@ export default function JourneyScreen() {
             status = "past";
           }
 
+          let lineFill: "full" | "half" | "none" = "none";
+          if (index < passListArray.length - 1) {
+            const nextPass = passListArray[index + 1];
+            let nextStatus = "future";
+            if (nextPass === nextStop) {
+              nextStatus = "current";
+            } else if (
+              (nextStop && nextPass.pass_count < nextStop.pass_count) ||
+              (nextPass.type === "O" &&
+                nextPass.actual_data?.dep_actual_time !== undefined) ||
+              (nextPass.type === "D" &&
+                nextPass.actual_data?.arr_actual_time !== undefined) ||
+              (nextPass.actual_data?.arr_actual_time !== undefined &&
+                nextPass.actual_data?.dep_actual_time !== undefined)
+            ) {
+              nextStatus = "past";
+            }
+
+            if (nextStatus === "past") {
+              lineFill = "full";
+            } else if (nextStatus === "current") {
+              const isNextAtStation =
+                nextPass.actual_data?.arr_actual_time !== undefined &&
+                nextPass.actual_data?.dep_actual_time === undefined &&
+                nextPass.type !== "D";
+              lineFill = isNextAtStation ? "full" : "half";
+            } else {
+              lineFill = "none";
+            }
+          }
+
           const scheduledTime =
             pass.type === "O" ? pass.dep_time : pass.arr_time;
           const actualTime =
@@ -117,6 +148,7 @@ export default function JourneyScreen() {
               }
               isUserDestination={isUserDestination}
               isPastDestination={isPastDestination}
+              lineFill={lineFill}
             />
           );
         })}
