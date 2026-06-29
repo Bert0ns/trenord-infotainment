@@ -35,6 +35,7 @@ export default function JourneyScreen() {
   if (!origDestData || !trainInfo || !passListArray) {
     return <LoadingScreen />;
   }
+
   uiLogger.trace(
     `Rendering timeline for train ${trainId}. ${passListArray.length} stations loaded.`,
   );

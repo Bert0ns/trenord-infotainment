@@ -7,6 +7,7 @@
     "departedAt": "Partito alle {{time}}",
     "minutesDelay": "+{{minutes}} min di ritardo",
     "platform": "Binario {{platform}}",
-    "destination": "Destinazione"
+    "destination": "Destinazione",
+    "arrivedAt": "Arrivato alle {{time}}"
   }
 }

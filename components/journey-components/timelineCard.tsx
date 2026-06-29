@@ -72,7 +72,7 @@ export default function TimelineCard({
     let diff = getMinutes(scheduledTime) - currentMinutes + delayMinutes;
     if (diff < -720) diff += 1440;
     if (diff > 720) diff -= 1440;
-    return diff;
+    return Math.max(0, diff);
   };
 
   const calculatedTime = getCalculatedTime();
@@ -117,7 +117,8 @@ export default function TimelineCard({
       <View
         style={[
           styles.contentColumn,
-          (isPast || (isPastDestination && !isCurrent)) && { opacity: 0.4 },
+          (isPast || (isPastDestination && !isCurrent)) &&
+            !isUserDestination && { opacity: 0.8 },
         ]}
       >
         <CardContent
@@ -218,7 +219,7 @@ function TimelineColumn({
               borderColor: theme.colors.background,
             },
             (isPast || (isPastDestination && !isCurrent)) && {
-              opacity: 0.4,
+              opacity: 0.8, // subtle dim instead of 0.4
             },
             isCurrent && {
               opacity: pulseAnim,
@@ -262,81 +263,78 @@ function CardContent({
   return (
     <View
       style={[
-        styles.contentColumn,
-        (isPast || (isPastDestination && !isCurrent)) && { opacity: 0.4 },
+        styles.card,
+        isCurrent && styles.currentCard,
+        isUserDestination && styles.destinationCard,
       ]}
     >
-      <View
-        style={[
-          styles.card,
-          isCurrent && styles.currentCard,
-          isUserDestination && styles.destinationCard,
-        ]}
-      >
-        <View style={styles.headerRow}>
-          <View style={{ flex: 1 }}>
-            {isUserDestination && (
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  marginBottom: 2,
-                }}
-              >
-                <Text
-                  style={[
-                    styles.subInfoText,
-                    {
-                      color: theme.colors.primary,
-                      fontWeight: "700",
-                      fontSize: 11,
-                      letterSpacing: 1,
-                    },
-                  ]}
-                >
-                  {t("destination").toUpperCase()}
-                </Text>
-              </View>
-            )}
-            <Text
-              style={[
-                styles.stationName,
-                isCurrent && styles.currentStationName,
-                isUserDestination && styles.destinationStationName,
-                isFuture && styles.textMuted,
-              ]}
+      <View style={styles.headerRow}>
+        <View style={{ flex: 1 }}>
+          {isUserDestination && (
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginBottom: 2,
+              }}
             >
-              {stationName}
-            </Text>
+              <Text
+                style={[
+                  styles.subInfoText,
+                  {
+                    color: theme.colors.homeSecondary,
+                    fontWeight: "700",
+                    fontSize: 11,
+                    letterSpacing: 1,
+                  },
+                ]}
+              >
+                {t("destination").toUpperCase()}
+              </Text>
+            </View>
+          )}
+          <Text
+            style={[
+              styles.stationName,
+              isCurrent && styles.currentStationName,
+              isUserDestination && styles.destinationStationName,
+              isFuture && styles.textMuted,
+              (isPast || isPastDestination) &&
+                !isCurrent &&
+                !isUserDestination && { color: theme.colors.mutedForeground },
+            ]}
+          >
+            {stationName}
+          </Text>
 
-            <SubInfoRow
-              platform={platform}
-              isCurrent={isCurrent}
-              isCompleted={isCompleted}
-              isFirst={isFirst}
-              isAtStation={isAtStation}
-              calculatedTime={calculatedTime}
-              isCancelled={isCancelled}
-              delayMinutes={delayMinutes}
-              t={t}
-              theme={theme}
-              styles={styles}
-            />
-          </View>
-
-          <TimeContainer
-            scheduledTime={scheduledTime}
-            actualTime={actualTime}
-            estimatedTime={estimatedTime}
-            isPast={isPast}
+          <SubInfoRow
+            platform={platform}
             isCurrent={isCurrent}
-            isFuture={isFuture}
+            isCompleted={isCompleted}
+            isFirst={isFirst}
             isUserDestination={isUserDestination}
+            isAtStation={isAtStation}
+            calculatedTime={calculatedTime}
+            isCancelled={isCancelled}
+            delayMinutes={delayMinutes}
             t={t}
             theme={theme}
             styles={styles}
           />
         </View>
+
+        <TimeContainer
+          scheduledTime={scheduledTime}
+          actualTime={actualTime}
+          estimatedTime={estimatedTime}
+          isPast={isPast}
+          isCurrent={isCurrent}
+          isFuture={isFuture}
+          isUserDestination={isUserDestination}
+          t={t}
+          theme={theme}
+          styles={styles}
+        />
       </View>
     </View>
   );
@@ -347,6 +345,7 @@ function SubInfoRow({
   isCurrent,
   isCompleted,
   isFirst,
+  isUserDestination,
   isAtStation,
   calculatedTime,
   isCancelled,
@@ -360,23 +359,45 @@ function SubInfoRow({
       <View style={styles.subInfoRow}>
         {/* Platform */}
         {!!platform && !isCurrent && (
-          <Text style={styles.subInfoText}>{t("platform", { platform })}</Text>
+          <Text
+            style={[
+              styles.subInfoText,
+              isUserDestination && { color: theme.colors.homeSecondary },
+            ]}
+          >
+            {t("platform", { platform })}
+          </Text>
         )}
         {/* Arriving / Departing + Platform */}
         {isCurrent && isCompleted && (
-          <Text style={styles.arrivingText}>
+          <Text
+            style={[
+              styles.arrivingText,
+              isUserDestination && { color: theme.colors.homeSecondary },
+            ]}
+          >
             {t("arrived")}
             {platform ? ` • ${t("platform", { platform })}` : ""}
           </Text>
         )}
         {isCurrent && !isCompleted && (isFirst || isAtStation) && (
-          <Text style={styles.arrivingText}>
+          <Text
+            style={[
+              styles.arrivingText,
+              isUserDestination && { color: theme.colors.homeSecondary },
+            ]}
+          >
             {t("departingIn", { minutes: calculatedTime })}
             {platform ? ` • ${t("platform", { platform })}` : ""}
           </Text>
         )}
         {isCurrent && !isCompleted && !isFirst && !isAtStation && (
-          <Text style={styles.arrivingText}>
+          <Text
+            style={[
+              styles.arrivingText,
+              isUserDestination && { color: theme.colors.homeSecondary },
+            ]}
+          >
             {t("arrivingIn", { minutes: calculatedTime })}
             {platform ? ` • ${t("platform", { platform })}` : ""}
           </Text>
@@ -428,22 +449,43 @@ function TimeContainer({
       <Text
         style={[
           styles.scheduledTime,
+          isUserDestination && { color: theme.colors.homeSecondary },
           isPast && styles.timeStrikethrough,
           isCurrent && styles.timeCurrent,
+          isCurrent &&
+            isUserDestination && { color: theme.colors.homeSecondary },
         ]}
       >
         {scheduledTime}
       </Text>
       {/* Actual departed/arrived time */}
       {!!actualTime && isPast && (
-        <Text style={[styles.statusText, { color: theme.colors.primary }]}>
+        <Text
+          style={[
+            styles.statusText,
+            {
+              color: isUserDestination
+                ? theme.colors.homeSecondary
+                : theme.colors.primary,
+            },
+          ]}
+        >
           {isUserDestination
-            ? `Arrived at ${actualTime}`
+            ? t("arrivedAt", { time: actualTime })
             : t("departedAt", { time: actualTime })}
         </Text>
       )}
       {/* Estimated time */}
-      {isFuture && <Text style={styles.subInfoText}>{estimatedTime}</Text>}
+      {isFuture && (
+        <Text
+          style={[
+            styles.subInfoText,
+            isUserDestination && { color: theme.colors.homeSecondary },
+          ]}
+        >
+          {estimatedTime}
+        </Text>
+      )}
     </View>
   );
 }
@@ -531,7 +573,7 @@ const useStyles = createStyleHook((theme) => ({
   destinationStationName: {
     fontSize: 26,
     fontWeight: "800",
-    color: theme.colors.foreground,
+    color: theme.colors.destructiveForeground,
   },
   textMuted: {
     color: theme.colors.mutedForeground,

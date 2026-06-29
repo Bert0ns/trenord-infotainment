@@ -7,6 +7,7 @@
     "departedAt": "Departed at {{time}}",
     "minutesDelay": "+{{minutes}} min delay",
     "platform": "Platform {{platform}}",
-    "destination": "Destination"
+    "destination": "Destination",
+    "arrivedAt": "Arrived at {{time}}"
   }
 }
