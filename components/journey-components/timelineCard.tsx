@@ -2,7 +2,7 @@ import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
 import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Text, View } from "react-native";
+import { Text, View, Animated } from "react-native";
 
 export type NodeStatus = "past" | "current" | "future";
 
@@ -19,6 +19,8 @@ interface TimelineCardProps {
   isFirst?: boolean;
   isCompleted?: boolean;
   isAtStation?: boolean;
+  isUserDestination?: boolean;
+  isPastDestination?: boolean;
 }
 
 export default function TimelineCard({
@@ -34,6 +36,8 @@ export default function TimelineCard({
   isFirst,
   isCompleted,
   isAtStation,
+  isUserDestination,
+  isPastDestination,
 }: TimelineCardProps) {
   const styles = useStyles();
   const theme = useTheme();
@@ -58,6 +62,27 @@ export default function TimelineCard({
   };
 
   const calculatedTime = getCalculatedTime();
+
+  const pulseAnim = React.useRef(new Animated.Value(1)).current;
+
+  React.useEffect(() => {
+    if (isCurrent) {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(pulseAnim, {
+            toValue: 0.5,
+            duration: 800,
+            useNativeDriver: true,
+          }),
+          Animated.timing(pulseAnim, {
+            toValue: 1,
+            duration: 800,
+            useNativeDriver: true,
+          }),
+        ]),
+      ).start();
+    }
+  }, [isCurrent, pulseAnim]);
 
   return (
     <View style={styles.container}>
@@ -89,10 +114,11 @@ export default function TimelineCard({
           />
         )}
         {!isCancelled && (
-          <View
+          <Animated.View
             style={[
               styles.dot,
               isCurrent && styles.dotCurrent,
+              isUserDestination && styles.dotDestination,
               isFuture && {
                 backgroundColor: theme.colors.border,
                 borderColor: theme.colors.background,
@@ -101,19 +127,68 @@ export default function TimelineCard({
                 backgroundColor: theme.colors.primary,
                 borderColor: theme.colors.background,
               },
+              (isPast || (isPastDestination && !isCurrent)) && {
+                opacity: 0.4,
+              },
+              isCurrent && {
+                opacity: pulseAnim,
+                transform: [
+                  {
+                    scale: pulseAnim.interpolate({
+                      inputRange: [0.5, 1],
+                      outputRange: [0.85, 1],
+                    }),
+                  },
+                ],
+              },
             ]}
           />
         )}
       </View>
 
-      <View style={styles.contentColumn}>
-        <View style={[styles.card, isCurrent && styles.currentCard]}>
+      <View
+        style={[
+          styles.contentColumn,
+          (isPast || (isPastDestination && !isCurrent)) && { opacity: 0.4 },
+        ]}
+      >
+        <View
+          style={[
+            styles.card,
+            isCurrent && styles.currentCard,
+            isUserDestination && styles.destinationCard,
+          ]}
+        >
           <View style={styles.headerRow}>
-            <View>
+            <View style={{ flex: 1 }}>
+              {isUserDestination && (
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    marginBottom: 2,
+                  }}
+                >
+                  <Text
+                    style={[
+                      styles.subInfoText,
+                      {
+                        color: theme.colors.primary,
+                        fontWeight: "700",
+                        fontSize: 11,
+                        letterSpacing: 1,
+                      },
+                    ]}
+                  >
+                    {t("destination").toUpperCase()}
+                  </Text>
+                </View>
+              )}
               <Text
                 style={[
                   styles.stationName,
                   isCurrent && styles.currentStationName,
+                  isUserDestination && styles.destinationStationName,
                   isFuture && styles.textMuted,
                 ]}
               >
@@ -189,12 +264,14 @@ export default function TimelineCard({
               >
                 {scheduledTime}
               </Text>
-              {/* Actual depearted time */}
+              {/* Actual departed/arrived time */}
               {!!actualTime && isPast && (
                 <Text
                   style={[styles.statusText, { color: theme.colors.primary }]}
                 >
-                  {t("departedAt", { time: actualTime })}
+                  {isUserDestination
+                    ? `Arrived at ${actualTime}`
+                    : t("departedAt", { time: actualTime })}
                 </Text>
               )}
               {/* Estimated time */}
@@ -240,6 +317,13 @@ const useStyles = createStyleHook((theme) => ({
     borderWidth: 4,
     marginTop: theme.spacing.md + 4,
   },
+  dotDestination: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 3,
+    marginTop: theme.spacing.md,
+  },
   contentColumn: {
     flex: 1,
     paddingBottom: theme.spacing.xl,
@@ -255,6 +339,15 @@ const useStyles = createStyleHook((theme) => ({
     borderColor: theme.colors.primary,
     borderRadius: theme.borderRadius.xl,
   },
+  destinationCard: {
+    backgroundColor: theme.colors.homeLiveStatus,
+    padding: theme.spacing.md,
+    borderWidth: 1,
+    borderColor: theme.colors.homeSecondary,
+    borderRadius: theme.borderRadius.xl,
+    marginTop: -4,
+    marginBottom: 4,
+  },
   headerRow: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -268,6 +361,11 @@ const useStyles = createStyleHook((theme) => ({
   currentStationName: {
     fontSize: 24,
     fontWeight: "700",
+    color: theme.colors.foreground,
+  },
+  destinationStationName: {
+    fontSize: 26,
+    fontWeight: "800",
     color: theme.colors.foreground,
   },
   textMuted: {

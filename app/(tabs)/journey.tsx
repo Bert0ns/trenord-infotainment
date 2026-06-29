@@ -64,6 +64,14 @@ export default function JourneyScreen() {
       {/* Timeline Fermate */}
       <View style={styles.timelineContainer}>
         {passListArray.map((pass: any, index: any) => {
+          const isUserDestination =
+            pass.station.station_id === destinationStation?.station_id;
+          const destinationIndex = passListArray.findIndex(
+            (p: any) => p.station.station_id === destinationStation?.station_id,
+          );
+          const isPastDestination =
+            destinationIndex !== -1 && index > destinationIndex;
+
           let status: any = "future";
           if (pass === nextStop) {
             status = "current";
@@ -107,6 +115,8 @@ export default function JourneyScreen() {
                 pass.actual_data?.dep_actual_time === undefined &&
                 pass.type !== "D"
               }
+              isUserDestination={isUserDestination}
+              isPastDestination={isPastDestination}
             />
           );
         })}
