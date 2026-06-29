@@ -3,18 +3,20 @@ import { View, StyleSheet } from "react-native";
 import TimelineCard from "./timelineCard";
 import { capitalizeWords } from "@/utils/string";
 
+import { PassList, Station, Train } from "@/lib/api/types";
+
 interface JourneyTimelineProps {
-  passListArray: any[];
-  destinationStation: any;
-  nextStop: any;
-  trainInfo: any;
+  passListArray: PassList[];
+  destinationStation: Station | null;
+  nextStop: PassList | undefined;
+  trainInfo: Train;
 }
 
 // --- Helpers to reduce cognitive complexity ---
 
 function getPassStatus(
-  pass: any,
-  nextStop: any,
+  pass: PassList,
+  nextStop: PassList | undefined,
 ): "future" | "current" | "past" {
   if (pass === nextStop) return "current";
   if (
@@ -29,7 +31,7 @@ function getPassStatus(
   return "future";
 }
 
-function getIsAtStation(pass: any): boolean {
+function getIsAtStation(pass: PassList): boolean {
   return (
     pass.actual_data?.arr_actual_time !== undefined &&
     pass.actual_data?.dep_actual_time === undefined &&
@@ -39,8 +41,8 @@ function getIsAtStation(pass: any): boolean {
 
 function getLineFill(
   index: number,
-  passListArray: any[],
-  nextStop: any,
+  passListArray: PassList[],
+  nextStop: PassList | undefined,
 ): "full" | "half" | "none" {
   if (index >= passListArray.length - 1) return "none";
 
@@ -60,14 +62,17 @@ export default function JourneyTimeline({
   nextStop,
   trainInfo,
 }: JourneyTimelineProps) {
+  const destinationIndex = destinationStation
+    ? passListArray.findIndex(
+        (p) => p.station.station_id === destinationStation.station_id,
+      )
+    : -1;
+
   return (
     <View style={styles.timelineContainer}>
-      {passListArray.map((pass: any, index: number) => {
+      {passListArray.map((pass, index) => {
         const isUserDestination =
           pass.station.station_id === destinationStation?.station_id;
-        const destinationIndex = passListArray.findIndex(
-          (p: any) => p.station.station_id === destinationStation?.station_id,
-        );
         const isPastDestination =
           destinationIndex !== -1 && index > destinationIndex;
 

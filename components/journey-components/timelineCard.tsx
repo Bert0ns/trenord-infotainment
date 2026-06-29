@@ -162,7 +162,19 @@ function TimelineColumn({
   pulseAnim,
   theme,
   styles,
-}: any) {
+}: {
+  isLast?: boolean;
+  lineFill: "full" | "half" | "none";
+  isCancelled?: boolean;
+  isCurrent?: boolean;
+  isUserDestination?: boolean;
+  isFuture?: boolean;
+  isPast?: boolean;
+  isPastDestination?: boolean;
+  pulseAnim: Animated.Value;
+  theme: any;
+  styles: any;
+}) {
   return (
     <View style={styles.timelineColumn}>
       {/* Vertical Line */}
@@ -261,7 +273,28 @@ function CardContent({
   t,
   theme,
   styles,
-}: any) {
+}: {
+  stationName: string;
+  scheduledTime: string;
+  estimatedTime?: string;
+  actualTime?: string;
+  platform?: string;
+  delayMinutes: number;
+  isCancelled?: boolean;
+  isFirst?: boolean;
+  isCompleted?: boolean;
+  isAtStation?: boolean;
+  isUserDestination?: boolean;
+  isPastDestination?: boolean;
+  isCurrent?: boolean;
+  isFuture?: boolean;
+  isPast?: boolean;
+  isLast?: boolean;
+  calculatedTime: number;
+  t: any;
+  theme: any;
+  styles: any;
+}) {
   return (
     <View
       style={[
@@ -356,7 +389,20 @@ function SubInfoRow({
   t,
   theme,
   styles,
-}: any) {
+}: {
+  platform?: string;
+  isCurrent?: boolean;
+  isCompleted?: boolean;
+  isFirst?: boolean;
+  isUserDestination?: boolean;
+  isAtStation?: boolean;
+  calculatedTime: number;
+  isCancelled?: boolean;
+  delayMinutes: number;
+  t: any;
+  theme: any;
+  styles: any;
+}) {
   return (
     <>
       <View style={styles.subInfoRow}>
@@ -446,7 +492,19 @@ function TimeContainer({
   t,
   theme,
   styles,
-}: any) {
+}: {
+  scheduledTime: string;
+  actualTime?: string;
+  estimatedTime?: string;
+  isPast?: boolean;
+  isCurrent?: boolean;
+  isFuture?: boolean;
+  isUserDestination?: boolean;
+  isLast?: boolean;
+  t: any;
+  theme: any;
+  styles: any;
+}) {
   return (
     <View style={styles.timeContainer}>
       {/* Scheduled Time */}
