@@ -94,3 +94,27 @@ Put it in `docs/plans`, you can either choose to write a `.md` file or an `.html
 - **Testability:** Design components so they can be unit-tested in isolation (pure rendering logic, injected dependencies, or mocked contexts).
 - **Discoverability & Documentation:** Add new shared components to the appropriate index/export file and document intended usage and props in a short README or JSDoc comment so other engineers and agents can discover and reuse them.
 - **When to Create New Components:** Create new shared components only when there's a clear, repeatable use case; prefer feature-local components for one-off UI that is unlikely to be reused.
+
+## Fallow
+
+- Use `fallow audit --format json --quiet` before committing AI-generated changes.
+- Use `fallow dead-code --format json --quiet`, `fallow dupes --format json --quiet`, and `fallow health --format json --quiet` for targeted checks.
+- Use `fallow list --entry-points --format json --quiet` and `fallow list --boundaries --format json --quiet` to inspect project shape.
+
+<!-- generated:task-matrix:start -->
+
+| When the agent is about to...     | Run                                                                                  |
+| --------------------------------- | ------------------------------------------------------------------------------------ |
+| delete an "unused" export or file | `fallow dead-code --trace <file>:<export>`                                           |
+| delete an "unused" dependency     | `fallow dead-code --trace-dependency <name>`                                         |
+| commit or open a PR               | `fallow audit --base <ref>`                                                          |
+| prioritize refactoring            | `fallow health --hotspots --targets`                                                 |
+| ask who owns code                 | `fallow health --ownership`                                                          |
+| check untested-but-reachable code | `fallow health --coverage-gaps`                                                      |
+| consolidate duplication           | `fallow dupes --trace dup:<fingerprint>`                                             |
+| find feature flags                | `fallow flags`                                                                       |
+| surface security candidates       | `fallow security`                                                                    |
+| understand a finding              | `fallow explain <issue-type>`                                                        |
+| scope a monorepo                  | `--workspace <glob> / --changed-workspaces <ref>` (global flags, prefix any command) |
+
+<!-- generated:task-matrix:end -->
