@@ -86,6 +86,9 @@ importers:
       jsrsasign:
         specifier: ^11.1.3
         version: 11.1.3
+      openmeteo:
+        specifier: ^1.2.3
+        version: 1.2.3
       react:
         specifier: 19.2.0
         version: 19.2.0
@@ -1093,6 +1096,10 @@ packages:
   '@nolyfill/is-core-module@1.0.39':
     resolution: {integrity: sha512-nn5ozdjYQpUCZlWGuxcJY/KpxkWQs4DcbMCmKojjyrYDEAGy4Ce19NN4v5MduafTwJlbKc99UA8YhSVqq9yPZA==}
     engines: {node: '>=12.4.0'}
+
+  '@openmeteo/sdk@1.27.2':
+    resolution: {integrity: sha512-aCDyWjDqdT6kf73chJJ//kWlqwh8fZgMwtU9sO14ElRn++Yte/MuX6rnPPhFK+1KSP78vx/aGBlwh9o6Mrs1Jg==}
+    engines: {node: '>=12.0'}
 
   '@pkgr/core@0.3.6':
     resolution: {integrity: sha512-SEeaJLb3qBNF/OaXnaR1NmmBbFYk1zC0ZH/52fATcRPLFg/p791YrcyFFy44Bo9sLaGuSuLp5Q6axbb/O+v/RA==}
@@ -2849,6 +2856,9 @@ packages:
     resolution: {integrity: sha512-f7ccFPK3SXFHpx15UIGyRJ/FJQctuKZ0zVuN3frBo4HnK3cay9VEW0R6yPYFHC0AgqhukPzKjq22t5DmAyqGyw==}
     engines: {node: '>=16'}
 
+  flatbuffers@25.9.23:
+    resolution: {integrity: sha512-MI1qs7Lo4Syw0EOzUl0xjs2lsoeqFku44KpngfIduHBYvzm8h2+7K8YMQh1JtVVVrUvhLpNwqVi4DERegUJhPQ==}
+
   flatted@3.4.2:
     resolution: {integrity: sha512-PjDse7RzhcPkIJwy5t7KPWQSZ9cAbzQXcafsetQoD7sOJRQlGikNbx7yZp2OotDnJyrDcbyRq3Ttb18iYOqkxA==}
 
@@ -3963,6 +3973,10 @@ packages:
   open@8.4.2:
     resolution: {integrity: sha512-7x81NCL719oNbsq/3mh+hVrAWmFuEYUqrq/Iw3kUzH8ReypT9QQ0BLoJS7/G9k6N81XjW4qHWtjWwe/9eLy1EQ==}
     engines: {node: '>=12'}
+
+  openmeteo@1.2.3:
+    resolution: {integrity: sha512-3updmgCMnCAAjAgV3RfhMdIBPi/43RtbjQ4CizHGn52RP9SpgmVCDRpun+Ex75NG3jTF3pZp+d1BPlP9DWMHiQ==}
+    engines: {node: '>=12.0'}
 
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
@@ -6450,6 +6464,10 @@ snapshots:
 
   '@nolyfill/is-core-module@1.0.39': {}
 
+  '@openmeteo/sdk@1.27.2':
+    dependencies:
+      flatbuffers: 25.9.23
+
   '@pkgr/core@0.3.6': {}
 
   '@radix-ui/primitive@1.1.4': {}
@@ -8469,6 +8487,8 @@ snapshots:
       flatted: 3.4.2
       keyv: 4.5.4
 
+  flatbuffers@25.9.23: {}
+
   flatted@3.4.2: {}
 
   flow-enums-runtime@0.0.6: {}
@@ -9878,6 +9898,11 @@ snapshots:
       define-lazy-prop: 2.0.0
       is-docker: 2.2.1
       is-wsl: 2.2.0
+
+  openmeteo@1.2.3:
+    dependencies:
+      '@openmeteo/sdk': 1.27.2
+      flatbuffers: 25.9.23
 
   optionator@0.9.4:
     dependencies:

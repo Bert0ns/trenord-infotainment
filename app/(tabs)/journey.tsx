@@ -1,11 +1,11 @@
 import TimelineCard from "@/components/journey-components/timelineCard";
 import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
 import {
-  useJourneyStore,
-  selectOrigDestData,
-  selectTrainInfo,
-  selectPassList,
   selectNextStop,
+  selectOrigDestData,
+  selectPassList,
+  selectTrainInfo,
+  useJourneyStore,
 } from "@/store/journeyStore";
 import { capitalizeWords } from "@/utils/string";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -87,13 +87,16 @@ export default function JourneyScreen() {
           ) {
             status = "past";
           }
+          const destination =
+            pass.station.station_ori_name ===
+            destinationStation?.station_ori_name;
 
           const scheduledTime =
-            pass.type === "O" ? pass.dep_time : pass.arr_time;
-          const actualTime =
-            pass.type === "O"
-              ? pass.actual_data?.dep_actual_time
-              : pass.actual_data?.arr_actual_time;
+            destination || pass.type === "D" ? pass.arr_time : pass.dep_time;
+          const actualTime = pass.actual_data?.dep_actual_time;
+          //pass.type === "O"
+          //? pass.actual_data?.dep_actual_time
+          //: pass.actual_data?.arr_actual_time;
 
           return (
             <TimelineCard
@@ -116,6 +119,7 @@ export default function JourneyScreen() {
                 pass.actual_data?.dep_actual_time === undefined &&
                 pass.type !== "D"
               }
+              isDestination={destination}
             />
           );
         })}

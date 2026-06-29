@@ -20,6 +20,12 @@
   },
   "weatherCard": {
     "at": "at",
-    "loadingWeather": "Loading weather..."
+    "loadingWeather": "Loading weather...",
+    "sunny": "Sunny",
+    "cloudy": "Cloudy",
+    "foggy": "Foggy",
+    "rainy": "Rainy",
+    "snowy": "Snowy",
+    "stormy": "Stormy"
   }
 }

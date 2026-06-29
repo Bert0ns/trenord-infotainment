@@ -1,6 +1,5 @@
 import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
 import { MaterialIcons } from "@expo/vector-icons";
-import React from "react";
 import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
 
@@ -19,6 +18,7 @@ interface TimelineCardProps {
   isFirst?: boolean;
   isCompleted?: boolean;
   isAtStation?: boolean;
+  isDestination?: boolean;
 }
 
 export default function TimelineCard({
@@ -34,6 +34,7 @@ export default function TimelineCard({
   isFirst,
   isCompleted,
   isAtStation,
+  isDestination,
 }: TimelineCardProps) {
   const styles = useStyles();
   const theme = useTheme();
@@ -114,7 +115,7 @@ export default function TimelineCard({
                 style={[
                   styles.stationName,
                   isCurrent && styles.currentStationName,
-                  isFuture && styles.textMuted,
+                  isFuture && !isDestination && styles.textMuted,
                 ]}
               >
                 {stationName}
@@ -129,6 +130,11 @@ export default function TimelineCard({
                   </Text>
                 )}
                 {/* Arriving / Departing + Platform */}
+                {isDestination && isFuture && !isCurrent && (
+                  <Text style={styles.arrivingText}>
+                    {"Destination of your journey"}
+                  </Text>
+                )}
                 {isCurrent && isCompleted && (
                   <Text style={styles.arrivingText}>
                     {t("arrived")}
@@ -180,15 +186,29 @@ export default function TimelineCard({
             {/* Time */}
             <View style={styles.timeContainer}>
               {/* Scheduled Time */}
-              <Text
-                style={[
-                  styles.scheduledTime,
-                  isPast && styles.timeStrikethrough,
-                  isCurrent && styles.timeCurrent,
-                ]}
-              >
-                {scheduledTime}
-              </Text>
+              {isFuture && isDestination && (
+                <Text
+                  style={[
+                    styles.destinationText,
+                    isPast && styles.timeStrikethrough,
+                    isCurrent && styles.timeCurrent,
+                  ]}
+                >
+                  {"Arriving at "}
+                  {scheduledTime}
+                </Text>
+              )}
+              {!isDestination && (
+                <Text
+                  style={[
+                    styles.scheduledTime,
+                    isPast && styles.timeStrikethrough,
+                    isCurrent && styles.timeCurrent,
+                  ]}
+                >
+                  {scheduledTime}
+                </Text>
+              )}
               {/* Actual depearted time */}
               {actualTime && isPast && (
                 <Text
@@ -288,6 +308,11 @@ const useStyles = createStyleHook((theme) => ({
   },
   arrivingText: {
     fontSize: 13,
+    fontWeight: "500",
+    color: theme.colors.primary,
+  },
+  destinationText: {
+    fontSize: 15,
     fontWeight: "500",
     color: theme.colors.primary,
   },

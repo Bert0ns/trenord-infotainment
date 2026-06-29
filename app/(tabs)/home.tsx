@@ -6,20 +6,22 @@ import NewsCard from "@/components/newsCard";
 import SectionHeader from "@/components/sectionHeader";
 import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
 import {
-  useJourneyStore,
-  selectOrigDestData,
-  selectTrainInfo,
-  selectPassList,
-  selectNextStop,
-  selectIsJourneyCompleted,
   selectIsAtStation,
+  selectIsJourneyCompleted,
+  selectNextStop,
+  selectOrigDestData,
+  selectPassList,
+  selectTrainInfo,
+  useJourneyStore,
 } from "@/store/journeyStore";
+import { useWeatherStore } from "@/store/weatherStore";
 import { capitalizeWords } from "@/utils/string";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Redirect } from "expo-router";
 import { FlatList, ScrollView, Text, View } from "react-native";
 
 import { logger } from "@/lib/logger";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 export default function HomeScreen() {
@@ -34,6 +36,18 @@ export default function HomeScreen() {
   const nextStop = useJourneyStore(selectNextStop);
   const isJourneyCompleted = useJourneyStore(selectIsJourneyCompleted);
   const isAtStation = useJourneyStore(selectIsAtStation);
+  const weather = useWeatherStore((state) => state.weather);
+  const startWeatherUpdates = useWeatherStore(
+    (state) => state.startWeatherUpdates,
+  );
+  //To be improven
+  useEffect(() => {
+    startWeatherUpdates(
+      destinationStation
+        ? destinationStation.station_ori_name.split(" ")[0]
+        : "None",
+    );
+  }, []);
 
   if (!trainId) return <Redirect href="/login" />;
 
@@ -115,10 +129,14 @@ export default function HomeScreen() {
       />
       <WeatherCard
         data={{
-          city: "Milan",
-          time: "09:00",
-          temperature: 22,
-          condition: "Sunny",
+          city: capitalizeWords(
+            destinationStation
+              ? destinationStation.station_ori_name
+              : "Unknown",
+          ),
+          temperature: Math.trunc(weather ? weather.temperature : 0),
+          code: weather ? weather.weatherCode : 0,
+          isDay: weather?.isDay === 1,
         }}
       />
 
