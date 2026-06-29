@@ -78,10 +78,7 @@ export default function QRScanner({ onScan, style }: QRScannerProps) {
             <View style={styles.maskHole} pointerEvents="none" />
 
             <View style={styles.cutout}>
-              <View style={[styles.corner, styles.topLeftCorner]} />
-              <View style={[styles.corner, styles.topRightCorner]} />
-              <View style={[styles.corner, styles.bottomLeftCorner]} />
-              <View style={[styles.corner, styles.bottomRightCorner]} />
+              <ScannerCorners />
 
               <View style={styles.permissionBlockedContent}>
                 <TouchableOpacity
@@ -125,10 +122,7 @@ export default function QRScanner({ onScan, style }: QRScannerProps) {
             <View style={styles.maskHole} pointerEvents="none" />
 
             <View style={styles.cutout}>
-              <View style={[styles.corner, styles.topLeftCorner]} />
-              <View style={[styles.corner, styles.topRightCorner]} />
-              <View style={[styles.corner, styles.bottomLeftCorner]} />
-              <View style={[styles.corner, styles.bottomRightCorner]} />
+              <ScannerCorners />
 
               <Animated.View style={[styles.successPopup, checkStyle]}>
                 <MaterialIcons
@@ -161,16 +155,25 @@ export default function QRScanner({ onScan, style }: QRScannerProps) {
           <View style={styles.maskHole} pointerEvents="none" />
 
           <View style={styles.cutout} pointerEvents="none">
-            <View style={[styles.corner, styles.topLeftCorner]} />
-            <View style={[styles.corner, styles.topRightCorner]} />
-            <View style={[styles.corner, styles.bottomLeftCorner]} />
-            <View style={[styles.corner, styles.bottomRightCorner]} />
+            <ScannerCorners />
           </View>
 
           <Text style={styles.instructionText}>{t("alignQRCode")}</Text>
         </View>
       </View>
     </View>
+  );
+}
+
+function ScannerCorners() {
+  const styles = useStyles();
+  return (
+    <>
+      <View style={[styles.corner, styles.topLeftCorner]} />
+      <View style={[styles.corner, styles.topRightCorner]} />
+      <View style={[styles.corner, styles.bottomLeftCorner]} />
+      <View style={[styles.corner, styles.bottomRightCorner]} />
+    </>
   );
 }
 
