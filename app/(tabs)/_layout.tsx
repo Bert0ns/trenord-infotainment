@@ -12,6 +12,8 @@ import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
 
+const pollingLogger = logger.extend("Polling");
+
 const FETCH_TRAIN_POLLING_RATE = 90000;
 
 export default function TabLayout() {
@@ -33,13 +35,13 @@ export default function TabLayout() {
 
     const pollTrainData = async () => {
       try {
-        logger.log(`[Polling] Background fetch for train ${trainId}...`);
+        pollingLogger.log(`Background fetch for train ${trainId}...`);
         const data = await fetchTrainData(trainId);
         if (isMounted && data && data.length > 0) {
           setJourney(trainId, destinationStation, data);
         }
       } catch (err) {
-        logger.error(`[Polling] Failed to fetch train data:`, err);
+        pollingLogger.error(`Failed to fetch train data:`, err);
       }
     };
 

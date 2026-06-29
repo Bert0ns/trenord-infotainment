@@ -16,6 +16,8 @@ import { useRefreshTrainData } from "@/hooks/use-refresh-train-data";
 import { logger } from "@/lib/logger";
 import { useTranslation } from "react-i18next";
 
+const uiLogger = logger.extend("UI");
+
 export default function JourneyScreen() {
   const { t } = useTranslation("common");
   const styles = useStyles();
@@ -42,8 +44,8 @@ export default function JourneyScreen() {
       </View>
     );
   }
-  logger.log(
-    `[Journey Screen] Rendering timeline for train ${trainId}. ${passListArray.length} stations loaded.`,
+  uiLogger.log(
+    `Rendering timeline for train ${trainId}. ${passListArray.length} stations loaded.`,
   );
 
   return (

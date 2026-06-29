@@ -3,6 +3,8 @@ import { Platform } from "react-native";
 import { logger } from "@/lib/logger";
 import { TrainInfoResponse } from "./types";
 
+const apiLogger = logger.extend("API");
+
 async function proxiedFetch(url: string, options: RequestInit = {}) {
   if (Platform.OS === "web") {
     return fetch("/api/proxy", {
@@ -45,7 +47,7 @@ try {
   const jwk = JSON.parse(jwkRaw);
   cachedPrivateKey = KEYUTIL.getKey(jwk);
 } catch (error) {
-  logger.error("Failed to eagerly parse JWK string or generate key", error);
+  apiLogger.error("Failed to eagerly parse JWK string or generate key", error);
 }
 
 export function clearTrenordApiCache() {
@@ -64,7 +66,7 @@ function getPrivateKey() {
     cachedPrivateKey = KEYUTIL.getKey(jwk);
     return cachedPrivateKey;
   } catch (error) {
-    logger.error("Failed to parse JWK string or generate key", error);
+    apiLogger.error("Failed to parse JWK string or generate key", error);
     throw new Error("Invalid JWK JSON format");
   }
 }
@@ -78,7 +80,7 @@ async function getAccessToken(): Promise<string> {
   }
 
   if (!cachedPrivateKey) {
-    logger.log("[Trenord API] Getting private JWK for authentication...");
+    apiLogger.log("Getting private JWK for authentication...");
   }
   const privateKey = getPrivateKey();
 
@@ -116,9 +118,7 @@ async function getAccessToken(): Promise<string> {
     "token_endpoint_auth_method=private_key_jwt",
   ].join("&");
 
-  logger.log(
-    "[Trenord API] Requesting Bearer Access Token from Trenord IDP...",
-  );
+  apiLogger.log("Requesting Bearer Access Token from Trenord IDP...");
   const tokenResponse = await proxiedFetch(tokenUrl, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -127,8 +127,8 @@ async function getAccessToken(): Promise<string> {
 
   if (!tokenResponse.ok) {
     const errText = await tokenResponse.text();
-    logger.error(
-      `[Trenord API] Token Request Failed! Status: ${tokenResponse.status}`,
+    apiLogger.error(
+      `Token Request Failed! Status: ${tokenResponse.status}`,
       errText,
     );
     throw new Error(`Failed to get token: ${tokenResponse.status} ${errText}`);
@@ -139,8 +139,8 @@ async function getAccessToken(): Promise<string> {
   cachedAccessToken = tokenData.access_token;
   const expiresIn = tokenData.expires_in || 300;
   tokenExpirationTime = now + expiresIn;
-  logger.log(
-    `[Trenord API] Access Token acquired successfully, expires in ${expiresIn} seconds.`,
+  apiLogger.log(
+    `Access Token acquired successfully, expires in ${expiresIn} seconds.`,
   );
   return cachedAccessToken!;
 }
@@ -151,7 +151,7 @@ export async function fetchTrainData(
   const accessToken = await getAccessToken();
   const url = `${apiUrl}/train/${trainId}`;
 
-  logger.log(`[Trenord API] Fetching live data for train ${trainId}...`);
+  apiLogger.log(`Fetching live data for train ${trainId}...`);
   const response = await proxiedFetch(url, {
     method: "GET",
     headers: {
@@ -160,14 +160,10 @@ export async function fetchTrainData(
   });
 
   if (!response.ok) {
-    logger.error(
-      `[Trenord API] Train fetch failed with status ${response.status}`,
-    );
+    apiLogger.error(`Train fetch failed with status ${response.status}`);
     throw new Error(`Train API Call failed with status ${response.status}`);
   }
 
-  logger.log(
-    `[Trenord API] Train data retrieved successfully for train ${trainId}.`,
-  );
+  apiLogger.log(`Train data retrieved successfully for train ${trainId}.`);
   return response.json();
 }

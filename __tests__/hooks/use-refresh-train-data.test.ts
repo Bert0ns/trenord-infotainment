@@ -7,13 +7,19 @@ jest.mock("@/lib/api/trenord", () => ({
   fetchTrainData: jest.fn(),
 }));
 
-jest.mock("@/lib/logger", () => ({
-  logger: {
+jest.mock("@/lib/logger", () => {
+  const mLogger = {
     log: jest.fn(),
     error: jest.fn(),
     warn: jest.fn(),
-  },
-}));
+  };
+  return {
+    logger: {
+      ...mLogger,
+      extend: () => mLogger,
+    },
+  };
+});
 
 describe("useRefreshTrainData", () => {
   beforeEach(() => {
