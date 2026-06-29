@@ -2,7 +2,6 @@ import TimelineCard from "@/components/journey-components/timelineCard";
 import { useRefreshTrainData } from "@/hooks/use-refresh-train-data";
 import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
 import {
-  selectDestinationPass,
   selectNextStop,
   selectOrigDestData,
   selectPassList,
@@ -27,7 +26,6 @@ export default function JourneyScreen() {
   const origDestData = useJourneyStore(selectOrigDestData);
   const trainInfo = useJourneyStore(selectTrainInfo);
   const passListArray = useJourneyStore(selectPassList);
-  const destinationPass = useJourneyStore(selectDestinationPass);
   const nextStop = useJourneyStore(selectNextStop);
   const { isRefreshing, onRefresh } = useRefreshTrainData();
 
