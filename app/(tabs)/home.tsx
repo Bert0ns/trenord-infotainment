@@ -17,7 +17,6 @@ import {
   useJourneyStore,
 } from "@/store/journeyStore";
 import { capitalizeWords } from "@/utils/string";
-import { MaterialIcons } from "@expo/vector-icons";
 import { Redirect } from "expo-router";
 import { FlatList, RefreshControl, ScrollView, Text, View } from "react-native";
 
@@ -72,30 +71,6 @@ export default function HomeScreen() {
         />
       }
     >
-      <View style={styles.pageHeader}>
-        <Text style={styles.pageTitle}>
-          {destinationStation
-            ? capitalizeWords(destinationStation.station_ori_name)
-            : "Unknown"}{" "}
-          - {trainInfo.train_category} {trainId}
-        </Text>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-          <MaterialIcons
-            name="access-time"
-            size={16}
-            color={theme.colors.mutedForeground}
-          />
-          <Text style={styles.pageSubtitle}>
-            {origDestData.dep_time
-              ? origDestData.dep_time.slice(0, 5)
-              : "Unknown"}
-            {" - "}
-            {destinationPass?.arr_time
-              ? destinationPass.arr_time.slice(0, 5)
-              : "Unknown"}
-          </Text>
-        </View>
-      </View>
       <LiveStatusCard
         nextStop={
           nextStop
@@ -104,6 +79,16 @@ export default function HomeScreen() {
         }
         arrivalTime={
           nextStop?.arr_time ? nextStop.arr_time.slice(0, 5) : "Unknown"
+        }
+        destination={
+          destinationStation
+            ? capitalizeWords(destinationStation.station_ori_name)
+            : "Unknown"
+        }
+        destinationArrivalTime={
+          destinationPass?.arr_time
+            ? destinationPass.arr_time.slice(0, 5)
+            : undefined
         }
         speed="N/A"
         trainNumber={`${trainInfo.train_category} ${trainId}`}

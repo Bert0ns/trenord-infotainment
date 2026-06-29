@@ -1,18 +1,17 @@
 import TimelineCard from "@/components/journey-components/timelineCard";
+import { useRefreshTrainData } from "@/hooks/use-refresh-train-data";
 import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
 import {
-  useJourneyStore,
-  selectOrigDestData,
-  selectTrainInfo,
-  selectPassList,
   selectDestinationPass,
   selectNextStop,
+  selectOrigDestData,
+  selectPassList,
+  selectTrainInfo,
+  useJourneyStore,
 } from "@/store/journeyStore";
 import { capitalizeWords } from "@/utils/string";
-import { MaterialIcons } from "@expo/vector-icons";
 import { Redirect } from "expo-router";
-import { ScrollView, Text, View, RefreshControl } from "react-native";
-import { useRefreshTrainData } from "@/hooks/use-refresh-train-data";
+import { RefreshControl, ScrollView, Text, View } from "react-native";
 
 import { logger } from "@/lib/logger";
 import { useTranslation } from "react-i18next";
@@ -62,30 +61,6 @@ export default function JourneyScreen() {
         />
       }
     >
-      <View style={styles.pageHeader}>
-        <Text style={styles.pageTitle}>
-          {destinationStation
-            ? capitalizeWords(destinationStation.station_ori_name)
-            : "Unknown"}{" "}
-          - {trainInfo.train_category} {trainId}
-        </Text>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-          <MaterialIcons
-            name="access-time"
-            size={16}
-            color={theme.colors.mutedForeground}
-          />
-          <Text style={styles.pageSubtitle}>
-            {origDestData.dep_time
-              ? origDestData.dep_time.slice(0, 5)
-              : "Unknown"}{" "}
-            -{" "}
-            {destinationPass?.arr_time
-              ? destinationPass.arr_time.slice(0, 5)
-              : "Unknown"}
-          </Text>
-        </View>
-      </View>
       {/* Timeline Fermate */}
       <View style={styles.timelineContainer}>
         {passListArray.map((pass: any, index: any) => {

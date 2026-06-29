@@ -139,8 +139,8 @@ describe("HomeScreen", () => {
           ],
         }),
     );
-    const { getByText } = render(<HomeScreen />);
-    expect(getByText("Milano Centrale - REG 1234")).toBeTruthy();
-    expect(getByText("08:00 - 09:00")).toBeTruthy();
+    const { getByText, getAllByText } = render(<HomeScreen />);
+    expect(getAllByText("Milano Centrale").length).toBeGreaterThan(0);
+    expect(getByText("REG 1234")).toBeTruthy();
   });
 });
