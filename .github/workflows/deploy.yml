@@ -33,6 +33,7 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: "22"
+          cache: "pnpm"
 
       - name: Install dependencies
         run: pnpm install
@@ -60,6 +61,7 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: "22"
+          cache: "pnpm"
 
       - name: Install dependencies
         run: pnpm install
@@ -90,12 +92,14 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: "22"
+          cache: "pnpm"
 
       - name: Setup Java
         uses: actions/setup-java@v5
         with:
           distribution: "zulu"
           java-version: "17"
+          cache: "gradle"
 
       - name: Install dependencies
         run: pnpm install
