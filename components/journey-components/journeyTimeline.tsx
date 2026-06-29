@@ -74,11 +74,16 @@ export default function JourneyTimeline({
         const status = getPassStatus(pass, nextStop);
         const lineFill = getLineFill(index, passListArray, nextStop);
 
-        const scheduledTime = pass.type === "O" ? pass.dep_time : pass.arr_time;
+        const scheduledTime =
+          pass.type === "D" || isUserDestination
+            ? pass.arr_time || pass.dep_time
+            : pass.dep_time || pass.arr_time;
         const actualTime =
-          pass.type === "O"
-            ? pass.actual_data?.dep_actual_time
-            : pass.actual_data?.arr_actual_time;
+          pass.type === "D" || isUserDestination
+            ? pass.actual_data?.arr_actual_time ||
+              pass.actual_data?.dep_actual_time
+            : pass.actual_data?.dep_actual_time ||
+              pass.actual_data?.arr_actual_time;
 
         return (
           <TimelineCard

@@ -137,6 +137,7 @@ export default function TimelineCard({
           isCurrent={isCurrent}
           isFuture={isFuture}
           isPast={isPast}
+          isLast={isLast}
           calculatedTime={calculatedTime}
           t={t}
           theme={theme}
@@ -255,6 +256,7 @@ function CardContent({
   isCurrent,
   isFuture,
   isPast,
+  isLast,
   calculatedTime,
   t,
   theme,
@@ -331,6 +333,7 @@ function CardContent({
           isCurrent={isCurrent}
           isFuture={isFuture}
           isUserDestination={isUserDestination}
+          isLast={isLast}
           t={t}
           theme={theme}
           styles={styles}
@@ -439,6 +442,7 @@ function TimeContainer({
   isCurrent,
   isFuture,
   isUserDestination,
+  isLast,
   t,
   theme,
   styles,
@@ -470,7 +474,7 @@ function TimeContainer({
             },
           ]}
         >
-          {isUserDestination
+          {isUserDestination || isLast
             ? t("arrivedAt", { time: actualTime })
             : t("departedAt", { time: actualTime })}
         </Text>
