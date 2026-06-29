@@ -2,7 +2,7 @@ import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
 import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Text, View, Animated } from "react-native";
+import { Animated, Text, View } from "react-native";
 
 export type NodeStatus = "past" | "current" | "future";
 
@@ -54,8 +54,20 @@ export default function TimelineCard({
     return h * 60 + m;
   };
 
+  const [now, setNow] = React.useState(new Date());
+
+  React.useEffect(() => {
+    if (!isCurrent) return;
+
+    // Update the 'now' reference every 15 seconds so the minutes countdown stays perfectly accurate
+    const interval = setInterval(() => {
+      setNow(new Date());
+    }, 15000);
+
+    return () => clearInterval(interval);
+  }, [isCurrent]);
+
   const getCalculatedTime = () => {
-    const now = new Date();
     const currentMinutes = now.getHours() * 60 + now.getMinutes();
     let diff = getMinutes(scheduledTime) - currentMinutes + delayMinutes;
     if (diff < -720) diff += 1440;
