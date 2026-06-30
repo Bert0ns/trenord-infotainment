@@ -6,14 +6,14 @@ import LoadingScreen from "@/components/loadingScreen";
 import NewsCard from "@/components/newsCard";
 import SectionHeader from "@/components/sectionHeader";
 import { useRefreshTrainData } from "@/hooks/use-refresh-train-data";
-import { useTheme } from "@/hooks/use-theme-color";
 import { useScreenStyles } from "@/hooks/use-screen-styles";
+import { useTheme } from "@/hooks/use-theme-color";
 import {
+  selectDestinationPass,
   selectIsAtStation,
   selectIsJourneyCompleted,
   selectNextStop,
   selectOrigDestData,
-  selectDestinationPass,
   selectPassList,
   selectTrainInfo,
   useJourneyStore,
@@ -24,10 +24,9 @@ import { Redirect } from "expo-router";
 import { FlatList, RefreshControl, ScrollView } from "react-native";
 
 import { logger } from "@/lib/logger";
+import { useEffect } from "react";
 
 const uiLogger = logger.extend("UI");
-import { useEffect } from "react";
-import { useTranslation } from "react-i18next";
 
 export default function HomeScreen() {
   const styles = useScreenStyles();
