@@ -10,6 +10,8 @@ import React, {
   useState,
 } from "react";
 
+const settingsLogger = logger.extend("Settings");
+
 /**
  * Language codes supported by the app. The "--" code represents the system default language.
  */
@@ -75,7 +77,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         try {
           setSettings({ ...DEFAULTS, ...JSON.parse(raw) });
         } catch (e) {
-          logger.error("Failed to parse settings:", e);
+          settingsLogger.error("Failed to parse settings:", e);
         }
       }
     });
@@ -83,7 +85,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
 
   const set = useCallback(
     <K extends keyof AppSettings>(key: K, val: AppSettings[K]) => {
-      logger.log(`Setting ${key} to ${val}`);
+      settingsLogger.log(`Setting ${key} to ${val}`);
       setSettings((prev) => {
         const next = { ...prev, [key]: val };
         AsyncStorage.setItem(KEY, JSON.stringify(next));

@@ -6,6 +6,8 @@
     "cancelled": "Cancellato",
     "departedAt": "Partito alle {{time}}",
     "minutesDelay": "+{{minutes}} min di ritardo",
-    "platform": "Binario {{platform}}"
+    "platform": "Binario {{platform}}",
+    "destination": "Destinazione",
+    "arrivedAt": "Arrivato alle {{time}}"
   }
 }

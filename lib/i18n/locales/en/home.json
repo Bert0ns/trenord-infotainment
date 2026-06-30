@@ -15,6 +15,7 @@
     "journeyCompleted": "JOURNEY COMPLETED",
     "currentlyAt": "CURRENTLY AT",
     "onTime": "On Time",
+    "destination": "DESTINATION",
     "speed": "SPEED",
     "trainNumber": "TRAIN"
   },

@@ -2,40 +2,46 @@ import DiscoveryCard from "@/components/discoveryCard";
 import CrowdingCard from "@/components/home-components/crowdCard";
 import LiveStatusCard from "@/components/home-components/liveStatusCard";
 import WeatherCard from "@/components/home-components/weatherCard";
+import LoadingScreen from "@/components/loadingScreen";
 import NewsCard from "@/components/newsCard";
 import SectionHeader from "@/components/sectionHeader";
-import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
+import { useRefreshTrainData } from "@/hooks/use-refresh-train-data";
+import { useTheme } from "@/hooks/use-theme-color";
+import { useScreenStyles } from "@/hooks/use-screen-styles";
 import {
   selectIsAtStation,
   selectIsJourneyCompleted,
   selectNextStop,
   selectOrigDestData,
+  selectDestinationPass,
   selectPassList,
   selectTrainInfo,
   useJourneyStore,
 } from "@/store/journeyStore";
 import { useWeatherStore } from "@/store/weatherStore";
 import { capitalizeWords } from "@/utils/string";
-import { MaterialIcons } from "@expo/vector-icons";
 import { Redirect } from "expo-router";
-import { FlatList, ScrollView, Text, View } from "react-native";
+import { FlatList, RefreshControl, ScrollView } from "react-native";
 
 import { logger } from "@/lib/logger";
+
+const uiLogger = logger.extend("UI");
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 export default function HomeScreen() {
-  const { t } = useTranslation("common");
-  const styles = useStyles();
+  const styles = useScreenStyles();
   const theme = useTheme();
   const trainId = useJourneyStore((s) => s.trainId);
   const destinationStation = useJourneyStore((s) => s.destinationStation);
   const origDestData = useJourneyStore(selectOrigDestData);
   const trainInfo = useJourneyStore(selectTrainInfo);
   const passListArray = useJourneyStore(selectPassList);
+  const destinationPass = useJourneyStore(selectDestinationPass);
   const nextStop = useJourneyStore(selectNextStop);
   const isJourneyCompleted = useJourneyStore(selectIsJourneyCompleted);
   const isAtStation = useJourneyStore(selectIsAtStation);
+  const { isRefreshing, onRefresh } = useRefreshTrainData();
   const weather = useWeatherStore((state) => state.weather);
   const startWeatherUpdates = useWeatherStore(
     (state) => state.startWeatherUpdates,
@@ -52,69 +58,60 @@ export default function HomeScreen() {
   if (!trainId) return <Redirect href="/login" />;
 
   if (!origDestData || !trainInfo || !passListArray) {
-    return (
-      <View
-        style={[
-          styles.container,
-          { alignItems: "center", justifyContent: "center" },
-        ]}
-      >
-        <Text style={styles.pageSubtitle}>{t("loadingTrainData")}</Text>
-      </View>
-    );
+    return <LoadingScreen />;
   }
 
-  logger.log(
-    `[Home Screen] Render train ${trainId}. Next stop: ${nextStop?.station?.station_ori_name || "None"}`,
+  uiLogger.trace(
+    `Render train ${trainId}. Next stop: ${nextStop?.station?.station_ori_name || "None"}`,
   );
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <View style={styles.pageHeader}>
-        <Text style={styles.pageTitle}>
-          {destinationStation
-            ? capitalizeWords(destinationStation.station_ori_name)
-            : "Unknown"}{" "}
-          - {trainInfo.train_category} {trainId}
-        </Text>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-          <MaterialIcons
-            name="access-time"
-            size={16}
-            color={theme.colors.mutedForeground}
-          />
-          <Text style={styles.pageSubtitle}>
-            {origDestData.dep_time
-              ? origDestData.dep_time.slice(0, 5)
-              : "Unknown"}{" "}
-            -{" "}
-            {origDestData.dep_time
-              ? origDestData.arr_time.slice(0, 5)
-              : "Unknown"}
-          </Text>
-        </View>
-      </View>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.content}
+      refreshControl={
+        <RefreshControl
+          refreshing={isRefreshing}
+          onRefresh={onRefresh}
+          tintColor={theme.colors.primary}
+        />
+      }
+    >
       <LiveStatusCard
         nextStop={
           nextStop
             ? capitalizeWords(nextStop.station.station_ori_name)
-            : "Unknown"
+            : isJourneyCompleted && destinationStation
+              ? capitalizeWords(destinationStation.station_ori_name)
+              : "Unknown"
         }
         arrivalTime={
-          nextStop?.arr_time ? nextStop.arr_time.slice(0, 5) : "Unknown"
+          nextStop?.arr_time
+            ? nextStop.arr_time.slice(0, 5)
+            : isJourneyCompleted && destinationPass?.arr_time
+              ? destinationPass.arr_time.slice(0, 5)
+              : "Unknown"
         }
-        speed="120 km/h"
+        destination={
+          destinationStation
+            ? capitalizeWords(destinationStation.station_ori_name)
+            : "Unknown"
+        }
+        destinationArrivalTime={
+          destinationPass?.arr_time
+            ? destinationPass.arr_time.slice(0, 5)
+            : undefined
+        }
+        speed="N/A"
         trainNumber={`${trainInfo.train_category} ${trainId}`}
         delayMinutes={trainInfo.delay}
         isFirst={nextStop?.pass_count === 1}
         departureTime={
-          isAtStation
+          isAtStation || nextStop?.pass_count === 1
             ? nextStop?.dep_time
               ? nextStop.dep_time.slice(0, 5)
               : "Unknown"
-            : origDestData.dep_time
-              ? origDestData.dep_time.slice(0, 5)
-              : "Unknown"
+            : undefined
         }
         isCompleted={isJourneyCompleted}
         isAtStation={isAtStation}
@@ -201,105 +198,3 @@ export default function HomeScreen() {
     </ScrollView>
   );
 }
-
-const useStyles = createStyleHook((theme) => ({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.background,
-  },
-  content: {
-    padding: theme.spacing.md,
-    paddingBottom: 100, // Spazio extra per non sovrapporsi alla tua bottom nav bar
-  },
-  pageHeader: {
-    marginBottom: theme.spacing.lg,
-  },
-  pageTitle: {
-    fontSize: 32,
-    fontWeight: "800",
-    color: theme.colors.primary,
-    marginBottom: theme.spacing.sm,
-  },
-  pageSubtitle: {
-    fontSize: 16,
-    color: theme.colors.mutedForeground,
-    lineHeight: 22,
-  },
-  themeRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    gap: theme.spacing.sm,
-  },
-  themeBox: {
-    flex: 1,
-    alignItems: "center",
-    paddingVertical: theme.spacing.md,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-    borderRadius: theme.borderRadius.md,
-    backgroundColor: theme.colors.background,
-  },
-  themeBoxActive: {
-    borderColor: theme.colors.primary,
-    backgroundColor: theme.colors.secondary,
-  },
-  themeBoxText: {
-    marginTop: theme.spacing.sm,
-    fontSize: 14,
-    color: theme.colors.mutedForeground,
-  },
-  themeBoxTextActive: {
-    color: theme.colors.primary,
-    fontWeight: "600",
-  },
-  dropdown: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-    borderRadius: theme.borderRadius.md,
-    padding: theme.spacing.md,
-    backgroundColor: theme.colors.background,
-  },
-  dropdownText: {
-    fontSize: 16,
-    color: theme.colors.foreground,
-  },
-  footer: {
-    marginTop: theme.spacing.md,
-    alignItems: "center",
-  },
-  reportButton: {
-    backgroundColor: theme.colors.destructive,
-    width: "100%",
-    paddingVertical: 14,
-    borderRadius: theme.borderRadius.xl,
-    alignItems: "center",
-    marginBottom: theme.spacing.lg,
-  },
-  reportButtonText: {
-    color: "#ffffff",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  versionText: {
-    fontSize: 13,
-    color: theme.colors.mutedForeground,
-    marginBottom: theme.spacing.sm,
-  },
-  linksRow: {
-    flexDirection: "row",
-    gap: 16,
-  },
-  link: {
-    fontSize: 13,
-    color: theme.colors.primary,
-  },
-  card: {
-    backgroundColor: theme.colors.muted,
-    borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing.md,
-    marginBottom: theme.spacing.md,
-  },
-}));

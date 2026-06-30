@@ -6,6 +6,8 @@
     "cancelled": "Cancelled",
     "departedAt": "Departed at {{time}}",
     "minutesDelay": "+{{minutes}} min delay",
-    "platform": "Platform {{platform}}"
+    "platform": "Platform {{platform}}",
+    "destination": "Destination",
+    "arrivedAt": "Arrived at {{time}}"
   }
 }

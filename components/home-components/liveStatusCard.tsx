@@ -8,6 +8,8 @@ import { Text, View } from "react-native";
 interface LiveStatusCardProps {
   nextStop: string;
   arrivalTime: string;
+  destination: string;
+  destinationArrivalTime?: string;
   speed: string;
   trainNumber: string;
   delayMinutes: number;
@@ -20,6 +22,8 @@ interface LiveStatusCardProps {
 export default function LiveStatusCard({
   nextStop,
   arrivalTime,
+  destination,
+  destinationArrivalTime,
   speed,
   trainNumber,
   delayMinutes,
@@ -35,48 +39,154 @@ export default function LiveStatusCard({
   return (
     <Card style={styles.card}>
       <View style={styles.topRow}>
-        {isCompleted && (
-          <Text style={styles.label}>{t("journeyCompleted")}</Text>
-        )}
-        {!isCompleted && isAtStation && (
-          <Text style={styles.label}>{t("currentlyAt")}</Text>
-        )}
-        {!isCompleted && !isAtStation && isFirst && (
-          <Text style={styles.label}>{t("startingFrom")}</Text>
-        )}
-        {!isCompleted && !isAtStation && !isFirst && (
-          <Text style={styles.label}>{t("nextStop")}</Text>
-        )}
-        {delayMinutes > 0 && (
-          <View style={styles.delayBadge}>
-            <MaterialIcons
-              name="warning"
-              size={12}
-              color={theme.colors.destructiveForeground}
-            />
-            <Text style={styles.delayText}>
-              + {delayMinutes} {t("minutesDelay")}
-            </Text>
-          </View>
-        )}
-        {delayMinutes === 0 && !isCompleted && (
-          <View
-            style={[styles.delayBadge, { backgroundColor: theme.colors.info }]}
-          >
-            <Text style={styles.onTimeText}>{t("onTime")}</Text>
-          </View>
-        )}
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 6,
+            flex: 1,
+          }}
+        >
+          {isCompleted && (
+            <Text style={styles.label}>{t("journeyCompleted")}</Text>
+          )}
+          {!isCompleted && isAtStation && (
+            <Text style={styles.label}>{t("currentlyAt")}</Text>
+          )}
+          {!isCompleted && !isAtStation && isFirst && (
+            <Text style={styles.label}>{t("startingFrom")}</Text>
+          )}
+          {!isCompleted && !isAtStation && !isFirst && (
+            <Text style={styles.label}>{t("nextStop")}</Text>
+          )}
+        </View>
+
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 8,
+            flex: 1,
+            justifyContent: "flex-end",
+          }}
+        >
+          {!isCompleted && <Text style={styles.label}>{t("destination")}</Text>}
+          {delayMinutes > 0 && (
+            <View style={styles.delayBadge}>
+              <MaterialIcons
+                name="warning"
+                size={12}
+                color={theme.colors.destructiveForeground}
+              />
+              <Text style={styles.delayText}>
+                + {delayMinutes} {t("minutesDelay")}
+              </Text>
+            </View>
+          )}
+          {delayMinutes <= 0 && (
+            <View
+              style={[
+                styles.delayBadge,
+                { backgroundColor: theme.colors.info },
+              ]}
+            >
+              <Text style={styles.onTimeText}>{t("onTime")}</Text>
+            </View>
+          )}
+        </View>
       </View>
 
       <View>
-        <Text style={styles.stationName}>{nextStop}</Text>
-        {isCompleted && <Text style={styles.arrTime}>Arr: {arrivalTime}</Text>}
-        {!isCompleted && (isAtStation || isFirst) && (
-          <Text style={styles.arrTime}>Dep: {departureTime}</Text>
-        )}
-        {!isCompleted && !isAtStation && !isFirst && (
-          <Text style={styles.arrTime}>Arr: {arrivalTime}</Text>
-        )}
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Text
+            style={[styles.stationName, { flex: 1 }]}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+          >
+            {nextStop}
+          </Text>
+
+          {!isCompleted && (
+            <MaterialIcons
+              name="arrow-forward"
+              size={24}
+              color={theme.colors.destructiveForeground}
+              style={{ marginHorizontal: 8, opacity: 0.5 }}
+            />
+          )}
+
+          {!isCompleted && (
+            <Text
+              style={[styles.stationName, { flex: 1, textAlign: "right" }]}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+            >
+              {destination}
+            </Text>
+          )}
+        </View>
+
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <View style={{ flex: 1 }}>
+            {isCompleted && (
+              <View style={styles.timeRow}>
+                <MaterialIcons
+                  name="place"
+                  size={16}
+                  color={theme.colors.destructiveForeground}
+                  style={{ opacity: 0.9 }}
+                />
+                <Text style={styles.timeText}>{arrivalTime}</Text>
+              </View>
+            )}
+            {!isCompleted && (isAtStation || isFirst) && (
+              <View style={styles.timeRow}>
+                <MaterialIcons
+                  name="trip-origin"
+                  size={16}
+                  color={theme.colors.destructiveForeground}
+                  style={{ opacity: 0.9 }}
+                />
+                <Text style={styles.timeText}>{departureTime}</Text>
+              </View>
+            )}
+            {!isCompleted && !isAtStation && !isFirst && (
+              <View style={styles.timeRow}>
+                <MaterialIcons
+                  name="place"
+                  size={16}
+                  color={theme.colors.destructiveForeground}
+                  style={{ opacity: 0.9 }}
+                />
+                <Text style={styles.timeText}>{arrivalTime}</Text>
+              </View>
+            )}
+          </View>
+
+          {!isCompleted && (
+            <View style={{ flex: 1, alignItems: "flex-end" }}>
+              {destinationArrivalTime && (
+                <View style={styles.timeRow}>
+                  <MaterialIcons
+                    name="place"
+                    size={16}
+                    color={theme.colors.destructiveForeground}
+                    style={{ opacity: 0.9 }}
+                  />
+                  <Text style={[styles.timeText, { textAlign: "right" }]}>
+                    {destinationArrivalTime}
+                  </Text>
+                </View>
+              )}
+            </View>
+          )}
+        </View>
       </View>
 
       <View style={styles.divider} />
@@ -151,11 +261,16 @@ const useStyles = createStyleHook((theme) => ({
     fontSize: 32,
     fontWeight: "800",
   },
-  arrTime: {
+  timeRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    marginBottom: theme.spacing.md,
+  },
+  timeText: {
     color: theme.colors.destructiveForeground,
     fontSize: 14,
     opacity: 0.9,
-    marginBottom: theme.spacing.md,
   },
   divider: {
     height: 1,
@@ -165,7 +280,8 @@ const useStyles = createStyleHook((theme) => ({
   },
   bottomRow: {
     flexDirection: "row",
-    gap: theme.spacing.xl,
+    gap: theme.spacing.lg,
+    flexWrap: "wrap",
   },
   infoBlock: {
     gap: 4,

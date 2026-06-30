@@ -1,40 +1,34 @@
-# Welcome to your Expo app 👋
+# Trenord Infotainment
 
-## Get started
+A highly polished, reliable, and premium onboard infotainment application for Trenord trains. Built with offline resilience, multi-language support (English/Italian), and a beautiful UI.
 
-Preferred package manager: pnpm.
+## 🚀 Tech Stack
 
-1. Install dependencies
+- **Framework:** React Native (0.83) with Expo (SDK 55)
+- **Routing:** Expo Router
+- **State Management:** Zustand
+- **Testing:** Jest + `@testing-library/react-native`
+- **Package Manager:** `pnpm` (Strictly enforced)
+
+## 📦 Getting Started
+
+1. **Install dependencies:**
 
    ```bash
    pnpm install
    ```
 
-2. Start the app
+2. **Start the development server:**
 
    ```bash
    pnpm start
    ```
 
-3. If the in browser login always fails it is because you have to disavle CORS policy
+   > **Note on Web Development & CORS:** When testing the app in a web browser, API requests are automatically routed through a local Expo API proxy (`/api/proxy`) to safely bypass CORS restrictions. The old `chrome.exe --disable-web-security` workaround is **no longer required**!
 
-   ```powershell
-   # In Windows press win+r
-   chrome.exe --user-data-dir="C://Chrome dev session" --disable-web-security
-   ```
+## 🧪 Testing
 
-   In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Testing
-
-Unit tests use Jest with React Native Testing Library. Test files live under [**tests**](__tests__) and follow the `*.test.tsx` naming convention.
+Unit tests cover all core business logic and UI interactions. Test files are located in the `__tests__` directory or alongside components as `*.test.tsx`.
 
 Run the test suite:
 
@@ -42,99 +36,68 @@ Run the test suite:
 pnpm test
 ```
 
-Jest runs in watch mode by default; press `q` to quit or use `pnpm test -- --watchAll=false` for a single run.
+_(You can also use pnpm `test:cov` to get the code coverage report.)._
 
-## Get a fresh project
+## 🏗️ Architecture & Guidelines
 
-When you're ready, run:
+This project strictly adheres to **SOLID principles**
 
-```bash
-pnpm run reset-project
-```
+For detailed development guidelines, project structure, domain knowledge, and AI Agent workflows, please review [.agents/AGENTS.md](.agents/AGENTS.md).
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## 🛠️ Android from WSL (Easy Setup)
 
-## Join the community
+If you are developing inside WSL but running Android Studio and the emulator on Windows, you must configure WSL to use the Windows Android SDK path.
 
-Join our community of developers creating universal apps.
+1. Find your Windows username from WSL:
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+   ```bash
+   ls /mnt/c/Users
+   ```
 
-## **Android from WSL (easy setup)**
+2. Export your SDK path (replace `<WINDOWS_USER>` with your actual username). You should add this to your `~/.bashrc` for permanence:
 
-Android Studio and the emulator run on Windows. This project runs in WSL.
+   ```bash
+   export ANDROID_HOME=/mnt/c/Users/<WINDOWS_USER>/AppData/Local/Android/Sdk
+   export ANDROID_SDK_ROOT=$ANDROID_HOME
+   export PATH=$PATH:$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:$ANDROID_HOME/cmdline-tools/latest/bin
+   ```
 
-To make them work together, configure WSL to use the Windows Android SDK path.
-
-Find your Windows user from WSL:
-
-```bash
-ls /mnt/c/Users
-```
-
-Then set your SDK path (replace `<WINDOWS_USER>`):
-
-```bash
-export ANDROID_HOME=/mnt/c/Users/<WINDOWS_USER>/AppData/Local/Android/Sdk
-export ANDROID_SDK_ROOT=$ANDROID_HOME
-export PATH=$PATH:$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:$ANDROID_HOME/cmdline-tools/latest/bin
-```
-
-You can also add the to ~/.bashrc for a permanent export
-
-### What was fixed
-
-Expo failed with:
-
-```text
-Error: spawn .../platform-tools/adb ENOENT
-```
-
-Reason: in Windows SDK the binary is `adb.exe`, but Expo in WSL tried `adb`.
-
-Fix applied:
+**ADB Fix for WSL:**
+Expo might fail with `Error: spawn .../platform-tools/adb ENOENT` because the Windows binary is `adb.exe`, but WSL expects `adb`. Fix this by creating a symlink:
 
 ```bash
 cd "$ANDROID_HOME/platform-tools"
 ln -s adb.exe adb
 ```
 
-### Run emulator from command line
-
-List available emulators:
+**Running the Emulator from CLI:**
 
 ```bash
+# List available emulators
 "$ANDROID_HOME/emulator/emulator.exe" -list-avds
-```
 
-Start one emulator (replace with your AVD name):
-
-```bash
+# Start an emulator (replace <AVD_NAME> with a name from the list above)
 "$ANDROID_HOME/emulator/emulator.exe" -avd <AVD_NAME>
-```
 
-Check that the emulator is connected:
-
-```bash
+# Check that the emulator is connected
 "$ANDROID_HOME/platform-tools/adb" devices
 ```
 
-## Updating dependencies
+## 🔄 Updating Dependencies
 
-Use pnpm for installs and updates in this repo.
+Use `pnpm` exclusively for installs and updates in this repository.
 
-Update regular dependencies within existing version ranges:
+- Update regular dependencies within their existing version ranges:
 
-```bash
-pnpm update
-```
+  ```bash
+  pnpm update
+  ```
 
-Check and align Expo-related packages to the current SDK:
+- Check and align Expo-related packages to the current SDK version:
 
-```bash
-pnpm dlx expo install --check
-pnpm dlx expo install --fix --pnpm
-```
+  ```bash
+  pnpm dlx expo install --check
+  pnpm dlx expo install --fix --pnpm
+  ```
 
-When upgrading the Expo SDK itself, follow the Expo SDK upgrade guide and then re-run the Expo alignment command above.
+_(When upgrading the Expo SDK itself, follow the official Expo SDK upgrade guide and then re-run the alignment command above)._

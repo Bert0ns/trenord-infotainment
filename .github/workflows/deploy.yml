@@ -1,0 +1,121 @@
+name: Deploy Android and Web
+
+on:
+  push:
+    branches:
+      - deploy
+  workflow_dispatch:
+
+# Define environment variables securely using GitHub Secrets.
+# These will be available to all jobs and injected into the Expo bundle.
+env:
+  EXPO_PUBLIC_TRENORD_API_URL: ${{ secrets.EXPO_PUBLIC_TRENORD_API_URL }}
+  EXPO_PUBLIC_TRENORD_AUDIENCE: ${{ secrets.EXPO_PUBLIC_TRENORD_AUDIENCE }}
+  EXPO_PUBLIC_TRENORD_CLIENT_ID: ${{ secrets.EXPO_PUBLIC_TRENORD_CLIENT_ID }}
+  EXPO_PUBLIC_TRENORD_ISSUER: ${{ secrets.EXPO_PUBLIC_TRENORD_ISSUER }}
+  EXPO_PUBLIC_TRENORD_PRIVATE_JWK: ${{ secrets.EXPO_PUBLIC_TRENORD_PRIVATE_JWK }}
+  EXPO_PUBLIC_TRENORD_TOKEN_URL: ${{ secrets.EXPO_PUBLIC_TRENORD_TOKEN_URL }}
+
+jobs:
+  quality:
+    name: Quality Gates (Lint & Test)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && 'main' || github.ref }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
+      - name: FormatCheck
+        run: pnpm format:check
+      - name: Lint
+        run: pnpm lint
+      - name: Typecheck
+        run: pnpm typecheck
+      - name: Test
+        run: pnpm test
+
+  build-web:
+    name: Build Web
+    needs: quality
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && 'main' || github.ref }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build Web
+        run: pnpm exec expo export -p web
+
+      - name: Upload Web Artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: web-build
+          path: dist
+
+  build-android:
+    name: Build Android APK
+    needs: quality
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && 'main' || github.ref }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+          cache: "pnpm"
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: "zulu"
+          java-version: "17"
+          cache: "gradle"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Prebuild Android
+        run: pnpm exec expo prebuild --platform android --no-install
+
+      - name: Build Android APK
+        run: |
+          cd android
+          ./gradlew assembleRelease
+
+      - name: Upload Android APK Artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: android-apk
+          path: android/app/build/outputs/apk/release/app-release.apk
