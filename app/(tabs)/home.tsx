@@ -18,6 +18,7 @@ import {
   selectTrainInfo,
   useJourneyStore,
 } from "@/store/journeyStore";
+import { useWeatherStore } from "@/store/weatherStore";
 import { capitalizeWords } from "@/utils/string";
 import { Redirect } from "expo-router";
 import { FlatList, RefreshControl, ScrollView } from "react-native";
@@ -25,6 +26,8 @@ import { FlatList, RefreshControl, ScrollView } from "react-native";
 import { logger } from "@/lib/logger";
 
 const uiLogger = logger.extend("UI");
+import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 export default function HomeScreen() {
   const styles = useScreenStyles();
@@ -39,6 +42,18 @@ export default function HomeScreen() {
   const isJourneyCompleted = useJourneyStore(selectIsJourneyCompleted);
   const isAtStation = useJourneyStore(selectIsAtStation);
   const { isRefreshing, onRefresh } = useRefreshTrainData();
+  const weather = useWeatherStore((state) => state.weather);
+  const startWeatherUpdates = useWeatherStore(
+    (state) => state.startWeatherUpdates,
+  );
+  //To be improven
+  useEffect(() => {
+    startWeatherUpdates(
+      destinationStation
+        ? destinationStation.station_ori_name.split(" ")[0]
+        : "None",
+    );
+  }, []);
 
   if (!trainId) return <Redirect href="/login" />;
 
@@ -111,10 +126,14 @@ export default function HomeScreen() {
       />
       <WeatherCard
         data={{
-          city: "Milan",
-          time: "09:00",
-          temperature: 22,
-          condition: "Sunny",
+          city: capitalizeWords(
+            destinationStation
+              ? destinationStation.station_ori_name
+              : "Unknown",
+          ),
+          temperature: Math.trunc(weather ? weather.temperature : 0),
+          code: weather ? weather.weatherCode : 0,
+          isDay: weather?.isDay === 1,
         }}
       />
 

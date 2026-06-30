@@ -1,6 +1,5 @@
 import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
 import { MaterialIcons } from "@expo/vector-icons";
-import React from "react";
 import { useTranslation } from "react-i18next";
 import { Animated, Text, View } from "react-native";
 
@@ -655,6 +654,11 @@ const useStyles = createStyleHook((theme) => ({
   },
   arrivingText: {
     fontSize: 13,
+    fontWeight: "500",
+    color: theme.colors.primary,
+  },
+  destinationText: {
+    fontSize: 15,
     fontWeight: "500",
     color: theme.colors.primary,
   },

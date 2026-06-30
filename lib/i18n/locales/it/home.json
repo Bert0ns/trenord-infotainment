@@ -21,6 +21,12 @@
   },
   "weatherCard": {
     "at": "a",
-    "loadingWeather": "Caricamento meteo..."
+    "loadingWeather": "Caricamento meteo...",
+    "sunny": "Soleggiato",
+    "cloudy": "Nuvoloso",
+    "foggy": "Nebbioso",
+    "rainy": "Piovoso",
+    "snowy": "Nevoso",
+    "stormy": "Tempestoso"
   }
 }
