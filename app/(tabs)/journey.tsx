@@ -20,8 +20,9 @@ import { logger } from "@/lib/logger";
 import { useTranslation } from "react-i18next";
 import MapView, { Marker, Polyline } from "react-native-maps";
 import { useLocationPermission } from "@/hooks/use-location";
-import { bboxToRegion, getBbox, useRailwayPolylines } from "@/utils/geometry";
+import { bboxToRegion, getBbox, stationLatLng } from "@/utils/geometry";
 import { JSX } from "react";
+import { useRailwayPolylines } from "@/lib/api/overpass";
 
 const uiLogger = logger.extend("UI");
 
@@ -86,10 +87,7 @@ export default function JourneyScreen() {
       markers.push(
         <Marker
           key={station.CodiceMIR}
-          coordinate={{
-            latitude: station.Location.coordinates[1],
-            longitude: station.Location.coordinates[0],
-          }}
+          coordinate={stationLatLng(station)}
           title={station.NomeGeoStazioni}
         >
           <View
