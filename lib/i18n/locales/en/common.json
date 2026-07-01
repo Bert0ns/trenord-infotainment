@@ -10,5 +10,7 @@
     "settings": "Settings"
   },
   "loading": "Loading...",
-  "loadingTrainData": "Loading or no train data available."
+  "loadingTrainData": "Loading or no train data available.",
+  "livePosOn": "LIVE",
+  "livePosOff": "NO GPS"
 }

@@ -44,7 +44,12 @@
       "expo-font",
       "expo-web-browser",
       "expo-image",
-      "expo-localization"
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

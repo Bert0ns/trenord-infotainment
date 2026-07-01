@@ -196,3 +196,43 @@ export interface ActualData {
   /** Real-time arrival in format HH:MM:SS. */
   arr_actual_time?: string;
 }
+
+export type StationResponse = StationFull[];
+
+export interface StationFull {
+  _id: string;
+  creatorId: string;
+  createdAt: string;
+  updaterId: string;
+  updatedAt: string;
+  Cap: number;
+  /** Seems to be a unique identifier for a station */
+  CodiceMIR: string;
+  Comune: string;
+  Direttrici: string[];
+  Indirizzo: string;
+  /** Full Display name for the station (all UPPERCASE) */
+  NomeGeoStazioni: string;
+  Note: string;
+  Prov: string;
+  Location: Location;
+  locIdSbme: number;
+  MetaStazione: boolean;
+  country: string;
+  tariff_zone: string;
+  __STATE__: string;
+  Regione: string;
+  /** Standard HAFAS codes, usually just one */
+  hafasCodes: string[];
+  soglia: number;
+  ignore_during_search: boolean;
+  is_metro_station: boolean;
+  station_classification: string[];
+  platforms: string[];
+}
+
+export interface Location {
+  /** Coordinates in [longitude, latitude] format  */
+  coordinates: number[];
+  type: string;
+}

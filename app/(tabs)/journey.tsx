@@ -1,20 +1,27 @@
-import TimelineCard from "@/components/journey-components/timelineCard";
+import TimelineCard, {
+  NodeStatus,
+} from "@/components/journey-components/timelineCard";
+import { useRefreshTrainData } from "@/hooks/use-refresh-train-data";
 import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
 import {
-  useJourneyStore,
-  selectOrigDestData,
-  selectTrainInfo,
-  selectPassList,
   selectNextStop,
+  selectOrigDestData,
+  selectPassList,
+  selectStations,
+  selectTrainInfo,
+  useJourneyStore,
 } from "@/store/journeyStore";
 import { capitalizeWords } from "@/utils/string";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Redirect } from "expo-router";
-import { ScrollView, Text, View, RefreshControl } from "react-native";
-import { useRefreshTrainData } from "@/hooks/use-refresh-train-data";
+import { RefreshControl, ScrollView, Text, View } from "react-native";
 
 import { logger } from "@/lib/logger";
 import { useTranslation } from "react-i18next";
+import MapView, { Marker, Polyline } from "react-native-maps";
+import { useLocationPermission } from "@/hooks/use-location";
+import { bboxToRegion, getBbox, useRailwayPolylines } from "@/utils/geometry";
+import { JSX } from "react";
 
 const uiLogger = logger.extend("UI");
 
@@ -29,6 +36,12 @@ export default function JourneyScreen() {
   const passListArray = useJourneyStore(selectPassList);
   const nextStop = useJourneyStore(selectNextStop);
   const { isRefreshing, onRefresh } = useRefreshTrainData();
+  const stationData = useJourneyStore(selectStations);
+
+  const locationPermission = useLocationPermission();
+  const polylines = useRailwayPolylines(stationData);
+
+  const region = bboxToRegion(getBbox(stationData));
 
   if (!trainId) return <Redirect href="/login" />;
 
@@ -47,6 +60,79 @@ export default function JourneyScreen() {
   uiLogger.trace(
     `Rendering timeline for train ${trainId}. ${passListArray.length} stations loaded.`,
   );
+
+  const markers: JSX.Element[] = [];
+  const timelineCards: JSX.Element[] = [];
+
+  passListArray.forEach((pass, index) => {
+    let status: NodeStatus = "future";
+    if (pass === nextStop) {
+      status = "current";
+    } else if (
+      (nextStop && pass.pass_count < nextStop.pass_count) ||
+      (pass.type === "O" && pass.actual_data?.dep_actual_time !== undefined) ||
+      (pass.type === "D" && pass.actual_data?.arr_actual_time !== undefined) ||
+      (pass.actual_data?.arr_actual_time !== undefined &&
+        pass.actual_data?.dep_actual_time !== undefined)
+    ) {
+      status = "past";
+    }
+
+    const station = stationData.find(
+      (s) => s.CodiceMIR === pass.station.station_id,
+    );
+
+    if (station)
+      markers.push(
+        <Marker
+          key={station.CodiceMIR}
+          coordinate={{
+            latitude: station.Location.coordinates[1],
+            longitude: station.Location.coordinates[0],
+          }}
+          title={station.NomeGeoStazioni}
+        >
+          <View
+            style={[
+              styles.marker,
+              {
+                backgroundColor:
+                  status === "future" ? "white" : theme.colors.primary,
+              },
+            ]}
+          />
+        </Marker>,
+      );
+
+    const scheduledTime = pass.type === "O" ? pass.dep_time : pass.arr_time;
+    const actualTime =
+      pass.type === "O"
+        ? pass.actual_data?.dep_actual_time
+        : pass.actual_data?.arr_actual_time;
+
+    timelineCards.push(
+      <TimelineCard
+        key={pass.station.station_id}
+        status={status}
+        stationName={capitalizeWords(pass.station.station_ori_name)}
+        scheduledTime={scheduledTime?.slice(0, 5) || "N/A"}
+        actualTime={actualTime?.slice(0, 5) || "N/A"}
+        platform={pass.platform ? String(pass.platform) : undefined}
+        delayMinutes={trainInfo.delay ? trainInfo.delay : 0}
+        isCancelled={pass.cancelled}
+        isLast={index === passListArray.length - 1}
+        isFirst={nextStop?.pass_count === 1}
+        isCompleted={
+          pass.type === "D" && pass.actual_data?.arr_actual_time !== undefined
+        }
+        isAtStation={
+          pass.actual_data?.arr_actual_time !== undefined &&
+          pass.actual_data?.dep_actual_time === undefined &&
+          pass.type !== "D"
+        }
+      />,
+    );
+  });
 
   return (
     <ScrollView
@@ -84,56 +170,46 @@ export default function JourneyScreen() {
           </Text>
         </View>
       </View>
-      {/* Timeline Fermate */}
-      <View style={styles.timelineContainer}>
-        {passListArray.map((pass: any, index: any) => {
-          let status: any = "future";
-          if (pass === nextStop) {
-            status = "current";
-          } else if (
-            (nextStop && pass.pass_count < nextStop.pass_count) ||
-            (pass.type === "O" &&
-              pass.actual_data?.dep_actual_time !== undefined) ||
-            (pass.type === "D" &&
-              pass.actual_data?.arr_actual_time !== undefined) ||
-            (pass.actual_data?.arr_actual_time !== undefined &&
-              pass.actual_data?.dep_actual_time !== undefined)
-          ) {
-            status = "past";
-          }
 
-          const scheduledTime =
-            pass.type === "O" ? pass.dep_time : pass.arr_time;
-          const actualTime =
-            pass.type === "O"
-              ? pass.actual_data?.dep_actual_time
-              : pass.actual_data?.arr_actual_time;
-
-          return (
-            <TimelineCard
-              key={pass.station.station_id}
-              status={status}
-              stationName={capitalizeWords(pass.station.station_ori_name)}
-              scheduledTime={scheduledTime?.slice(0, 5) || "N/A"}
-              actualTime={actualTime?.slice(0, 5) || "N/A"}
-              platform={pass.platform ? String(pass.platform) : undefined}
-              delayMinutes={trainInfo.delay ? trainInfo.delay : 0}
-              isCancelled={pass.cancelled}
-              isLast={index === passListArray.length - 1}
-              isFirst={nextStop?.pass_count === 1}
-              isCompleted={
-                pass.type === "D" &&
-                pass.actual_data?.arr_actual_time !== undefined
-              }
-              isAtStation={
-                pass.actual_data?.arr_actual_time !== undefined &&
-                pass.actual_data?.dep_actual_time === undefined &&
-                pass.type !== "D"
-              }
+      <View style={styles.mapContainer}>
+        <MapView
+          showsUserLocation
+          userLocationPriority="low"
+          rotateEnabled={false}
+          showsCompass
+          showsMyLocationButton
+          initialRegion={region}
+          style={styles.map}
+        >
+          {markers}
+          {polylines.map((polyline, index) => (
+            <Polyline
+              key={index}
+              coordinates={polyline}
+              strokeColor={theme.colors.primary}
+              strokeWidth={4}
             />
-          );
-        })}
+          ))}
+        </MapView>
+        <View style={styles.mapInfoBox}>
+          <View
+            style={{
+              width: 10,
+              height: 10,
+              borderRadius: 5,
+              backgroundColor: locationPermission
+                ? theme.colors.primary
+                : theme.colors.destructive,
+            }}
+          />
+          <Text style={styles.mapInfoText}>
+            {locationPermission ? t("livePosOn") : t("livePosOff")}
+          </Text>
+        </View>
       </View>
+
+      {/* Timeline Fermate */}
+      <View style={styles.timelineContainer}>{timelineCards}</View>
     </ScrollView>
   );
 }
@@ -241,5 +317,48 @@ const useStyles = createStyleHook((theme) => ({
   timelineContainer: {
     marginTop: theme.spacing.sm,
     paddingLeft: theme.spacing.sm, // Per dare spazio ai pallini
+  },
+  mapContainer: {
+    width: "100%",
+    height: 400,
+    backgroundColor: theme.colors.muted,
+    marginTop: theme.spacing.sm,
+    marginBottom: theme.spacing.md,
+    borderRadius: theme.borderRadius.xl,
+    overflow: "hidden",
+    borderColor: theme.colors.border,
+    borderWidth: 1,
+  },
+  map: {
+    width: "100%",
+    height: "100%",
+  },
+  mapInfoBox: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    backgroundColor: theme.colors.backgroundTransparent,
+    paddingHorizontal: theme.spacing.sm,
+    paddingVertical: 4,
+    borderRadius: theme.borderRadius.lg,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 4,
+  },
+  mapInfoText: {
+    color: theme.colors.foreground,
+    fontWeight: 600,
+    fontSize: 12,
+  },
+  marker: {
+    width: 20,
+    height: 20,
+    backgroundColor: "white",
+    borderRadius: 10,
+    borderWidth: 4,
+    borderColor: theme.colors.primary,
   },
 }));

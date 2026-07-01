@@ -10,5 +10,7 @@
     "settings": "Impostazioni"
   },
   "loading": "Caricamento in corso...",
-  "loadingTrainData": "Caricamento o nessun dato treno disponibile."
+  "loadingTrainData": "Caricamento o nessun dato treno disponibile.",
+  "livePosOn": "LIVE",
+  "livePosOff": "NO GPS"
 }

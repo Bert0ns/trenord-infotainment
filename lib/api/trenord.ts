@@ -1,7 +1,9 @@
+import { logger } from "@/lib/logger";
+import { getCachedAccessToken, setCachedAccessToken } from "@/store/apiStore";
+import { nowSec } from "@/utils/time";
 import { KJUR, KEYUTIL } from "jsrsasign";
 import { Platform } from "react-native";
-import { logger } from "@/lib/logger";
-import { TrainInfoResponse } from "./types";
+import { StationResponse, TrainInfoResponse } from "./types";
 
 const apiLogger = logger.extend("API");
 
@@ -38,50 +40,26 @@ if (!tokenUrl) throw new Error("Missing EXPO_PUBLIC_TRENORD_TOKEN_URL");
 if (!apiUrl) throw new Error("Missing EXPO_PUBLIC_TRENORD_API_URL");
 if (!jwkRaw) throw new Error("Missing EXPO_PUBLIC_TRENORD_PRIVATE_JWK");
 
-let cachedPrivateKey: any = null;
-let cachedAccessToken: string | null = null;
-let tokenExpirationTime: number = 0;
-
-try {
-  // Eagerly compute the crypto key on app boot so the first login is instant
-  const jwk = JSON.parse(jwkRaw);
-  cachedPrivateKey = KEYUTIL.getKey(jwk);
-} catch (error) {
-  apiLogger.error("Failed to eagerly parse JWK string or generate key", error);
-}
-
-export function clearTrenordApiCache() {
-  cachedPrivateKey = null;
-  cachedAccessToken = null;
-  tokenExpirationTime = 0;
-}
-
 function getPrivateKey() {
-  if (cachedPrivateKey) return cachedPrivateKey;
-
-  if (!jwkRaw)
-    throw new Error("Missing EXPO_PUBLIC_TRENORD_PRIVATE_JWK in environment");
   try {
+    // Eagerly compute the crypto key on app boot so the first login is instant
     const jwk = JSON.parse(jwkRaw);
-    cachedPrivateKey = KEYUTIL.getKey(jwk);
-    return cachedPrivateKey;
+    return KEYUTIL.getKey(jwk) as jsrsasign.RSAKey;
   } catch (error) {
-    apiLogger.error("Failed to parse JWK string or generate key", error);
-    throw new Error("Invalid JWK JSON format");
+    apiLogger.error(
+      "Failed to eagerly parse JWK string or generate key",
+      error,
+    );
+    return null;
   }
 }
 
 async function getAccessToken(): Promise<string> {
-  const now = Math.floor(Date.now() / 1000);
-
-  // Reuse token if it's still valid for at least 30 more seconds
-  if (cachedAccessToken && now < tokenExpirationTime - 30) {
-    return cachedAccessToken;
+  const cachedToken = getCachedAccessToken();
+  if (cachedToken) {
+    return cachedToken;
   }
-
-  if (!cachedPrivateKey) {
-    apiLogger.log("Getting private JWK for authentication...");
-  }
+  apiLogger.log("No valid cached access token found, generating a new one...");
   const privateKey = getPrivateKey();
 
   // Generate a random UUID for the JWT ID
@@ -97,8 +75,8 @@ async function getAccessToken(): Promise<string> {
     aud: issuer,
     jti: jti,
     requested_audiences: [audience],
-    iat: Math.floor(Date.now() / 1000),
-    exp: Math.floor(Date.now() / 1000) + 300, // Expires in 5 minutes
+    iat: nowSec(),
+    exp: nowSec() + 300, // Expires in 5 minutes
   };
 
   const jwt = KJUR.jws.JWS.sign(
@@ -136,13 +114,16 @@ async function getAccessToken(): Promise<string> {
 
   const tokenData = await tokenResponse.json();
 
-  cachedAccessToken = tokenData.access_token;
-  const expiresIn = tokenData.expires_in || 300;
-  tokenExpirationTime = now + expiresIn;
+  const token = tokenData.access_token;
+  if (!token) {
+    apiLogger.error("Token response did not contain an access_token");
+    throw new Error("Token response did not contain an access_token");
+  }
+  setCachedAccessToken(token, nowSec() + (tokenData.expires_in || 300));
   apiLogger.trace(
-    `Access Token acquired successfully, expires in ${expiresIn} seconds.`,
+    `Access Token acquired successfully, expires in ${tokenData.expires_in || 300} seconds.`,
   );
-  return cachedAccessToken!;
+  return token;
 }
 
 export async function fetchTrainData(
@@ -166,4 +147,42 @@ export async function fetchTrainData(
 
   apiLogger.trace(`Train data retrieved successfully for train ${trainId}.`);
   return response.json();
+}
+
+export async function fetchStationData(
+  stationIDs: string[],
+): Promise<StationResponse> {
+  // since i have no idea how to filter for multiple stations in the API (i
+  // don't thinkg it's possible and if it is it's not documented) it is easier
+  // and more practical to just fetch all stations and filter them quickly in JS
+  // For this reason this function should be called sparingly
+
+  const accessToken = await getAccessToken();
+  const url = `${apiUrl}/stazioni_v2`;
+
+  apiLogger.trace(`Fetching data for stations ${stationIDs.join(", ")}...`);
+  const response = await proxiedFetch(url, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    apiLogger.error(`Station fetch failed with status ${response.status}`);
+    throw new Error(`Station API Call failed with status ${response.status}`);
+  }
+
+  apiLogger.trace(
+    `Station data retrieved successfully for stations ${stationIDs.join(", ")}.`,
+  );
+
+  const stationData: StationResponse = await response.json();
+  const filteredData = stationData
+    .filter((station) => stationIDs.includes(station.CodiceMIR))
+    .toSorted(
+      (a, b) =>
+        stationIDs.indexOf(a.CodiceMIR) - stationIDs.indexOf(b.CodiceMIR),
+    );
+  return filteredData;
 }
