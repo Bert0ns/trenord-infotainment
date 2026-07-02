@@ -6,7 +6,7 @@ import { useJourneyStore } from "@/store/journeyStore";
 import { useNewsStore } from "@/store/newsStore";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { deduplicateNews } from "@/utils/news";
+import { deduplicateNews, getLocalizedCityName } from "@/utils/news";
 
 const hookLogger = logger.extend("NewsAPI");
 
@@ -49,8 +49,9 @@ export function useNews() {
     }
 
     const language = i18n.language.substring(0, 2); // e.g. "en-US" -> "en"
-    const keyword =
+    const rawKeyword =
       destinationMunicipality || destinationStation?.station_ori_name;
+    const keyword = getLocalizedCityName(rawKeyword, language);
     // Wait until municipality is fetched (prevents double fetch)
     if (isMunicipalityLoading) {
       return;

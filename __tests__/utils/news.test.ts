@@ -1,4 +1,4 @@
-import { deduplicateNews } from "@/utils/news";
+import { deduplicateNews, getLocalizedCityName } from "@/utils/news";
 import { NewsArticle } from "@/lib/api/currentsapi-news/currentsapi-news-types";
 
 describe("deduplicateNews", () => {
@@ -59,5 +59,25 @@ describe("deduplicateNews", () => {
     // Since minLen < 5 check is in place, they should not be filtered out
     const result = deduplicateNews(articles);
     expect(result).toHaveLength(2);
+  });
+});
+
+describe("getLocalizedCityName", () => {
+  it("should translate Milano to Milan for English language", () => {
+    expect(getLocalizedCityName("Milano", "en")).toBe("Milan");
+    expect(getLocalizedCityName(" MILANO ", "en-US")).toBe("Milan");
+  });
+
+  it("should not translate if language is not English", () => {
+    expect(getLocalizedCityName("Milano", "it")).toBe("Milano");
+  });
+
+  it("should return the original city if no translation is found", () => {
+    expect(getLocalizedCityName("Como", "en")).toBe("Como");
+  });
+
+  it("should handle null or undefined safely", () => {
+    expect(getLocalizedCityName(null, "en")).toBeNull();
+    expect(getLocalizedCityName(undefined, "en")).toBeUndefined();
   });
 });

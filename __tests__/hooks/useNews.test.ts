@@ -105,7 +105,7 @@ describe("useNews Hook", () => {
       expect(result.current.isLoading).toBe(false);
     });
 
-    expect(getRelevantNews).toHaveBeenCalledWith("Milano", "en");
+    expect(getRelevantNews).toHaveBeenCalledWith("Milan", "en");
   });
 
   it("should handle API errors gracefully", async () => {

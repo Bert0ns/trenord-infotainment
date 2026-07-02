@@ -8,6 +8,7 @@ const BASE_URL = "https://api.currentsapi.services/v2";
 
 interface FetchNewsOptions {
   language?: string;
+  country?: string;
   page_size?: number;
   category?: string;
   keywords?: string; // Only for search
@@ -139,6 +140,7 @@ export async function fetchLatestNews(
   return fetchFromCurrentsApi("/latest-news", {
     language: options?.language || "en",
     page_size: options?.page_size || 15,
+    ...(options?.country ? { country: options.country } : {}),
     ...(options?.category ? { category: options.category } : {}),
   });
 }
@@ -152,6 +154,7 @@ export async function fetchSearchNews(
   return fetchFromCurrentsApi("/search", {
     language: options?.language || "en",
     page_size: options?.page_size || 15,
+    ...(options?.country ? { country: options.country } : {}),
     ...(options?.category ? { category: options.category } : {}),
     ...(options?.keywords ? { keywords: options.keywords } : {}),
   });
@@ -193,6 +196,7 @@ export async function getRelevantNews(
         newsLogger.log("Fetching fresh fallback latest news");
         fallbackResult = await fetchLatestNews({
           language,
+          country: "IT",
           category: "general",
         });
         store.setLatestNews(fallbackCacheKey, fallbackResult);
@@ -214,6 +218,7 @@ export async function getRelevantNews(
       newsLogger.log("Fetching fresh latest news");
       result = await fetchLatestNews({
         language,
+        country: "IT",
         category: "general",
       });
       store.setLatestNews(cacheKey, result);

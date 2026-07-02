@@ -1,4 +1,5 @@
 import { NewsArticle } from "@/lib/api/currentsapi-news/currentsapi-news-types";
+import citiesData from "@/lib/i18n/locales/cities.json";
 
 /**
  * Deduplicates an array of news articles based on their title.
@@ -40,4 +41,34 @@ export function deduplicateNews(articles: NewsArticle[]): NewsArticle[] {
   }
 
   return uniqueArticles;
+}
+
+/**
+ * Translates common Italian city names to English for better search results in English news.
+ * @param city - The original city name (usually in Italian)
+ * @param language - The target language code (e.g., "en")
+ * @returns The localized city name or the original if no translation is found
+ */
+export function getLocalizedCityName(
+  city: string | null | undefined,
+  language: string,
+): string | null | undefined {
+  if (!city) return city;
+
+  if (language.startsWith("en")) {
+    const englishMap = Object.entries(citiesData).reduce(
+      (acc, [key, val]) => {
+        acc[key.toLowerCase()] = val;
+        return acc;
+      },
+      {} as Record<string, string>,
+    );
+
+    const lowerCity = city.toLowerCase().trim();
+    if (englishMap[lowerCity]) {
+      return englishMap[lowerCity];
+    }
+  }
+
+  return city;
 }
