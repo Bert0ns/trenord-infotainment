@@ -22,5 +22,8 @@
   "weatherCard": {
     "at": "a",
     "loadingWeather": "Caricamento meteo..."
+  },
+  "newsCard": {
+    "videoArticle": "Articolo Video"
   }
 }

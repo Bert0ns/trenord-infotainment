@@ -3,9 +3,12 @@ import { createStyleHook } from "@/hooks/use-theme-color";
 import { BlurView } from "expo-blur";
 import * as WebBrowser from "expo-web-browser";
 import React from "react";
+import { MaterialIcons } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 import {
   Dimensions,
   ImageBackground,
+  Linking,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -17,20 +20,42 @@ const uiLogger = logger.extend("UI");
 
 export default function NewsCard({ article }: { article: NewsArticle }) {
   const styles = useStyles();
+  const { t } = useTranslation("home", { keyPrefix: "newsCard" });
+
+  const videoUrlMatch = article.description.match(
+    /(https?:\/\/[^\s]+(?:mp4|video)[^\s]*)/,
+  );
+  const resolvedUrl = videoUrlMatch ? videoUrlMatch[0] : article.url;
+
+  const isVideo =
+    resolvedUrl.includes("/mp4/") ||
+    resolvedUrl.endsWith(".mp4") ||
+    resolvedUrl.includes("/video/");
 
   const handlePress = async () => {
     try {
-      uiLogger.log(`Opening news article: ${article.url}`);
-      await WebBrowser.openBrowserAsync(article.url, {
-        controlsColor: "#007aff",
-      });
+      if (isVideo) {
+        uiLogger.log(`Opening external video link: ${resolvedUrl}`);
+        await Linking.openURL(resolvedUrl);
+      } else {
+        uiLogger.log(`Opening news article: ${resolvedUrl}`);
+        await WebBrowser.openBrowserAsync(resolvedUrl, {
+          controlsColor: "#007aff",
+        });
+      }
     } catch (e) {
-      uiLogger.error("Failed to open web browser:", e);
+      uiLogger.error("Failed to open article url", e);
     }
   };
 
   const hasImage =
     article.image && article.image !== "None" && article.image !== "null";
+
+  // Clean description if it's just the URL
+  const displayDescription =
+    article.description === resolvedUrl
+      ? t("videoArticle")
+      : article.description;
 
   return (
     <TouchableOpacity
@@ -51,20 +76,29 @@ export default function NewsCard({ article }: { article: NewsArticle }) {
                   {article.title}
                 </Text>
                 <Text style={styles.description} numberOfLines={2}>
-                  {article.description}
+                  {displayDescription}
                 </Text>
               </BlurView>
             </View>
           </ImageBackground>
         ) : (
           <View style={[styles.imageBackground, styles.fallbackBackground]}>
+            {isVideo && (
+              <View style={styles.playIconCenter}>
+                <MaterialIcons
+                  name="play-circle-outline"
+                  size={64}
+                  color="rgba(255,255,255,0.7)"
+                />
+              </View>
+            )}
             <View style={styles.overlayContainer}>
               <View style={[styles.blurView, styles.fallbackBlurView]}>
                 <Text style={styles.title} numberOfLines={2}>
                   {article.title}
                 </Text>
                 <Text style={styles.description} numberOfLines={3}>
-                  {article.description}
+                  {displayDescription}
                 </Text>
               </View>
             </View>
@@ -128,5 +162,11 @@ const useStyles = createStyleHook((theme) => ({
     fontSize: 13,
     color: "rgba(255, 255, 255, 0.8)", // Slightly dimmed white
     lineHeight: 18,
+  },
+  playIconCenter: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingBottom: 40, // offset for the overlay
   },
 }));

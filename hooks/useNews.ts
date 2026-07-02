@@ -55,37 +55,56 @@ export function useNews() {
         if (keyword) {
           // Contextual News
           const cacheKey = `${keyword}-${language}`;
-          const cached = newsStore.getValidSearchNews(cacheKey);
+          let result = newsStore.getValidSearchNews(cacheKey);
 
-          if (cached) {
+          if (result) {
             hookLogger.log("Using cached search news");
-            if (isMounted) setData(cached.news);
           } else {
             hookLogger.log(`Fetching fresh search news for: ${keyword}`);
-            const result = await fetchSearchNews({
+            result = await fetchSearchNews({
               language,
               keywords: keyword,
             });
             newsStore.setSearchNews(cacheKey, result);
+          }
+
+          if (result.news.length === 0) {
+            hookLogger.log(
+              `0 contextual news for ${keyword}. Falling back to general latest news.`,
+            );
+            const fallbackCacheKey = `latest-${language}`;
+            let fallbackResult = newsStore.getValidLatestNews(fallbackCacheKey);
+
+            if (!fallbackResult) {
+              hookLogger.log("Fetching fresh fallback latest news");
+              fallbackResult = await fetchLatestNews({
+                language,
+                category: "general",
+              });
+              newsStore.setLatestNews(fallbackCacheKey, fallbackResult);
+            } else {
+              hookLogger.log("Using cached fallback latest news");
+            }
+            if (isMounted) setData(fallbackResult.news);
+          } else {
             if (isMounted) setData(result.news);
           }
         } else {
           // General News
           const cacheKey = `latest-${language}`;
-          const cached = newsStore.getValidLatestNews(cacheKey);
+          let result = newsStore.getValidLatestNews(cacheKey);
 
-          if (cached) {
+          if (result) {
             hookLogger.log("Using cached latest news");
-            if (isMounted) setData(cached.news);
           } else {
             hookLogger.log("Fetching fresh latest news");
-            const result = await fetchLatestNews({
+            result = await fetchLatestNews({
               language,
               category: "general",
             });
             newsStore.setLatestNews(cacheKey, result);
-            if (isMounted) setData(result.news);
           }
+          if (isMounted) setData(result.news);
         }
       } catch (err: any) {
         hookLogger.error("Error in useNews hook:", err);

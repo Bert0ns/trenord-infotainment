@@ -120,6 +120,45 @@ describe("useNews Hook", () => {
     expect(result.current.data).toEqual(mockNewsData.news);
   });
 
+  it("should fallback to latest news if search news returns 0 articles", async () => {
+    (useJourneyStore as unknown as jest.Mock).mockReturnValue({
+      destinationStation: { station_ori_name: "Nowhere Station" },
+      trainId: "1234",
+    });
+
+    // Simulate cache miss for search
+    mockGetValidSearchNews.mockReturnValue(null);
+    // Simulate search api returning 0 articles
+    (fetchSearchNews as jest.Mock).mockResolvedValue({ news: [] });
+
+    // Simulate cache miss for fallback latest news
+    mockGetValidLatestNews.mockReturnValue(null);
+    const mockFallbackData = {
+      news: [{ id: "1", title: "General News fallback" }],
+    };
+    (fetchLatestNews as jest.Mock).mockResolvedValue(mockFallbackData);
+
+    const { result } = renderHook(() => useNews());
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    // It should have called search first
+    expect(fetchSearchNews).toHaveBeenCalledWith({
+      language: "en",
+      keywords: "Nowhere Station",
+    });
+
+    // And then fallback to latest
+    expect(fetchLatestNews).toHaveBeenCalledWith({
+      language: "en",
+      category: "general",
+    });
+
+    expect(result.current.data).toEqual(mockFallbackData.news);
+  });
+
   it("should handle API errors gracefully", async () => {
     mockGetValidLatestNews.mockReturnValue(null);
     const mockError = new Error("API Failure");

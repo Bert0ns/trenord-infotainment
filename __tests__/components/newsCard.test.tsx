@@ -11,6 +11,10 @@ jest.mock("expo-web-browser", () => ({
   openBrowserAsync: jest.fn(),
 }));
 
+jest.mock("@expo/vector-icons", () => ({
+  MaterialIcons: "MaterialIcons",
+}));
+
 jest.mock("@/lib/logger", () => ({
   logger: {
     extend: () => ({
@@ -71,5 +75,28 @@ describe("NewsCard", () => {
       "https://example.com/news",
       expect.any(Object),
     );
+  });
+
+  it("opens video links externally using Linking when URL is embedded in description", () => {
+    const videoArticle = {
+      ...mockArticle,
+      url: "https://www.liberoquotidiano.it/news/48398933/undefined/",
+      description: "https://video.italpress.com/play/mp4/video/7xy8",
+    };
+    const { getByText } = render(<NewsCard article={videoArticle} />);
+
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { Linking } = require("react-native");
+    const openURLSpy = jest
+      .spyOn(Linking, "openURL")
+      .mockImplementation(() => Promise.resolve());
+
+    fireEvent.press(getByText("Breaking News"));
+
+    expect(openURLSpy).toHaveBeenCalledWith(
+      "https://video.italpress.com/play/mp4/video/7xy8",
+    );
+
+    openURLSpy.mockRestore();
   });
 });
