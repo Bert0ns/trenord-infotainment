@@ -36,14 +36,22 @@ describe("useNews Hook", () => {
     (useJourneyStore as unknown as jest.Mock).mockReturnValue({
       destinationStation: null,
       destinationMunicipality: null,
+      isMunicipalityLoading: false,
       trainId: "1234",
     });
 
-    (useNewsStore as unknown as jest.Mock).mockReturnValue({
+    const mockStoreState = {
       getValidLatestNews: mockGetValidLatestNews,
       getValidSearchNews: mockGetValidSearchNews,
       setLatestNews: mockSetLatestNews,
       setSearchNews: mockSetSearchNews,
+    };
+
+    (useNewsStore as unknown as jest.Mock).mockImplementation((selector) => {
+      if (selector) {
+        return selector(mockStoreState);
+      }
+      return mockStoreState;
     });
 
     (fetchLatestNews as jest.Mock).mockResolvedValue(mockNewsData);
@@ -101,6 +109,7 @@ describe("useNews Hook", () => {
     (useJourneyStore as unknown as jest.Mock).mockReturnValue({
       destinationStation: { station_ori_name: "Milano Centrale" },
       destinationMunicipality: null,
+      isMunicipalityLoading: false,
       trainId: "1234",
     });
     mockGetValidSearchNews.mockReturnValue(null);
@@ -116,7 +125,7 @@ describe("useNews Hook", () => {
       keywords: "Milano Centrale",
     });
     expect(mockSetSearchNews).toHaveBeenCalledWith(
-      "Milano Centrale-en",
+      "search-Milano Centrale-en",
       mockNewsData,
     );
     expect(result.current.data).toEqual(mockNewsData.news);
@@ -126,6 +135,7 @@ describe("useNews Hook", () => {
     (useJourneyStore as unknown as jest.Mock).mockReturnValue({
       destinationStation: { station_ori_name: "Nowhere Station" },
       destinationMunicipality: null,
+      isMunicipalityLoading: false,
       trainId: "1234",
     });
 
@@ -166,6 +176,7 @@ describe("useNews Hook", () => {
     (useJourneyStore as unknown as jest.Mock).mockReturnValue({
       destinationStation: { station_ori_name: "MILANO GRECO PIRELLI" },
       destinationMunicipality: "Milano",
+      isMunicipalityLoading: false,
       trainId: "1234",
     });
     mockGetValidSearchNews.mockReturnValue(null);
@@ -180,7 +191,10 @@ describe("useNews Hook", () => {
       language: "en",
       keywords: "Milano",
     });
-    expect(mockSetSearchNews).toHaveBeenCalledWith("Milano-en", mockNewsData);
+    expect(mockSetSearchNews).toHaveBeenCalledWith(
+      "search-Milano-en",
+      mockNewsData,
+    );
   });
 
   it("should handle API errors gracefully", async () => {

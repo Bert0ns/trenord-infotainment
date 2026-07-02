@@ -14,9 +14,16 @@ const hookLogger = logger.extend("NewsAPI");
 
 export function useNews() {
   const { settings } = useSettings();
-  const { destinationStation, destinationMunicipality, trainId } =
-    useJourneyStore();
-  const newsStore = useNewsStore();
+  const {
+    destinationStation,
+    destinationMunicipality,
+    isMunicipalityLoading,
+    trainId,
+  } = useJourneyStore();
+  const getValidLatestNews = useNewsStore((s) => s.getValidLatestNews);
+  const getValidSearchNews = useNewsStore((s) => s.getValidSearchNews);
+  const setLatestNews = useNewsStore((s) => s.setLatestNews);
+  const setSearchNews = useNewsStore((s) => s.setSearchNews);
   const { i18n } = useTranslation();
 
   const [data, setData] = useState<NewsArticle[]>([]);
@@ -49,15 +56,19 @@ export function useNews() {
     const language = i18n.language.substring(0, 2); // e.g. "en-US" -> "en"
     const keyword =
       destinationMunicipality || destinationStation?.station_ori_name;
+    // Wait until municipality is fetched (prevents double fetch)
+    if (isMunicipalityLoading) {
+      return;
+    }
+
     const fetchNews = async () => {
       setIsLoading(true);
       setError(null);
 
       try {
         if (keyword) {
-          // Contextual News
-          const cacheKey = `${keyword}-${language}`;
-          let result = newsStore.getValidSearchNews(cacheKey);
+          const cacheKey = `search-${keyword}-${language}`;
+          let result = getValidSearchNews(cacheKey);
 
           if (result) {
             hookLogger.log("Using cached search news");
@@ -67,7 +78,7 @@ export function useNews() {
               language,
               keywords: keyword,
             });
-            newsStore.setSearchNews(cacheKey, result);
+            setSearchNews(cacheKey, result);
           }
 
           if (result.news.length === 0) {
@@ -75,7 +86,7 @@ export function useNews() {
               `0 contextual news for ${keyword}. Falling back to general latest news.`,
             );
             const fallbackCacheKey = `latest-${language}`;
-            let fallbackResult = newsStore.getValidLatestNews(fallbackCacheKey);
+            let fallbackResult = getValidLatestNews(fallbackCacheKey);
 
             if (!fallbackResult) {
               hookLogger.log("Fetching fresh fallback latest news");
@@ -83,7 +94,7 @@ export function useNews() {
                 language,
                 category: "general",
               });
-              newsStore.setLatestNews(fallbackCacheKey, fallbackResult);
+              setLatestNews(fallbackCacheKey, fallbackResult);
             } else {
               hookLogger.log("Using cached fallback latest news");
             }
@@ -94,7 +105,7 @@ export function useNews() {
         } else {
           // General News
           const cacheKey = `latest-${language}`;
-          let result = newsStore.getValidLatestNews(cacheKey);
+          let result = getValidLatestNews(cacheKey);
 
           if (result) {
             hookLogger.log("Using cached latest news");
@@ -104,7 +115,7 @@ export function useNews() {
               language,
               category: "general",
             });
-            newsStore.setLatestNews(cacheKey, result);
+            setLatestNews(cacheKey, result);
           }
           if (isMounted) setData(result.news);
         }
@@ -125,9 +136,14 @@ export function useNews() {
     settings.enableNewsApi,
     destinationStation,
     destinationMunicipality,
+    isMunicipalityLoading,
     i18n.language,
     trainId,
-  ]); // Intentionally omitting newsStore functions to prevent infinite loops
+    getValidLatestNews,
+    getValidSearchNews,
+    setLatestNews,
+    setSearchNews,
+  ]);
 
   return { data, isLoading, error };
 }

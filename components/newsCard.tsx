@@ -36,12 +36,23 @@ export default function NewsCard({ article }: { article: NewsArticle }) {
 
   const handlePress = async () => {
     try {
+      const safeUrl =
+        resolvedUrl?.startsWith("http://") ||
+        resolvedUrl?.startsWith("https://")
+          ? resolvedUrl
+          : null;
+
+      if (!safeUrl) {
+        uiLogger.warn(`Invalid or unsafe URL blocked: ${resolvedUrl}`);
+        return;
+      }
+
       if (isVideo) {
-        uiLogger.log(`Opening external video link: ${resolvedUrl}`);
-        await Linking.openURL(resolvedUrl);
+        uiLogger.log(`Opening external video link: ${safeUrl}`);
+        await Linking.openURL(safeUrl);
       } else {
-        uiLogger.log(`Opening news article: ${resolvedUrl}`);
-        await WebBrowser.openBrowserAsync(resolvedUrl, {
+        uiLogger.log(`Opening news article: ${safeUrl}`);
+        await WebBrowser.openBrowserAsync(safeUrl, {
           controlsColor: "#007aff",
         });
       }
@@ -63,7 +74,7 @@ export default function NewsCard({ article }: { article: NewsArticle }) {
           });
           if (isMounted) setThumbnailUri(uri);
         } catch (e) {
-          uiLogger.warn("Failed to generate video thumbnail", e);
+          uiLogger.warn("Failed to generate video thumbnail: ", e);
         }
       };
       generateThumbnail();
