@@ -41,6 +41,20 @@ export type Colors = {
   homeLiveStatus: string;
   /** Background logout botton */
   logout: string;
+  /** Color for good */
+  scaleGood: string;
+  /** Color for fair */
+  scaleFair: string;
+  /** Color for moderate */
+  scaleModerate: string;
+  /** Color for poor */
+  scalePoor: string;
+  /** Color for very poor */
+  scaleVeryPoor: string;
+  /** Color for extreme */
+  scaleExtreme: string;
+  /** Color for svg track */
+  svgTrack: string;
 };
 
 export type Sizes = {

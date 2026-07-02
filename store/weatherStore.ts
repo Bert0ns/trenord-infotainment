@@ -52,7 +52,7 @@ export const useWeatherStore = create<WeatherState>((set) => ({
         );
 
         const currentWeather = weather.current();
-        const currentAir = weather.current();
+        const currentAir = air.current();
 
         set({
           weather: {

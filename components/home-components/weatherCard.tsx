@@ -26,61 +26,54 @@ export default function WeatherCard({ data }: { data: WeatherData | null }) {
     );
   }
 
-  // Nuova funzione basata sui codici meteo WMO e giorno/notte
   const getIcon = () => {
     const { code, isDay } = data;
 
-    // 0: Cielo sereno
-    if ([0, 1].includes(code)) {
+    if ([0, 1, 2].includes(code)) {
       weatherCondition = "sunny";
       return {
-        name: isDay ? "wb-sunny" : "bedtime", // Sole o Luna
-        color: theme.colors.warning, // Giallo/Oro
+        name: isDay ? "wb-sunny" : "bedtime",
+        color: theme.colors.warning,
       };
     }
 
-    // 1, 2, 3: Da poco nuvoloso a coperto
     if ([2, 3].includes(code)) {
       weatherCondition = "cloudy";
       return {
         name: "cloud",
-        color: theme.colors.cloud || theme.colors.mutedForeground, // Assicurati di avere 'cloud' nel tema o usa un fallback
-      };
-    }
-
-    // 45, 48: Nebbia
-    if ([45, 48].includes(code)) {
-      weatherCondition = "foggy";
-      return {
-        name: "dehaze", // L'icona con le linee orizzontali, ottima per la nebbia
         color: theme.colors.cloud || theme.colors.mutedForeground,
       };
     }
 
-    // 51-67, 80-82: Pioviggine e Pioggia (anche gelata o a rovesci)
+    if ([45, 48].includes(code)) {
+      weatherCondition = "foggy";
+      return {
+        name: "dehaze",
+        color: theme.colors.cloud || theme.colors.mutedForeground,
+      };
+    }
+
     if ((code >= 51 && code <= 67) || [80, 81, 82].includes(code)) {
       weatherCondition = "rainy";
       return {
         name: "water-drop",
-        color: theme.colors.info, // Azzurro
+        color: theme.colors.info,
       };
     }
 
-    // 71-77, 85-86: Neve (debole, moderata, forte o grandine)
     if ((code >= 71 && code <= 77) || [85, 86].includes(code)) {
       weatherCondition = "snowy";
       return {
-        name: "ac-unit", // L'icona del fiocco di neve in MaterialIcons
-        color: theme.colors.info, // Puoi usare info o creare un colore apposito "snow" nel tema
+        name: "ac-unit",
+        color: theme.colors.info,
       };
     }
 
-    // 95, 96, 99: Temporali (con o senza grandine)
     if ([95, 96, 99].includes(code)) {
       weatherCondition = "stormy";
       return {
-        name: "bolt", // Fulmine
-        color: theme.colors.warning, // Giallo
+        name: "bolt",
+        color: theme.colors.warning,
       };
     }
 
