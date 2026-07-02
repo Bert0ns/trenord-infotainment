@@ -17,6 +17,7 @@ export interface NewsCacheItem {
 export interface NewsStore {
   latestNewsCache: Record<string, NewsCacheItem>;
   searchNewsCache: Record<string, NewsCacheItem>;
+  cacheVersion: number;
   setLatestNews: (key: string, data: NewsAPIResponse) => void;
   setSearchNews: (key: string, data: NewsAPIResponse) => void;
   clearCache: () => void;
@@ -29,6 +30,7 @@ export const useNewsStore = create<NewsStore>()(
     (set, get) => ({
       latestNewsCache: {},
       searchNewsCache: {},
+      cacheVersion: 0,
 
       setLatestNews: (key, data) => {
         storeLogger.info(`Caching latest news for key: ${key}`);
@@ -70,7 +72,11 @@ export const useNewsStore = create<NewsStore>()(
 
       clearCache: () => {
         storeLogger.info("Clearing news cache");
-        set({ latestNewsCache: {}, searchNewsCache: {} });
+        set((state) => ({
+          latestNewsCache: {},
+          searchNewsCache: {},
+          cacheVersion: state.cacheVersion + 1,
+        }));
       },
 
       getValidLatestNews: (key: string) => {
