@@ -1,7 +1,7 @@
 import { logger } from "@/lib/logger";
 import { KEYUTIL, KJUR } from "jsrsasign";
 import { Platform } from "react-native";
-import { TrainInfoResponse } from "./trenord-types";
+import { TrainInfoResponse, StazioniV2Response } from "./trenord-types";
 
 const apiLogger = logger.extend("TrenordAPI");
 
@@ -165,5 +165,32 @@ export async function fetchTrainData(
   }
 
   apiLogger.trace(`Train data retrieved successfully for train ${trainId}.`);
+  return response.json();
+}
+
+export async function fetchStationMetadata(
+  stationName: string,
+): Promise<StazioniV2Response> {
+  const accessToken = await getAccessToken();
+  const url = `${apiUrl}/stazioni_v2?NomeGeoStazioni=${encodeURIComponent(stationName)}`;
+
+  apiLogger.trace(`Fetching metadata for station ${stationName}...`);
+  const response = await proxiedFetch(url, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    apiLogger.error(
+      `Station metadata fetch failed with status ${response.status}`,
+    );
+    throw new Error(`Station API Call failed with status ${response.status}`);
+  }
+
+  apiLogger.trace(
+    `Station metadata retrieved successfully for ${stationName}.`,
+  );
   return response.json();
 }

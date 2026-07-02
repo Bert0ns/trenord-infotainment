@@ -19,22 +19,22 @@ By fetching the station's metadata via `stazioni_v2`, we can extract its `Comune
   - Extract the `stazioni_v2` documentation from the Postman collection.
   - Create a new markdown file `docs/api/trenord/get_stazioni.md` detailing the GET endpoint, parameters, and expected response object (highlighting `Comune`).
 
-- [ ] **Task 2: Strict Typing & API Service Implementation**
+- [x] **Task 2: Strict Typing & API Service Implementation**
   - Define `StationMetadata` and `StazioniV2Response` interfaces in `lib/api/trenord/trenord-types.ts`.
   - Implement a strongly-typed `fetchStationMetadata(stationName: string)` function inside `lib/api/trenord/trenord.ts`.
   - Ensure API calls are routed through the custom logger (`logger.extend("TrenordAPI")`).
 
-- [ ] **Task 3: Zustand Store Updates**
+- [x] **Task 3: Zustand Store Updates**
   - Update `store/journeyStore.ts` to add a new state property: `destinationMunicipality: string | null`.
   - Update the `setDestinationStation` (or equivalent initialization action) to automatically trigger an asynchronous fetch for the station metadata using `fetchStationMetadata`, and populate `destinationMunicipality` upon success.
   - Ensure error states (e.g., failed metadata fetch) do not crash the app, but simply leave the municipality as `null`.
 
-- [ ] **Task 4: Custom Hook Refactoring (`useNews.ts`)**
+- [x] **Task 4: Custom Hook Refactoring (`useNews.ts`)**
   - Refactor `hooks/useNews.ts` to consume `destinationMunicipality` instead of the raw `destinationStation.station_ori_name`.
   - If `destinationMunicipality` is missing (due to network failure or initialization delay), cleanly skip fetching or fallback to General News.
   - Retain the existing 0-article fallback logic as a safety net.
 
-- [ ] **Task 5: Unit Testing (Sketch)**
+- [x] **Task 5: Unit Testing (Sketch)**
   - **`trenord.test.ts`**: Verify `fetchStationMetadata` constructs the correct URL and handles HTTP errors (400/500).
   - **`journeyStore.test.ts`**: Verify that setting a destination station fires off the metadata fetch and correctly updates the `destinationMunicipality` state.
   - **`useNews.test.ts`**: Verify that `useNews` respects the new `destinationMunicipality` variable when making calls to the Currents API search endpoint.

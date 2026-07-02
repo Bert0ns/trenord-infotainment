@@ -8,6 +8,7 @@ import { renderHook } from "@testing-library/react-native";
 
 jest.mock("@/lib/api/trenord/trenord", () => ({
   fetchTrainData: jest.fn(),
+  fetchStationMetadata: jest.fn().mockResolvedValue([]),
 }));
 
 jest.mock("@/lib/logger", () => {

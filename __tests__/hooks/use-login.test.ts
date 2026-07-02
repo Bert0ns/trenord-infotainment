@@ -14,6 +14,7 @@ jest.mock("expo-router", () => ({
 // Mock the API
 jest.mock("../../lib/api/trenord/trenord", () => ({
   fetchTrainData: jest.fn(),
+  fetchStationMetadata: jest.fn().mockResolvedValue([]),
 }));
 
 describe("useLogin hook", () => {

@@ -24,6 +24,7 @@ import {
 import { capitalizeWords } from "@/utils/string";
 import { Redirect } from "expo-router";
 import { FlatList, RefreshControl, ScrollView, Text } from "react-native";
+import { useTranslation } from "react-i18next";
 
 import { logger } from "@/lib/logger";
 
@@ -34,6 +35,9 @@ export default function HomeScreen() {
   const theme = useTheme();
   const trainId = useJourneyStore((s) => s.trainId);
   const destinationStation = useJourneyStore((s) => s.destinationStation);
+  const destinationMunicipality = useJourneyStore(
+    (s) => s.destinationMunicipality,
+  );
   const origDestData = useJourneyStore(selectOrigDestData);
   const trainInfo = useJourneyStore(selectTrainInfo);
   const passListArray = useJourneyStore(selectPassList);
@@ -44,6 +48,7 @@ export default function HomeScreen() {
   const { isRefreshing, onRefresh } = useRefreshTrainData();
   const { settings } = useSettings();
   const { data: newsData, isLoading: isNewsLoading } = useNews();
+  const { t } = useTranslation("home");
 
   if (!trainId) return <Redirect href="/login" />;
 
@@ -73,26 +78,26 @@ export default function HomeScreen() {
             ? capitalizeWords(nextStop.station.station_ori_name)
             : isJourneyCompleted && destinationStation
               ? capitalizeWords(destinationStation.station_ori_name)
-              : "Unknown"
+              : t("unknown")
         }
         arrivalTime={
           nextStop?.arr_time
             ? nextStop.arr_time.slice(0, 5)
             : isJourneyCompleted && destinationPass?.arr_time
               ? destinationPass.arr_time.slice(0, 5)
-              : "Unknown"
+              : t("unknown")
         }
         destination={
           destinationStation
             ? capitalizeWords(destinationStation.station_ori_name)
-            : "Unknown"
+            : t("unknown")
         }
         destinationArrivalTime={
           destinationPass?.arr_time
             ? destinationPass.arr_time.slice(0, 5)
             : undefined
         }
-        speed="N/A"
+        speed={t("na")}
         trainNumber={`${trainInfo.train_category} ${trainId}`}
         delayMinutes={trainInfo.delay}
         isFirst={nextStop?.pass_count === 1}
@@ -100,7 +105,7 @@ export default function HomeScreen() {
           isAtStation || nextStop?.pass_count === 1
             ? nextStop?.dep_time
               ? nextStop.dep_time.slice(0, 5)
-              : "Unknown"
+              : t("unknown")
             : undefined
         }
         isCompleted={isJourneyCompleted}
@@ -127,9 +132,17 @@ export default function HomeScreen() {
         <ErrorBoundary>
           <SectionHeader
             title={
-              destinationStation
-                ? `${capitalizeWords(destinationStation.station_ori_name)} News`
-                : "Latest News"
+              destinationMunicipality
+                ? t("newsSuffix", {
+                    city: capitalizeWords(destinationMunicipality),
+                  })
+                : destinationStation
+                  ? t("newsSuffix", {
+                      city: capitalizeWords(
+                        destinationStation.station_ori_name,
+                      ),
+                    })
+                  : t("latestNews")
             }
             type="home"
             icon="newspaper"
@@ -142,7 +155,7 @@ export default function HomeScreen() {
                 color: theme.colors.mutedForeground,
               }}
             >
-              Loading news...
+              {t("loadingNews")}
             </Text>
           ) : newsData.length > 0 ? (
             <FlatList
@@ -163,13 +176,13 @@ export default function HomeScreen() {
                 color: theme.colors.mutedForeground,
               }}
             >
-              No news available.
+              {t("noNews")}
             </Text>
           )}
         </ErrorBoundary>
       )}
 
-      <SectionHeader title="Discover Milano" type="home" icon="explore" />
+      <SectionHeader title={t("discoverMilano")} type="home" icon="explore" />
       {/* Tips cards */}
       <FlatList
         data={[

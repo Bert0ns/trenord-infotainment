@@ -98,6 +98,16 @@ jest.mock("react-i18next", () => {
       };
     },
     Trans: ({ children }) => children,
+    Translation: ({ children, ns }) =>
+      children((k, opts) => replaceTemplate(lookup(ns || "common", k), opts), {
+        i18n: {},
+      }),
     initReactI18next: { type: "3rdParty", init: jest.fn() },
   };
 });
+
+jest.mock("@/lib/api/trenord/trenord", () => ({
+  fetchTrainData: jest.fn(),
+  fetchStationMetadata: jest.fn().mockResolvedValue([]),
+  clearTrenordApiCache: jest.fn(),
+}));

@@ -90,7 +90,10 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         loadedSettings.enableNewsApi = false;
       }
 
-      setSettings(loadedSettings);
+      // Avoid unnecessary state update if settings haven't changed (prevents act warnings in tests)
+      if (JSON.stringify(loadedSettings) !== JSON.stringify(DEFAULTS)) {
+        setSettings(loadedSettings);
+      }
     });
   }, []);
 

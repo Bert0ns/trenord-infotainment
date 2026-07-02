@@ -1,5 +1,6 @@
 import React, { Component, ReactNode } from "react";
 import { View, Text, StyleSheet } from "react-native";
+import { Translation } from "react-i18next";
 import { logger } from "@/lib/logger";
 
 const uiLogger = logger.extend("UI");
@@ -33,7 +34,13 @@ export class ErrorBoundary extends Component<Props, State> {
       }
       return (
         <View style={styles.container}>
-          <Text style={styles.text}>Something went wrong.</Text>
+          <Translation ns="common">
+            {(t) => (
+              <Text style={styles.text}>
+                {t("errorBoundary.somethingWentWrong")}
+              </Text>
+            )}
+          </Translation>
         </View>
       );
     }

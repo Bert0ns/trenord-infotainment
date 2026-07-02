@@ -92,7 +92,15 @@ jest.mock("@/hooks/settings", () => ({
 
 jest.mock("@/hooks/useNews", () => ({
   useNews: () => ({
-    data: [{ id: "1", title: "Test News", description: "Desc", image: null }],
+    data: [
+      {
+        id: "1",
+        title: "Test News",
+        description: "Desc",
+        image: null,
+        url: "https://example.com",
+      },
+    ],
     isLoading: false,
     error: null,
   }),

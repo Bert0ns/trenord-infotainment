@@ -14,7 +14,8 @@ const hookLogger = logger.extend("NewsAPI");
 
 export function useNews() {
   const { settings } = useSettings();
-  const { destinationStation, trainId } = useJourneyStore();
+  const { destinationStation, destinationMunicipality, trainId } =
+    useJourneyStore();
   const newsStore = useNewsStore();
   const { i18n } = useTranslation();
 
@@ -46,7 +47,8 @@ export function useNews() {
     }
 
     const language = i18n.language.substring(0, 2); // e.g. "en-US" -> "en"
-    const keyword = destinationStation?.station_ori_name;
+    const keyword =
+      destinationMunicipality || destinationStation?.station_ori_name;
     const fetchNews = async () => {
       setIsLoading(true);
       setError(null);
@@ -119,7 +121,13 @@ export function useNews() {
     return () => {
       isMounted = false;
     };
-  }, [settings.enableNewsApi, destinationStation, i18n.language, trainId]); // Intentionally omitting newsStore functions to prevent infinite loops
+  }, [
+    settings.enableNewsApi,
+    destinationStation,
+    destinationMunicipality,
+    i18n.language,
+    trainId,
+  ]); // Intentionally omitting newsStore functions to prevent infinite loops
 
   return { data, isLoading, error };
 }

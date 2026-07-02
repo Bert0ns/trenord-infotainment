@@ -24,6 +24,7 @@ jest.mock("@expo/vector-icons", () => ({
 // Mock the API
 jest.mock("../lib/api/trenord/trenord", () => ({
   fetchTrainData: jest.fn(),
+  fetchStationMetadata: jest.fn().mockResolvedValue([]),
 }));
 
 // Mock expo-camera to prevent async state updates from permissions hook during tests

@@ -30,9 +30,9 @@ export default function NewsCard({ article }: { article: NewsArticle }) {
   const resolvedUrl = videoUrlMatch ? videoUrlMatch[0] : article.url;
 
   const isVideo =
-    resolvedUrl.includes("/mp4/") ||
-    resolvedUrl.endsWith(".mp4") ||
-    resolvedUrl.includes("/video/");
+    resolvedUrl?.includes("/mp4/") ||
+    resolvedUrl?.endsWith(".mp4") ||
+    resolvedUrl?.includes("/video/");
 
   const handlePress = async () => {
     try {

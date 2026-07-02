@@ -35,6 +35,7 @@ describe("useNews Hook", () => {
 
     (useJourneyStore as unknown as jest.Mock).mockReturnValue({
       destinationStation: null,
+      destinationMunicipality: null,
       trainId: "1234",
     });
 
@@ -99,6 +100,7 @@ describe("useNews Hook", () => {
   it("should fetch search news with keyword if destination station is set and cache misses", async () => {
     (useJourneyStore as unknown as jest.Mock).mockReturnValue({
       destinationStation: { station_ori_name: "Milano Centrale" },
+      destinationMunicipality: null,
       trainId: "1234",
     });
     mockGetValidSearchNews.mockReturnValue(null);
@@ -123,6 +125,7 @@ describe("useNews Hook", () => {
   it("should fallback to latest news if search news returns 0 articles", async () => {
     (useJourneyStore as unknown as jest.Mock).mockReturnValue({
       destinationStation: { station_ori_name: "Nowhere Station" },
+      destinationMunicipality: null,
       trainId: "1234",
     });
 
@@ -157,6 +160,27 @@ describe("useNews Hook", () => {
     });
 
     expect(result.current.data).toEqual(mockFallbackData.news);
+  });
+
+  it("should prefer destinationMunicipality over station_ori_name for search", async () => {
+    (useJourneyStore as unknown as jest.Mock).mockReturnValue({
+      destinationStation: { station_ori_name: "MILANO GRECO PIRELLI" },
+      destinationMunicipality: "Milano",
+      trainId: "1234",
+    });
+    mockGetValidSearchNews.mockReturnValue(null);
+
+    const { result } = renderHook(() => useNews());
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    expect(fetchSearchNews).toHaveBeenCalledWith({
+      language: "en",
+      keywords: "Milano",
+    });
+    expect(mockSetSearchNews).toHaveBeenCalledWith("Milano-en", mockNewsData);
   });
 
   it("should handle API errors gracefully", async () => {

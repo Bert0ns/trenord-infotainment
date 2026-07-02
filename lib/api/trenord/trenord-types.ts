@@ -196,3 +196,41 @@ export interface ActualData {
   /** Real-time arrival in format HH:MM:SS. */
   arr_actual_time?: string;
 }
+
+/**
+ * Geographic and metadata information for a station from stazioni_v2.
+ */
+export interface StationMetadata {
+  /** Unique identifier of the station */
+  id: string;
+  /** Postal code */
+  Cap: number;
+  /** MIR code */
+  CodiceMIR: string;
+  /** Municipality (e.g. "Milano") */
+  Comune: string;
+  /** List of directions */
+  Direttrici: string[];
+  /** Address */
+  Indirizzo: string;
+  /** Station name */
+  NomeGeoStazioni: string;
+  /** Province (e.g. "MI") */
+  Prov: string;
+  /** Geographic location information */
+  Location: {
+    type: string;
+    coordinates: number[]; // [longitude, latitude]
+  };
+  /** Region (e.g. "Lombardia") */
+  Regione: string;
+  /** Tariff zone */
+  tariff_zone: string;
+  /** Country */
+  country: string;
+}
+
+/**
+ * API response for stazioni_v2 endpoint.
+ */
+export type StazioniV2Response = StationMetadata[];

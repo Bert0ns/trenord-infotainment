@@ -25,5 +25,12 @@
   },
   "newsCard": {
     "videoArticle": "Articolo Video"
-  }
+  },
+  "unknown": "Sconosciuto",
+  "na": "N/A",
+  "latestNews": "Ultime Notizie",
+  "newsSuffix": "Notizie da {{city}}",
+  "loadingNews": "Caricamento notizie...",
+  "noNews": "Nessuna notizia disponibile.",
+  "discoverMilano": "Scopri Milano"
 }
