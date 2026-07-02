@@ -10,7 +10,7 @@ function getMiddleString(str: string, cutAmountPercentage: number) {
 
 /**
  * Deduplicates an array of news articles based on their title.
- * Articles are considered duplicates if the first 70% of their titles match,
+ * Articles are considered duplicates if a middle portion of their titles overlaps,
  * preventing nearly identical articles from clustering in the UI.
  *
  * @param articles - The array of news articles to deduplicate
