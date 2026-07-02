@@ -2,8 +2,9 @@ import { NewsArticle } from "@/lib/api/currentsapi-news/currentsapi-news-types";
 import { createStyleHook } from "@/hooks/use-theme-color";
 import { BlurView } from "expo-blur";
 import * as WebBrowser from "expo-web-browser";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
+import * as VideoThumbnails from "expo-video-thumbnails";
 import { useTranslation } from "react-i18next";
 import {
   Dimensions,
@@ -21,6 +22,7 @@ const uiLogger = logger.extend("UI");
 export default function NewsCard({ article }: { article: NewsArticle }) {
   const styles = useStyles();
   const { t } = useTranslation("home", { keyPrefix: "newsCard" });
+  const [thumbnailUri, setThumbnailUri] = useState<string | null>(null);
 
   const videoUrlMatch = article.description.match(
     /(https?:\/\/[^\s]+(?:mp4|video)[^\s]*)/,
@@ -51,11 +53,33 @@ export default function NewsCard({ article }: { article: NewsArticle }) {
   const hasImage =
     article.image && article.image !== "None" && article.image !== "null";
 
+  useEffect(() => {
+    let isMounted = true;
+    if (isVideo && !hasImage) {
+      const generateThumbnail = async () => {
+        try {
+          const { uri } = await VideoThumbnails.getThumbnailAsync(resolvedUrl, {
+            time: 1000,
+          });
+          if (isMounted) setThumbnailUri(uri);
+        } catch (e) {
+          uiLogger.warn("Failed to generate video thumbnail", e);
+        }
+      };
+      generateThumbnail();
+    }
+    return () => {
+      isMounted = false;
+    };
+  }, [isVideo, hasImage, resolvedUrl]);
+
   // Clean description if it's just the URL
   const displayDescription =
     article.description === resolvedUrl
       ? t("videoArticle")
       : article.description;
+
+  const effectiveImageUri = hasImage ? article.image : thumbnailUri;
 
   return (
     <TouchableOpacity
@@ -64,12 +88,21 @@ export default function NewsCard({ article }: { article: NewsArticle }) {
       onPress={handlePress}
     >
       <View style={styles.imageContainer}>
-        {hasImage ? (
+        {effectiveImageUri ? (
           <ImageBackground
-            source={{ uri: article.image! }}
+            source={{ uri: effectiveImageUri! }}
             style={styles.imageBackground}
             imageStyle={styles.imageStyle}
           >
+            {isVideo && (
+              <View style={styles.playIconCenter}>
+                <MaterialIcons
+                  name="play-circle-outline"
+                  size={64}
+                  color="rgba(255,255,255,0.7)"
+                />
+              </View>
+            )}
             <View style={styles.overlayContainer}>
               <BlurView intensity={70} tint="dark" style={styles.blurView}>
                 <Text style={styles.title} numberOfLines={2}>

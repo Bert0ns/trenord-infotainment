@@ -11,6 +11,10 @@ jest.mock("expo-web-browser", () => ({
   openBrowserAsync: jest.fn(),
 }));
 
+jest.mock("expo-video-thumbnails", () => ({
+  getThumbnailAsync: jest.fn().mockResolvedValue({ uri: "mock-thumbnail.jpg" }),
+}));
+
 jest.mock("@expo/vector-icons", () => ({
   MaterialIcons: "MaterialIcons",
 }));
