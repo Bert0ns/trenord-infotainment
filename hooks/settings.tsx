@@ -28,6 +28,7 @@ export type AppSettings = {
   delayAlerts: boolean;
   weatherAlerts: boolean;
   language: LanguageCode;
+  enableNewsApi: boolean;
 };
 
 /**
@@ -40,6 +41,7 @@ const DEFAULTS: AppSettings = {
   delayAlerts: true,
   weatherAlerts: false,
   language: "--",
+  enableNewsApi: true,
 };
 
 const KEY = "app:settings";

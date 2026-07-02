@@ -21,7 +21,8 @@ const config = {
       error: "redBright" as const,
     },
     extensionColors: {
-      API: "cyan" as const,
+      TrenordAPI: "cyan" as const,
+      NewsAPI: "greenBright" as const,
       Login: "magenta" as const,
       Scanner: "green" as const,
       Polling: "yellow" as const,

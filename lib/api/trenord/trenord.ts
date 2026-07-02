@@ -3,7 +3,7 @@ import { KEYUTIL, KJUR } from "jsrsasign";
 import { Platform } from "react-native";
 import { TrainInfoResponse } from "./trenord-types";
 
-const apiLogger = logger.extend("API");
+const apiLogger = logger.extend("TrenordAPI");
 
 async function proxiedFetch(url: string, options: RequestInit = {}) {
   if (Platform.OS === "web") {

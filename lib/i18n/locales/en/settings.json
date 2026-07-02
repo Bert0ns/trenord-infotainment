@@ -7,6 +7,13 @@
   },
   "endJourney": "End Journey",
   "logout": "Log Out",
+  "news": {
+    "title": "News Feed",
+    "enableNews": {
+      "title": "Enable AI News",
+      "description": "Display contextual news related to your destination."
+    }
+  },
   "notifications": {
     "delayAlerts": {
       "description": "Real-time schedule changes",

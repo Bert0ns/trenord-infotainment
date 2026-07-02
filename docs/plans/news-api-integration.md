@@ -88,7 +88,7 @@ We will ensure high test coverage for the business logic:
 - [x] **Task 2: API Service & Logging**
   - Create `api/news.ts` implementing `fetchLatestNews` and `fetchSearchNews` with mock fallbacks and `@/lib/logger` integration.
   - Write `api/news.test.ts` to verify error handling for `400` and `429` status codes.
-- [ ] **Task 3: Implement Zustand Store & Settings**
+- [x] **Task 3: Implement Zustand Store & Settings**
   - Create `store/newsStore.ts` for caching (with TTL) and state management.
   - Add a News Toggle to the Settings page (falling back to Env var).
   - Write `newsStore.test.ts`.

@@ -130,6 +130,15 @@ export default function SettingsScreen() {
         />
       </SectionCard>
 
+      <SectionCard iconName="newspaper" title={t("news.title")}>
+        <SettingSwitch
+          label={t("news.enableNews.title")}
+          description={t("news.enableNews.description")}
+          value={settings.enableNewsApi}
+          onValueChange={(value) => set("enableNewsApi", value)}
+        />
+      </SectionCard>
+
       <View style={styles.card}>
         <View style={styles.footer}>
           <TouchableOpacity
