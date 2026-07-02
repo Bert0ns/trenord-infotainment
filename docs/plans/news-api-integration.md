@@ -92,7 +92,7 @@ We will ensure high test coverage for the business logic:
   - Create `store/newsStore.ts` for caching (with TTL) and state management.
   - Add a News Toggle to the Settings page (falling back to Env var).
   - Write `newsStore.test.ts`.
-- [ ] **Task 4: Create Custom Hook**
+- [x] **Task 4: Create Custom Hook**
   - Implement `hooks/useNews.ts` connecting language changes, toggles, and store cache.
   - Write `useNews.test.ts`.
 - [ ] **Task 5: Update UI Components (Experimental)**

@@ -94,7 +94,7 @@ jest.mock("react-i18next", () => {
         options && options.keyPrefix ? options.keyPrefix : undefined;
       return {
         t: (k, opts) => replaceTemplate(lookup(namespace, k, keyPrefix), opts),
-        i18n: { changeLanguage: jest.fn() },
+        i18n: { changeLanguage: jest.fn(), language: "en" },
       };
     },
     Trans: ({ children }) => children,
