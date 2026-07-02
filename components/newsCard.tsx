@@ -1,88 +1,40 @@
 import { NewsArticle } from "@/lib/api/currentsapi-news/currentsapi-news-types";
 import { createStyleHook } from "@/hooks/use-theme-color";
 import { BlurView } from "expo-blur";
-import * as WebBrowser from "expo-web-browser";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { MaterialIcons } from "@expo/vector-icons";
-import * as VideoThumbnails from "expo-video-thumbnails";
 import { useTranslation } from "react-i18next";
 import {
   Dimensions,
   ImageBackground,
-  Linking,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import { logger } from "@/lib/logger";
-
-const uiLogger = logger.extend("UI");
+import { useVideoThumbnail } from "@/hooks/use-video-thumbnail";
+import {
+  extractMediaUrl,
+  isDirectVideoLink,
+  openMediaUrl,
+} from "@/utils/link-handler";
 
 export default function NewsCard({ article }: { article: NewsArticle }) {
   const styles = useStyles();
   const { t } = useTranslation("home", { keyPrefix: "newsCard" });
-  const [thumbnailUri, setThumbnailUri] = useState<string | null>(null);
 
-  const videoUrlMatch = article.description.match(
-    /(https?:\/\/[^\s]+(?:mp4|video)[^\s]*)/,
+  const resolvedUrl = extractMediaUrl(article.description) || article.url;
+  const isVideo = isDirectVideoLink(resolvedUrl);
+
+  const hasImage = Boolean(
+    article.image && article.image !== "None" && article.image !== "null",
   );
-  const resolvedUrl = videoUrlMatch ? videoUrlMatch[0] : article.url;
 
-  const isVideo =
-    resolvedUrl?.includes("/mp4/") ||
-    resolvedUrl?.endsWith(".mp4") ||
-    resolvedUrl?.includes("/video/");
+  const thumbnailUri = useVideoThumbnail(resolvedUrl, isVideo, hasImage);
 
   const handlePress = async () => {
-    try {
-      const safeUrl =
-        resolvedUrl?.startsWith("http://") ||
-        resolvedUrl?.startsWith("https://")
-          ? resolvedUrl
-          : null;
-
-      if (!safeUrl) {
-        uiLogger.warn(`Invalid or unsafe URL blocked: ${resolvedUrl}`);
-        return;
-      }
-
-      if (isVideo) {
-        uiLogger.log(`Opening external video link: ${safeUrl}`);
-        await Linking.openURL(safeUrl);
-      } else {
-        uiLogger.log(`Opening news article: ${safeUrl}`);
-        await WebBrowser.openBrowserAsync(safeUrl, {
-          controlsColor: "#007aff",
-        });
-      }
-    } catch (e) {
-      uiLogger.error("Failed to open article url", e);
-    }
+    await openMediaUrl(resolvedUrl, isVideo);
   };
-
-  const hasImage =
-    article.image && article.image !== "None" && article.image !== "null";
-
-  useEffect(() => {
-    let isMounted = true;
-    if (isVideo && !hasImage) {
-      const generateThumbnail = async () => {
-        try {
-          const { uri } = await VideoThumbnails.getThumbnailAsync(resolvedUrl, {
-            time: 1000,
-          });
-          if (isMounted) setThumbnailUri(uri);
-        } catch (e) {
-          uiLogger.warn("Failed to generate video thumbnail: ", e);
-        }
-      };
-      generateThumbnail();
-    }
-    return () => {
-      isMounted = false;
-    };
-  }, [isVideo, hasImage, resolvedUrl]);
 
   // Clean description if it's just the URL
   const displayDescription =
@@ -127,15 +79,21 @@ export default function NewsCard({ article }: { article: NewsArticle }) {
           </ImageBackground>
         ) : (
           <View style={[styles.imageBackground, styles.fallbackBackground]}>
-            {isVideo && (
-              <View style={styles.playIconCenter}>
+            <View style={styles.playIconCenter}>
+              {isVideo ? (
                 <MaterialIcons
                   name="play-circle-outline"
                   size={64}
                   color="rgba(255,255,255,0.7)"
                 />
-              </View>
-            )}
+              ) : (
+                <MaterialIcons
+                  name="newspaper"
+                  size={64}
+                  color="rgba(255,255,255,0.2)"
+                />
+              )}
+            </View>
             <View style={styles.overlayContainer}>
               <View style={[styles.blurView, styles.fallbackBlurView]}>
                 <Text style={styles.title} numberOfLines={2}>

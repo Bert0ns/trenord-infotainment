@@ -85,7 +85,7 @@ describe("NewsCard", () => {
     const videoArticle = {
       ...mockArticle,
       url: "https://www.liberoquotidiano.it/news/48398933/undefined/",
-      description: "https://video.italpress.com/play/mp4/video/7xy8",
+      description: "https://video.italpress.com/play/mp4/video/7xy8.mp4",
     };
     const { getByText } = render(<NewsCard article={videoArticle} />);
 
@@ -98,7 +98,7 @@ describe("NewsCard", () => {
     fireEvent.press(getByText("Breaking News"));
 
     expect(openURLSpy).toHaveBeenCalledWith(
-      "https://video.italpress.com/play/mp4/video/7xy8",
+      "https://video.italpress.com/play/mp4/video/7xy8.mp4",
     );
 
     openURLSpy.mockRestore();

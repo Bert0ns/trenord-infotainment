@@ -54,6 +54,7 @@ export function useNews() {
     const keyword = getLocalizedCityName(rawKeyword, language);
     // Wait until municipality is fetched (prevents double fetch)
     if (isMunicipalityLoading) {
+      setData([]);
       return;
     }
 

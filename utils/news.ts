@@ -47,6 +47,14 @@ export function deduplicateNews(articles: NewsArticle[]): NewsArticle[] {
   return uniqueArticles;
 }
 
+const englishCityMap = Object.entries(citiesData).reduce(
+  (acc, [key, val]) => {
+    acc[key.toLowerCase()] = val;
+    return acc;
+  },
+  {} as Record<string, string>,
+);
+
 /**
  * Translates common Italian city names to English for better search results in English news.
  * @param city - The original city name (usually in Italian)
@@ -60,17 +68,9 @@ export function getLocalizedCityName(
   if (!city) return city;
 
   if (language.startsWith("en")) {
-    const englishMap = Object.entries(citiesData).reduce(
-      (acc, [key, val]) => {
-        acc[key.toLowerCase()] = val;
-        return acc;
-      },
-      {} as Record<string, string>,
-    );
-
     const lowerCity = city.toLowerCase().trim();
-    if (englishMap[lowerCity]) {
-      return englishMap[lowerCity];
+    if (englishCityMap[lowerCity]) {
+      return englishCityMap[lowerCity];
     }
   }
 

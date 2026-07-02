@@ -3,12 +3,8 @@ import {
   selectDestinationPass,
   selectIsJourneyCompleted,
   selectNextStop,
-} from "../../store/journeyStore";
-import { fetchStationMetadata } from "../../lib/api/trenord/trenord";
-
-jest.mock("../../lib/api/trenord/trenord", () => ({
-  fetchStationMetadata: jest.fn(),
-}));
+} from "@/store/journeyStore";
+import { fetchStationMetadata } from "@/lib/api/trenord/trenord";
 
 // Get initial state to reset between tests
 const initialStoreState = useJourneyStore.getState();
