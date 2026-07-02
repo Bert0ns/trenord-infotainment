@@ -14,15 +14,7 @@ describe("deduplicateNews", () => {
     expect(deduplicateNews(articles)).toEqual(articles);
   });
 
-  it("should remove articles where the first 70% of the title matches", () => {
-    const articles = [
-      { id: "1", title: "Apple announces new iPhone 16 with AI features" },
-      { id: "2", title: "Apple announces new iPhone 16 pro max details" }, // First 70% is likely matching
-    ] as NewsArticle[];
-
-    // The first article is 46 chars. 70% is 32 chars: "apple announces new iphone 16 wi"
-    // The second article is 47 chars. 70% is 32 chars: "apple announces new iphone 16 pr"
-    // Wait, let's make it explicitly matching.
+  it("should remove near-duplicate articles with very similar titles", () => {
     const articlesExplicit = [
       {
         id: "1",
