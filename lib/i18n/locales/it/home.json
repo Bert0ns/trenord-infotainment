@@ -27,6 +27,24 @@
     "foggy": "Nebbioso",
     "rainy": "Piovoso",
     "snowy": "Nevoso",
-    "stormy": "Tempestoso"
+    "stormy": "Tempestoso",
+    "currentWeather": "METEO ATTUALE",
+    "airQuality": "QUALITA' DELL'ARIA",
+    "uvIndex": "INDICE UV",
+    "Good": "Buona",
+    "Fair": "Discreta",
+    "Moderate": "Moderata",
+    "Poor": "Scarsa",
+    "Very Poor": "Molto scarsa",
+    "Extremely Poor": "Estremamente scarsa",
+    "Low": "Basso",
+    "Minimal risk": "Rischio minimo",
+    "Protection recommended": "Protezione consigliata",
+    "High": "Alto",
+    "Protection required": "Protezione richiesta",
+    "Very High": "Molto alto",
+    "Extra protection": "Protezione extra",
+    "Extreme": "Estremo",
+    "Avoid direct sun": "Evitare il sole diretto"
   }
 }

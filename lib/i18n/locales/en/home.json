@@ -27,6 +27,24 @@
     "foggy": "Foggy",
     "rainy": "Rainy",
     "snowy": "Snowy",
-    "stormy": "Stormy"
+    "stormy": "Stormy",
+    "currentWeather": "CURRENT WEATHER",
+    "airQuality": "AIR QUALITY",
+    "uvIndex": "UV INDEX",
+    "Good": "Good",
+    "Fair": "Fair",
+    "Moderate": "Moderate",
+    "Poor": "Poor",
+    "Very Poor": "Very Poor",
+    "Extremely Poor": "Extremely Poor",
+    "Low": "Low",
+    "Minimal risk": "Minimal risk",
+    "Protection recommended": "Protection recommended",
+    "High": "High",
+    "Protection required": "Protection required",
+    "Very High": "Very High",
+    "Extra protection": "Extra protection",
+    "Extreme": "Extreme",
+    "Avoid direct sun": "Avoid direct sun"
   }
 }

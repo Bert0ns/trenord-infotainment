@@ -1,7 +1,9 @@
 {
   "sectionHeader": {
     "seeAll": "See all",
-    "seeMore": "See more"
+    "seeMore": "See more",
+    "destinationNews": "Destination News",
+    "discover": "Discover"
   },
   "tabLayout": {
     "home": "Home",
