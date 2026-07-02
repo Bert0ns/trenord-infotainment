@@ -1,5 +1,7 @@
 import SectionCard from "@/components/settings-componenents/sectionCard";
 import SettingSwitch from "@/components/settings-componenents/settingSwitch";
+import ClearTrenordCacheButton from "@/components/settings-componenents/clearTrenordCacheButton";
+import ClearNewsCacheButton from "@/components/settings-componenents/clearNewsCacheButton";
 import DropDownSelector from "@/components/ui/dropDownSelector";
 import { AppSettings, LanguageCode, useSettings } from "@/hooks/settings";
 import { useScreenStyles } from "@/hooks/use-screen-styles";
@@ -8,7 +10,6 @@ import { useJourneyStore } from "@/store/journeyStore";
 import { MaterialIcons } from "@expo/vector-icons";
 import { getLocales } from "expo-localization";
 import { useRouter } from "expo-router";
-import { useNewsStore } from "@/store/newsStore";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
@@ -139,21 +140,16 @@ export default function SettingsScreen() {
             value={settings.enableNewsApi}
             onValueChange={(value) => set("enableNewsApi", value)}
           />
+        </SectionCard>
+      )}
+
+      {(process.env.EXPO_PUBLIC_SHOW_CLEAR_TRENORD_CACHE_BUTTON === "true" ||
+        process.env.EXPO_PUBLIC_SHOW_CLEAR_NEWS_CACHE_BUTTON === "true") && (
+        <SectionCard iconName="developer-board" title="Developer">
+          {process.env.EXPO_PUBLIC_SHOW_CLEAR_TRENORD_CACHE_BUTTON ===
+            "true" && <ClearTrenordCacheButton />}
           {process.env.EXPO_PUBLIC_SHOW_CLEAR_NEWS_CACHE_BUTTON === "true" && (
-            <TouchableOpacity
-              style={styles.clearCacheButton}
-              onPress={() => {
-                useNewsStore.getState().clearCache();
-                uiLogger.log("User manually cleared the news cache.");
-              }}
-            >
-              <MaterialIcons
-                name="delete-outline"
-                size={16}
-                color={theme.colors.destructiveForeground}
-              />
-              <Text style={styles.clearCacheButtonText}>Clear News Cache</Text>
-            </TouchableOpacity>
+            <ClearNewsCacheButton />
           )}
         </SectionCard>
       )}
@@ -249,22 +245,6 @@ const useStyles = createStyleHook((theme) => ({
   logoutButtonText: {
     color: theme.colors.warningForeground,
     fontSize: 16,
-    fontWeight: "600",
-  },
-  clearCacheButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    alignSelf: "flex-start",
-    backgroundColor: theme.colors.destructive,
-    paddingVertical: theme.spacing.sm,
-    paddingHorizontal: theme.spacing.md,
-    borderRadius: theme.borderRadius.md,
-    marginTop: theme.spacing.md,
-    gap: theme.spacing.sm,
-  },
-  clearCacheButtonText: {
-    color: theme.colors.destructiveForeground,
-    fontSize: 12,
     fontWeight: "600",
   },
   versionText: {
