@@ -22,7 +22,7 @@ jest.mock("@expo/vector-icons", () => ({
 }));
 
 // Mock the API
-jest.mock("../lib/api/trenord", () => ({
+jest.mock("../lib/api/trenord/trenord", () => ({
   fetchTrainData: jest.fn(),
 }));
 

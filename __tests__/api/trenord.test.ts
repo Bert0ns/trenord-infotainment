@@ -14,7 +14,7 @@ process.env.EXPO_PUBLIC_TRENORD_PRIVATE_JWK = JSON.stringify({
 const {
   fetchTrainData,
   clearTrenordApiCache,
-} = require("../../lib/api/trenord");
+} = require("../../lib/api/trenord/trenord");
 
 // Mock `jsrsasign` package to avoid real crypto in tests
 jest.mock("jsrsasign", () => {

@@ -85,7 +85,7 @@ We will ensure high test coverage for the business logic:
   - Download and review Currents API docs to `docs/api/currentsAPI_NEWS/`.
   - Define `EXPO_PUBLIC_ENABLE_NEWS_API` in `.env` and `example.env`.
   - Create `types/news.ts` with strict interfaces (including `next_cursor`).
-- [ ] **Task 2: API Service & Logging**
+- [x] **Task 2: API Service & Logging**
   - Create `api/news.ts` implementing `fetchLatestNews` and `fetchSearchNews` with mock fallbacks and `@/lib/logger` integration.
   - Write `api/news.test.ts` to verify error handling for `400` and `429` status codes.
 - [ ] **Task 3: Implement Zustand Store & Settings**

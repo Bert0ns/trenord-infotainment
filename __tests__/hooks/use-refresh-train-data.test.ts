@@ -3,7 +3,7 @@ import { fetchTrainData } from "@/lib/api/trenord/trenord";
 import { useJourneyStore } from "@/store/journeyStore";
 import { act, renderHook } from "@testing-library/react-native";
 
-jest.mock("@/lib/api/trenord", () => ({
+jest.mock("@/lib/api/trenord/trenord", () => ({
   fetchTrainData: jest.fn(),
 }));
 

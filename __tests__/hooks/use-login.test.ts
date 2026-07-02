@@ -12,7 +12,7 @@ jest.mock("expo-router", () => ({
 }));
 
 // Mock the API
-jest.mock("../../lib/api/trenord", () => ({
+jest.mock("../../lib/api/trenord/trenord", () => ({
   fetchTrainData: jest.fn(),
 }));
 
