@@ -4,7 +4,10 @@ import LiveStatusCard from "@/components/home-components/liveStatusCard";
 import WeatherCard from "@/components/home-components/weatherCard";
 import LoadingScreen from "@/components/loadingScreen";
 import NewsCard from "@/components/newsCard";
+import { ErrorBoundary } from "@/components/errorBoundary";
 import SectionHeader from "@/components/sectionHeader";
+import { useNews } from "@/hooks/useNews";
+import { useSettings } from "@/hooks/settings";
 import { useRefreshTrainData } from "@/hooks/use-refresh-train-data";
 import { useTheme } from "@/hooks/use-theme-color";
 import { useScreenStyles } from "@/hooks/use-screen-styles";
@@ -20,7 +23,7 @@ import {
 } from "@/store/journeyStore";
 import { capitalizeWords } from "@/utils/string";
 import { Redirect } from "expo-router";
-import { FlatList, RefreshControl, ScrollView } from "react-native";
+import { FlatList, RefreshControl, ScrollView, Text } from "react-native";
 
 import { logger } from "@/lib/logger";
 
@@ -39,6 +42,8 @@ export default function HomeScreen() {
   const isJourneyCompleted = useJourneyStore(selectIsJourneyCompleted);
   const isAtStation = useJourneyStore(selectIsAtStation);
   const { isRefreshing, onRefresh } = useRefreshTrainData();
+  const { settings } = useSettings();
+  const { data: newsData, isLoading: isNewsLoading } = useNews();
 
   if (!trainId) return <Redirect href="/login" />;
 
@@ -118,33 +123,52 @@ export default function HomeScreen() {
         }}
       />
 
-      <SectionHeader
-        title="Destination News"
-        type="home"
-        icon="newspaper"
-        isFirst
-      />
-      {/* News cards */}
-      <FlatList
-        data={[
-          {
-            id: "1",
-            title: "Milan Design Week",
-            text: "Milan Design Week kicks off today. Expect minor traffic.",
-          },
-          {
-            id: "2",
-            title: "Extra Train for M2",
-            text: "Metro line M2 operating with extra trains today.",
-          },
-        ]}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <NewsCard title={item.title} text={item.text} />
-        )}
-      />
+      {settings.enableNewsApi && (
+        <ErrorBoundary>
+          <SectionHeader
+            title={
+              destinationStation
+                ? `${capitalizeWords(destinationStation.station_ori_name)} News`
+                : "Latest News"
+            }
+            type="home"
+            icon="newspaper"
+            isFirst
+          />
+          {isNewsLoading ? (
+            <Text
+              style={{
+                paddingHorizontal: theme.spacing.md,
+                color: theme.colors.mutedForeground,
+              }}
+            >
+              Loading news...
+            </Text>
+          ) : newsData.length > 0 ? (
+            <FlatList
+              data={newsData}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => <NewsCard article={item} />}
+              contentContainerStyle={{
+                paddingLeft: theme.spacing.md,
+                paddingBottom: theme.spacing.md,
+              }}
+            />
+          ) : (
+            <Text
+              style={{
+                paddingHorizontal: theme.spacing.md,
+                color: theme.colors.mutedForeground,
+              }}
+            >
+              No news available.
+            </Text>
+          )}
+        </ErrorBoundary>
+      )}
+
       <SectionHeader title="Discover Milano" type="home" icon="explore" />
       {/* Tips cards */}
       <FlatList

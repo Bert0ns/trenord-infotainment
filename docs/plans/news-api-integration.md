@@ -95,10 +95,14 @@ We will ensure high test coverage for the business logic:
 - [x] **Task 4: Create Custom Hook**
   - Implement `hooks/useNews.ts` connecting language changes, toggles, and store cache.
   - Write `useNews.test.ts`.
-- [ ] **Task 5: Update UI Components (Experimental)**
-  - Refactor `components/newsCard.tsx` to accept the new data structure.
-  - Experiment with the UI layout (e.g., swiping stack vs single static card).
+- [x] **Task 5: Update UI Components (Experimental)**
+  - Refactor `components/newsCard.tsx` into a **Horizontal Glassmorphism Carousel**.
+  - Create the sleek card layout with background images and frosted glass overlay using `expo-blur`.
   - Implement `Linking` or `expo-web-browser` for card presses.
-- [ ] **Task 6: Integrate into Screens**
+- [x] **Task 6: Integrate into Screens**
   - Update `app/(tabs)/home.tsx` to use the `useNews` hook and conditionally render based on the toggle.
   - Implement Error Boundary around the News UI section.
+
+## 8. Future Ideas
+
+- **Digital Magazine Page:** We will reserve the "Masonry Grid" layout for a dedicated, full-page digital magazine. Users will access this expanded view via a "See More" button on the horizontal carousel. This will allow for a highly editorial, deeply immersive reading experience without cluttering the main dashboard.

@@ -14,7 +14,7 @@ const hookLogger = logger.extend("NewsAPI");
 
 export function useNews() {
   const { settings } = useSettings();
-  const { destinationStation } = useJourneyStore();
+  const { destinationStation, trainId } = useJourneyStore();
   const newsStore = useNewsStore();
   const { i18n } = useTranslation();
 
@@ -25,7 +25,7 @@ export function useNews() {
   useEffect(() => {
     let isMounted = true;
 
-    // Feature Toggle Check
+    // Feature Toggle Check & Active Train Check
     if (
       !settings.enableNewsApi ||
       process.env.EXPO_PUBLIC_ENABLE_NEWS_API !== "true"
@@ -33,6 +33,13 @@ export function useNews() {
       hookLogger.log(
         "News API is disabled via settings or environment variable.",
       );
+      setData([]);
+      setIsLoading(false);
+      return;
+    }
+
+    if (!trainId) {
+      hookLogger.log("No train selected, skipping news fetch.");
       setData([]);
       setIsLoading(false);
       return;
@@ -74,7 +81,7 @@ export function useNews() {
             hookLogger.log("Fetching fresh latest news");
             const result = await fetchLatestNews({
               language,
-              category: "regional",
+              category: "general",
             });
             newsStore.setLatestNews(cacheKey, result);
             if (isMounted) setData(result.news);
@@ -93,7 +100,7 @@ export function useNews() {
     return () => {
       isMounted = false;
     };
-  }, [settings.enableNewsApi, destinationStation, i18n.language]); // Intentionally omitting newsStore functions to prevent infinite loops
+  }, [settings.enableNewsApi, destinationStation, i18n.language, trainId]); // Intentionally omitting newsStore functions to prevent infinite loops
 
   return { data, isLoading, error };
 }

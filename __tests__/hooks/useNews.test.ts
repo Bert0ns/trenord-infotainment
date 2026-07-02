@@ -35,6 +35,7 @@ describe("useNews Hook", () => {
 
     (useJourneyStore as unknown as jest.Mock).mockReturnValue({
       destinationStation: null,
+      trainId: "1234",
     });
 
     (useNewsStore as unknown as jest.Mock).mockReturnValue({
@@ -76,7 +77,7 @@ describe("useNews Hook", () => {
 
     expect(fetchLatestNews).toHaveBeenCalledWith({
       language: "en",
-      category: "regional",
+      category: "general",
     });
     expect(mockSetLatestNews).toHaveBeenCalledWith("latest-en", mockNewsData);
     expect(result.current.data).toEqual(mockNewsData.news);
@@ -98,6 +99,7 @@ describe("useNews Hook", () => {
   it("should fetch search news with keyword if destination station is set and cache misses", async () => {
     (useJourneyStore as unknown as jest.Mock).mockReturnValue({
       destinationStation: { station_ori_name: "Milano Centrale" },
+      trainId: "1234",
     });
     mockGetValidSearchNews.mockReturnValue(null);
 
