@@ -8,6 +8,7 @@ import { useJourneyStore } from "@/store/journeyStore";
 import { MaterialIcons } from "@expo/vector-icons";
 import { getLocales } from "expo-localization";
 import { useRouter } from "expo-router";
+import { useNewsStore } from "@/store/newsStore";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
@@ -130,14 +131,32 @@ export default function SettingsScreen() {
         />
       </SectionCard>
 
-      <SectionCard iconName="newspaper" title={t("news.title")}>
-        <SettingSwitch
-          label={t("news.enableNews.title")}
-          description={t("news.enableNews.description")}
-          value={settings.enableNewsApi}
-          onValueChange={(value) => set("enableNewsApi", value)}
-        />
-      </SectionCard>
+      {process.env.EXPO_PUBLIC_ENABLE_NEWS_API === "true" && (
+        <SectionCard iconName="newspaper" title={t("news.title")}>
+          <SettingSwitch
+            label={t("news.enableNews.title")}
+            description={t("news.enableNews.description")}
+            value={settings.enableNewsApi}
+            onValueChange={(value) => set("enableNewsApi", value)}
+          />
+          {process.env.EXPO_PUBLIC_SHOW_CLEAR_NEWS_CACHE_BUTTON === "true" && (
+            <TouchableOpacity
+              style={styles.clearCacheButton}
+              onPress={() => {
+                useNewsStore.getState().clearCache();
+                uiLogger.log("User manually cleared the news cache.");
+              }}
+            >
+              <MaterialIcons
+                name="delete-outline"
+                size={16}
+                color={theme.colors.destructiveForeground}
+              />
+              <Text style={styles.clearCacheButtonText}>Clear News Cache</Text>
+            </TouchableOpacity>
+          )}
+        </SectionCard>
+      )}
 
       <View style={styles.card}>
         <View style={styles.footer}>
@@ -230,6 +249,22 @@ const useStyles = createStyleHook((theme) => ({
   logoutButtonText: {
     color: theme.colors.warningForeground,
     fontSize: 16,
+    fontWeight: "600",
+  },
+  clearCacheButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "flex-start",
+    backgroundColor: theme.colors.destructive,
+    paddingVertical: theme.spacing.sm,
+    paddingHorizontal: theme.spacing.md,
+    borderRadius: theme.borderRadius.md,
+    marginTop: theme.spacing.md,
+    gap: theme.spacing.sm,
+  },
+  clearCacheButtonText: {
+    color: theme.colors.destructiveForeground,
+    fontSize: 12,
     fontWeight: "600",
   },
   versionText: {

@@ -41,7 +41,7 @@ const DEFAULTS: AppSettings = {
   delayAlerts: true,
   weatherAlerts: false,
   language: "--",
-  enableNewsApi: true,
+  enableNewsApi: process.env.EXPO_PUBLIC_ENABLE_NEWS_API === "true",
 };
 
 const KEY = "app:settings";
@@ -75,18 +75,34 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     AsyncStorage.getItem(KEY).then((raw) => {
+      let parsed = {};
       if (raw) {
         try {
-          setSettings({ ...DEFAULTS, ...JSON.parse(raw) });
+          parsed = JSON.parse(raw);
         } catch (e) {
           settingsLogger.error("Failed to parse settings:", e);
         }
       }
+      const loadedSettings = { ...DEFAULTS, ...parsed };
+
+      // Enforce the environment variable as a master switch
+      if (process.env.EXPO_PUBLIC_ENABLE_NEWS_API !== "true") {
+        loadedSettings.enableNewsApi = false;
+      }
+
+      setSettings(loadedSettings);
     });
   }, []);
 
   const set = useCallback(
     <K extends keyof AppSettings>(key: K, val: AppSettings[K]) => {
+      if (
+        key === "enableNewsApi" &&
+        process.env.EXPO_PUBLIC_ENABLE_NEWS_API !== "true"
+      ) {
+        // Silently override to false if the master environment variable is false
+        val = false as AppSettings[K];
+      }
       settingsLogger.log(`Setting ${key} to ${val}`);
       setSettings((prev) => {
         const next = { ...prev, [key]: val };

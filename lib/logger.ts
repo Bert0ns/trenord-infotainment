@@ -31,6 +31,7 @@ const config = {
       Report: "red" as const,
       Settings: "white" as const,
       Store: "magentaBright" as const,
+      NewsStore: "yellowBright" as const,
     },
   },
   async: process.env.NODE_ENV !== "test",
