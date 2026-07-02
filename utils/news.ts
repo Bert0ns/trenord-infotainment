@@ -1,6 +1,13 @@
 import { NewsArticle } from "@/lib/api/currentsapi-news/currentsapi-news-types";
 import citiesData from "@/lib/i18n/locales/cities.json";
 
+function getMiddleString(str: string, cutAmountPercentage: number) {
+  return str.substring(
+    Math.floor(str.length * (1 - cutAmountPercentage)),
+    Math.floor(str.length * cutAmountPercentage),
+  );
+}
+
 /**
  * Deduplicates an array of news articles based on their title.
  * Articles are considered duplicates if the first 70% of their titles match,
@@ -18,21 +25,18 @@ export function deduplicateNews(articles: NewsArticle[]): NewsArticle[] {
       continue;
     }
 
-    const headerPrefix = article.title
-      .substring(0, Math.floor(article.title.length * 0.7))
-      .toLowerCase();
+    const headerMiddleString = getMiddleString(
+      article.title,
+      0.3,
+    ).toLowerCase();
 
-    const isDuplicate = uniqueArticles.some((existing) => {
-      if (!existing.title) return false;
-      const existingPrefix = existing.title
-        .substring(0, Math.floor(existing.title.length * 0.7))
-        .toLowerCase();
-      const minLen = Math.min(headerPrefix.length, existingPrefix.length);
-      if (minLen < 5) return false; // Prevent overly aggressive matching on very short titles
-      return (
-        headerPrefix.substring(0, minLen) ===
-        existingPrefix.substring(0, minLen)
-      );
+    const isDuplicate = uniqueArticles.some((newsArticle) => {
+      if (!newsArticle.title) return false;
+      const articleMiddleStringTitle = getMiddleString(
+        newsArticle.title,
+        0.4,
+      ).toLowerCase();
+      return headerMiddleString.includes(articleMiddleStringTitle);
     });
 
     if (!isDuplicate) {
