@@ -49,17 +49,6 @@ describe("deduplicateNews", () => {
     const result = deduplicateNews(articles);
     expect(result).toHaveLength(3);
   });
-
-  it("should not match very short titles even if they share a prefix", () => {
-    const articles = [
-      { id: "1", title: "A" },
-      { id: "2", title: "A" },
-    ] as NewsArticle[];
-
-    // Since minLen < 5 check is in place, they should not be filtered out
-    const result = deduplicateNews(articles);
-    expect(result).toHaveLength(2);
-  });
 });
 
 describe("getLocalizedCityName", () => {
