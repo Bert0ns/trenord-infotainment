@@ -1,7 +1,6 @@
-import React from "react";
-import { render } from "@testing-library/react-native";
-import HomeScreen from "@/app/(tabs)/home";
+import HomeScreen from "@/app/(tabs)/home/home";
 import { useJourneyStore } from "@/store/journeyStore";
+import { render } from "@testing-library/react-native";
 
 jest.mock("expo-router", () => {
   const React = require("react");

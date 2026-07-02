@@ -1,24 +1,29 @@
 import { createStyleHook } from "@/hooks/use-theme-color";
 import { MaterialIcons } from "@expo/vector-icons";
-import React from "react";
+import { Href, router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { Text, TouchableOpacity, View } from "react-native";
 
 interface SectionHeaderProps {
   title: string;
+  destination?: string;
   type?: "journey" | "media" | "home";
   isFirst?: boolean;
   icon?: keyof typeof MaterialIcons.glyphMap;
+  route?: Href;
 }
 
 export default function SectionHeader({
   title,
+  destination,
   type,
   icon,
   isFirst,
+  route,
 }: SectionHeaderProps) {
   const styles = useStyles();
   const { t } = useTranslation("common", { keyPrefix: "sectionHeader" });
+  const isDiscover = title === "discover";
 
   return (
     <View style={isFirst ? styles.firstContainer : styles.container}>
@@ -29,7 +34,14 @@ export default function SectionHeader({
             size={16}
             color={styles.iconColor.color}
           />
-          <Text style={styles.titleHome}>{title}</Text>
+          {isDiscover ? (
+            <Text style={styles.titleHome}>
+              {t(title)}
+              {destination && ` ${destination}`}
+            </Text>
+          ) : (
+            <Text style={styles.titleHome}>{t(title)}</Text>
+          )}
         </View>
       ) : (
         <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
@@ -46,8 +58,8 @@ export default function SectionHeader({
           <Text style={styles.seeAll}>{t("seeAll")}</Text>
         </TouchableOpacity>
       )}
-      {type === "home" && (
-        <TouchableOpacity>
+      {type === "home" && route && (
+        <TouchableOpacity onPress={() => router.push(route)}>
           <Text style={styles.seeAll}>{t("seeMore")}</Text>
         </TouchableOpacity>
       )}

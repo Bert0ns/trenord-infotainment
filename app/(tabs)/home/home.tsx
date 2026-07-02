@@ -45,7 +45,6 @@ export default function HomeScreen() {
   const startWeatherUpdates = useWeatherStore(
     (state) => state.startWeatherUpdates,
   );
-  //To be improven
   useEffect(() => {
     startWeatherUpdates(
       destinationStation
@@ -137,10 +136,11 @@ export default function HomeScreen() {
       />
 
       <SectionHeader
-        title="Destination News"
+        title="destinationNews"
         type="home"
         icon="newspaper"
         isFirst
+        route="/home/destinationDetails"
       />
       {/* News cards */}
       <FlatList
@@ -163,7 +163,13 @@ export default function HomeScreen() {
           <NewsCard title={item.title} text={item.text} />
         )}
       />
-      <SectionHeader title="Discover Milano" type="home" icon="explore" />
+      <SectionHeader
+        title="discover"
+        destination="Milano"
+        type="home"
+        icon="explore"
+        route="/home/destinationDetails"
+      />
       {/* Tips cards */}
       <FlatList
         data={[
