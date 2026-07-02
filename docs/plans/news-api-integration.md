@@ -81,7 +81,7 @@ We will ensure high test coverage for the business logic:
 
 ## Task Breakdown
 
-- [ ] **Task 1: Docs & Interfaces**
+- [x] **Task 1: Docs & Interfaces**
   - Download and review Currents API docs to `docs/api/currentsAPI_NEWS/`.
   - Define `EXPO_PUBLIC_ENABLE_NEWS_API` in `.env` and `example.env`.
   - Create `types/news.ts` with strict interfaces (including `next_cursor`).

@@ -1,6 +1,6 @@
-import { renderHook, act } from "@testing-library/react-native";
+import { act, renderHook } from "@testing-library/react-native";
 import { useLogin } from "../../hooks/use-login";
-import * as api from "../../lib/api/trenord";
+import * as api from "../../lib/api/trenord/trenord";
 import { useJourneyStore } from "../../store/journeyStore";
 
 // Mock expo-router

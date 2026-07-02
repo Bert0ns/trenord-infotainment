@@ -1,8 +1,8 @@
-import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { TrainInfoResponse } from "@/lib/api/types";
+import { TrainInfoResponse } from "@/lib/api/trenord/trenord-types";
 import { logger } from "@/lib/logger";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 const storeLogger = logger.extend("Store");
 

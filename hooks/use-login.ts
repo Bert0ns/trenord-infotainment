@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
-import { useRouter } from "expo-router";
-import { fetchTrainData } from "@/lib/api/trenord";
-import { useJourneyStore, Station } from "@/store/journeyStore";
+import { fetchTrainData } from "@/lib/api/trenord/trenord";
+import { TrainInfoResponse } from "@/lib/api/trenord/trenord-types";
 import { logger } from "@/lib/logger";
-import { TrainInfoResponse } from "@/lib/api/types";
+import { Station, useJourneyStore } from "@/store/journeyStore";
+import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
 import { useQRScanner } from "./use-qr-scanner";
 
 const loginLogger = logger.extend("Login");

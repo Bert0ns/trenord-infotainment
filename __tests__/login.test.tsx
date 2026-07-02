@@ -3,7 +3,7 @@ import { fireEvent, render } from "@testing-library/react-native";
 import React from "react";
 import LoginScreen from "../app/login";
 import { SettingsProvider } from "../hooks/settings";
-import * as api from "../lib/api/trenord";
+import * as api from "../lib/api/trenord/trenord";
 import { useJourneyStore } from "../store/journeyStore";
 
 // Mock expo-router
