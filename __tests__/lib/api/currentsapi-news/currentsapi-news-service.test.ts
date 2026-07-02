@@ -1,7 +1,12 @@
 import {
   fetchLatestNews,
   fetchSearchNews,
+  getRelevantNews,
 } from "@/lib/api/currentsapi-news/currentsapi-news-service";
+
+import { useNewsStore } from "@/store/newsStore";
+
+jest.mock("@/store/newsStore");
 
 jest.mock("@/lib/logger", () => {
   const mLogger = {
@@ -144,6 +149,86 @@ describe("Currents API News Service", () => {
       await expect(fetchLatestNews()).rejects.toThrow(
         "Failed to fetch news data due to network error.",
       );
+    });
+  });
+
+  describe("getRelevantNews", () => {
+    const mockGetValidLatestNews = jest.fn();
+    const mockGetValidSearchNews = jest.fn();
+    const mockSetLatestNews = jest.fn();
+    const mockSetSearchNews = jest.fn();
+
+    const mockNewsData = { news: [{ id: "1", title: "Test News" }] };
+    const mockEmptyData = { news: [] };
+
+    beforeEach(() => {
+      (useNewsStore.getState as jest.Mock).mockReturnValue({
+        getValidLatestNews: mockGetValidLatestNews,
+        getValidSearchNews: mockGetValidSearchNews,
+        setLatestNews: mockSetLatestNews,
+        setSearchNews: mockSetSearchNews,
+      });
+      process.env.EXPO_PUBLIC_ENABLE_NEWS_API = "true";
+      process.env.EXPO_PUBLIC_NEWS_API_KEY = "test_api_key";
+    });
+
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it("should fetch latest news when no keyword is provided", async () => {
+      mockGetValidLatestNews.mockReturnValue(null);
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockNewsData,
+      });
+
+      const result = await getRelevantNews(null, "en");
+
+      expect(result).toEqual(mockNewsData.news);
+      expect(mockSetLatestNews).toHaveBeenCalledWith("latest-en", mockNewsData);
+    });
+
+    it("should fetch search news when keyword is provided", async () => {
+      mockGetValidSearchNews.mockReturnValue(null);
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockNewsData,
+      });
+
+      const result = await getRelevantNews("Milan", "en");
+
+      expect(result).toEqual(mockNewsData.news);
+      expect(mockSetSearchNews).toHaveBeenCalledWith(
+        "search-Milan-en",
+        mockNewsData,
+      );
+    });
+
+    it("should fallback to latest news if search returns empty", async () => {
+      mockGetValidSearchNews.mockReturnValue(null);
+      mockGetValidLatestNews.mockReturnValue(null);
+
+      // fetchSearchNews returns empty
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockEmptyData,
+      });
+
+      // fetchLatestNews returns data
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockNewsData,
+      });
+
+      const result = await getRelevantNews("Nowhere", "en");
+
+      expect(result).toEqual(mockNewsData.news);
+      expect(mockSetSearchNews).toHaveBeenCalledWith(
+        "search-Nowhere-en",
+        mockEmptyData,
+      );
+      expect(mockSetLatestNews).toHaveBeenCalledWith("latest-en", mockNewsData);
     });
   });
 });

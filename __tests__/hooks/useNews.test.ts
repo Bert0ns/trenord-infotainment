@@ -1,9 +1,6 @@
 import { renderHook, waitFor } from "@testing-library/react-native";
 import { useNews } from "@/hooks/useNews";
-import {
-  fetchLatestNews,
-  fetchSearchNews,
-} from "@/lib/api/currentsapi-news/currentsapi-news-service";
+import { getRelevantNews } from "@/lib/api/currentsapi-news/currentsapi-news-service";
 import { useSettings } from "@/hooks/settings";
 import { useJourneyStore } from "@/store/journeyStore";
 import { useNewsStore } from "@/store/newsStore";
@@ -19,12 +16,7 @@ jest.mock("@/lib/logger", () => {
 });
 
 describe("useNews Hook", () => {
-  const mockSetLatestNews = jest.fn();
-  const mockSetSearchNews = jest.fn();
-  const mockGetValidLatestNews = jest.fn();
-  const mockGetValidSearchNews = jest.fn();
-
-  const mockNewsData = { news: [{ id: "1", title: "Test News" }] };
+  const mockNewsData = [{ id: "1", title: "Test News" }];
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -41,10 +33,7 @@ describe("useNews Hook", () => {
     });
 
     const mockStoreState = {
-      getValidLatestNews: mockGetValidLatestNews,
-      getValidSearchNews: mockGetValidSearchNews,
-      setLatestNews: mockSetLatestNews,
-      setSearchNews: mockSetSearchNews,
+      cacheVersion: 0,
     };
 
     (useNewsStore as unknown as jest.Mock).mockImplementation((selector) => {
@@ -54,8 +43,7 @@ describe("useNews Hook", () => {
       return mockStoreState;
     });
 
-    (fetchLatestNews as jest.Mock).mockResolvedValue(mockNewsData);
-    (fetchSearchNews as jest.Mock).mockResolvedValue(mockNewsData);
+    (getRelevantNews as jest.Mock).mockResolvedValue(mockNewsData);
 
     process.env.EXPO_PUBLIC_ENABLE_NEWS_API = "true";
   });
@@ -69,13 +57,10 @@ describe("useNews Hook", () => {
 
     expect(result.current.data).toEqual([]);
     expect(result.current.isLoading).toBe(false);
-    expect(fetchLatestNews).not.toHaveBeenCalled();
-    expect(fetchSearchNews).not.toHaveBeenCalled();
+    expect(getRelevantNews).not.toHaveBeenCalled();
   });
 
-  it("should fetch latest news if no destination station is set and cache misses", async () => {
-    mockGetValidLatestNews.mockReturnValue(null);
-
+  it("should call getRelevantNews and return data", async () => {
     const { result } = renderHook(() => useNews());
 
     expect(result.current.isLoading).toBe(true);
@@ -84,35 +69,17 @@ describe("useNews Hook", () => {
       expect(result.current.isLoading).toBe(false);
     });
 
-    expect(fetchLatestNews).toHaveBeenCalledWith({
-      language: "en",
-      category: "general",
-    });
-    expect(mockSetLatestNews).toHaveBeenCalledWith("latest-en", mockNewsData);
-    expect(result.current.data).toEqual(mockNewsData.news);
+    expect(getRelevantNews).toHaveBeenCalledWith(undefined, "en");
+    expect(result.current.data).toEqual(mockNewsData);
   });
 
-  it("should return cached latest news if cache hits without calling api", async () => {
-    mockGetValidLatestNews.mockReturnValue(mockNewsData);
-
-    const { result } = renderHook(() => useNews());
-
-    await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
-    });
-
-    expect(fetchLatestNews).not.toHaveBeenCalled();
-    expect(result.current.data).toEqual(mockNewsData.news);
-  });
-
-  it("should fetch search news with keyword if destination station is set and cache misses", async () => {
+  it("should call getRelevantNews with keywords if destination station is set", async () => {
     (useJourneyStore as unknown as jest.Mock).mockReturnValue({
       destinationStation: { station_ori_name: "Milano Centrale" },
       destinationMunicipality: null,
       isMunicipalityLoading: false,
       trainId: "1234",
     });
-    mockGetValidSearchNews.mockReturnValue(null);
 
     const { result } = renderHook(() => useNews());
 
@@ -120,56 +87,8 @@ describe("useNews Hook", () => {
       expect(result.current.isLoading).toBe(false);
     });
 
-    expect(fetchSearchNews).toHaveBeenCalledWith({
-      language: "en",
-      keywords: "Milano Centrale",
-    });
-    expect(mockSetSearchNews).toHaveBeenCalledWith(
-      "search-Milano Centrale-en",
-      mockNewsData,
-    );
-    expect(result.current.data).toEqual(mockNewsData.news);
-  });
-
-  it("should fallback to latest news if search news returns 0 articles", async () => {
-    (useJourneyStore as unknown as jest.Mock).mockReturnValue({
-      destinationStation: { station_ori_name: "Nowhere Station" },
-      destinationMunicipality: null,
-      isMunicipalityLoading: false,
-      trainId: "1234",
-    });
-
-    // Simulate cache miss for search
-    mockGetValidSearchNews.mockReturnValue(null);
-    // Simulate search api returning 0 articles
-    (fetchSearchNews as jest.Mock).mockResolvedValue({ news: [] });
-
-    // Simulate cache miss for fallback latest news
-    mockGetValidLatestNews.mockReturnValue(null);
-    const mockFallbackData = {
-      news: [{ id: "1", title: "General News fallback" }],
-    };
-    (fetchLatestNews as jest.Mock).mockResolvedValue(mockFallbackData);
-
-    const { result } = renderHook(() => useNews());
-
-    await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
-    });
-
-    // It should have called search first
-    expect(fetchSearchNews).toHaveBeenCalledWith({
-      language: "en",
-      keywords: "Nowhere Station",
-    });
-
-    // And then fallback to latest
-    expect(fetchLatestNews).toHaveBeenCalledWith({
-      language: "en",
-      category: "general",
-    });
-
-    expect(result.current.data).toEqual(mockFallbackData.news);
+    expect(getRelevantNews).toHaveBeenCalledWith("Milano Centrale", "en");
+    expect(result.current.data).toEqual(mockNewsData);
   });
 
   it("should prefer destinationMunicipality over station_ori_name for search", async () => {
@@ -179,7 +98,6 @@ describe("useNews Hook", () => {
       isMunicipalityLoading: false,
       trainId: "1234",
     });
-    mockGetValidSearchNews.mockReturnValue(null);
 
     const { result } = renderHook(() => useNews());
 
@@ -187,20 +105,12 @@ describe("useNews Hook", () => {
       expect(result.current.isLoading).toBe(false);
     });
 
-    expect(fetchSearchNews).toHaveBeenCalledWith({
-      language: "en",
-      keywords: "Milano",
-    });
-    expect(mockSetSearchNews).toHaveBeenCalledWith(
-      "search-Milano-en",
-      mockNewsData,
-    );
+    expect(getRelevantNews).toHaveBeenCalledWith("Milano", "en");
   });
 
   it("should handle API errors gracefully", async () => {
-    mockGetValidLatestNews.mockReturnValue(null);
     const mockError = new Error("API Failure");
-    (fetchLatestNews as jest.Mock).mockRejectedValue(mockError);
+    (getRelevantNews as jest.Mock).mockRejectedValue(mockError);
 
     const { result } = renderHook(() => useNews());
 

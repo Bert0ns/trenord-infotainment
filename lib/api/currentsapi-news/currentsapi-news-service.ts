@@ -1,5 +1,6 @@
 import { logger } from "@/lib/logger";
-import { NewsAPIResponse } from "./currentsapi-news-types";
+import { NewsAPIResponse, NewsArticle } from "./currentsapi-news-types";
+import { useNewsStore } from "@/store/newsStore";
 
 const newsLogger = logger.extend("NewsAPI");
 
@@ -154,4 +155,69 @@ export async function fetchSearchNews(
     ...(options?.category ? { category: options.category } : {}),
     ...(options?.keywords ? { keywords: options.keywords } : {}),
   });
+}
+
+/**
+ * Orchestrates fetching contextual news (by keyword) with a fallback to general latest news.
+ * Checks the zustand store for valid cached entries before hitting the API.
+ */
+export async function getRelevantNews(
+  keyword: string | null | undefined,
+  language: string,
+): Promise<NewsArticle[]> {
+  const store = useNewsStore.getState();
+
+  if (keyword) {
+    const cacheKey = `search-${keyword}-${language}`;
+    let result = store.getValidSearchNews(cacheKey);
+
+    if (result) {
+      newsLogger.log("Using cached search news");
+    } else {
+      newsLogger.log(`Fetching fresh search news for: ${keyword}`);
+      result = await fetchSearchNews({
+        language,
+        keywords: keyword,
+      });
+      store.setSearchNews(cacheKey, result);
+    }
+
+    if (result.news.length === 0) {
+      newsLogger.log(
+        `0 contextual news for ${keyword}. Falling back to general latest news.`,
+      );
+      const fallbackCacheKey = `latest-${language}`;
+      let fallbackResult = store.getValidLatestNews(fallbackCacheKey);
+
+      if (!fallbackResult) {
+        newsLogger.log("Fetching fresh fallback latest news");
+        fallbackResult = await fetchLatestNews({
+          language,
+          category: "general",
+        });
+        store.setLatestNews(fallbackCacheKey, fallbackResult);
+      } else {
+        newsLogger.log("Using cached fallback latest news");
+      }
+      return fallbackResult.news;
+    } else {
+      return result.news;
+    }
+  } else {
+    // General News
+    const cacheKey = `latest-${language}`;
+    let result = store.getValidLatestNews(cacheKey);
+
+    if (result) {
+      newsLogger.log("Using cached latest news");
+    } else {
+      newsLogger.log("Fetching fresh latest news");
+      result = await fetchLatestNews({
+        language,
+        category: "general",
+      });
+      store.setLatestNews(cacheKey, result);
+    }
+    return result.news;
+  }
 }
