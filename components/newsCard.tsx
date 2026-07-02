@@ -86,7 +86,7 @@ export default function NewsCard({ article }: { article: NewsArticle }) {
 
   // Clean description if it's just the URL
   const displayDescription =
-    article.description === resolvedUrl
+    isVideo && article.description === resolvedUrl
       ? t("videoArticle")
       : article.description;
 
