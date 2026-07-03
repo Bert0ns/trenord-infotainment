@@ -45,7 +45,9 @@ export default function JourneyScreen() {
   const locationPermission = useLocationPermission();
   const polylines = useRailwayPolylines(stationData);
 
-  const region = bboxToRegion(getBbox(stationData));
+  const region = stationData?.length
+    ? bboxToRegion(getBbox(stationData))
+    : undefined;
 
   if (!trainId) return <Redirect href="/login" />;
 
@@ -82,7 +84,7 @@ export default function JourneyScreen() {
       status = "past";
     }
 
-    const station = stationData.find(
+    const station = stationData?.find(
       (s) => s.CodiceMIR === pass.station.station_id,
     );
 

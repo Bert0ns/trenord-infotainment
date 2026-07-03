@@ -54,3 +54,7 @@ export function getCachedAccessToken() {
 export function setCachedAccessToken(token: string, expirationTime: number) {
   apiStore.getState().setAccessToken(token, expirationTime);
 }
+
+export function clearCache() {
+  apiStore.getState().clearCache();
+}

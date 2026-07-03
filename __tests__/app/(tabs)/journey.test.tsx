@@ -2,6 +2,7 @@ import React from "react";
 import { render } from "@testing-library/react-native";
 import JourneyScreen from "@/app/(tabs)/journey";
 import { useJourneyStore } from "@/store/journeyStore";
+import { useRailwayPolylines } from "@/lib/api/overpass";
 
 jest.mock("expo-router", () => {
   const React = require("react");
@@ -37,6 +38,11 @@ jest.mock("@/hooks/use-theme-color", () => ({
   }),
 }));
 
+jest.mock("@/lib/api/overpass", () => ({
+  ...jest.requireActual("@/lib/api/overpass"),
+  useRailwayPolylines: jest.fn(),
+}));
+
 jest.mock("@/store/journeyStore", () => ({
   ...jest.requireActual("@/store/journeyStore"),
   useJourneyStore: jest.fn(),
@@ -56,6 +62,8 @@ describe("JourneyScreen", () => {
   });
 
   it("renders the timeline correctly with train data", () => {
+    (useRailwayPolylines as jest.Mock).mockImplementation(() => []);
+
     (useJourneyStore as unknown as jest.Mock).mockImplementation(
       (selector: any) =>
         selector({

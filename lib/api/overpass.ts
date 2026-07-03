@@ -58,7 +58,7 @@ export function useRailwayPolylines(stations: StationFull[] | null) {
 
   useEffect(() => {
     if (!stations || stations.length < 2) {
-      setPolylines([]);
+      if (polylines.length) setPolylines([]);
       return;
     }
     if (!polylines.length) {

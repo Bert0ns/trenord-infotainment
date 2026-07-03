@@ -1,5 +1,9 @@
 import { logger } from "@/lib/logger";
-import { getCachedAccessToken, setCachedAccessToken } from "@/store/apiStore";
+import {
+  clearCache,
+  getCachedAccessToken,
+  setCachedAccessToken,
+} from "@/store/apiStore";
 import { nowSec } from "@/utils/time";
 import { KJUR, KEYUTIL } from "jsrsasign";
 import { Platform } from "react-native";
@@ -185,4 +189,8 @@ export async function fetchStationData(
         stationIDs.indexOf(a.CodiceMIR) - stationIDs.indexOf(b.CodiceMIR),
     );
   return filteredData;
+}
+
+export function clearTrenordApiCache() {
+  clearCache();
 }
