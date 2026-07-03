@@ -23,8 +23,11 @@ import { useLocationPermission } from "@/hooks/use-location";
 import { bboxToRegion, getBbox, stationLatLng } from "@/utils/geometry";
 import { JSX } from "react";
 import { useRailwayPolylines } from "@/lib/api/overpass";
+import { THEME } from "@/constants/theme";
 
 const uiLogger = logger.extend("UI");
+
+const mapMarkColor = THEME.colors.dark.primary;
 
 export default function JourneyScreen() {
   const { t } = useTranslation("common");
@@ -89,16 +92,22 @@ export default function JourneyScreen() {
           key={station.CodiceMIR}
           coordinate={stationLatLng(station)}
           title={station.NomeGeoStazioni}
+          onPress={(e) => e.preventDefault()}
+          onSelect={(e) => e.preventDefault()}
+          onCalloutPress={(e) => e.preventDefault()}
         >
           <View
             style={[
               styles.marker,
               {
-                backgroundColor:
-                  status === "future" ? "white" : theme.colors.primary,
+                borderWidth: status === "current" ? 4 : 2,
+                backgroundColor: status === "past" ? mapMarkColor : "white",
               },
             ]}
           />
+          <Text style={styles.markerText}>
+            {capitalizeWords(pass.station.station_ori_name)}
+          </Text>
         </Marker>,
       );
 
@@ -184,8 +193,8 @@ export default function JourneyScreen() {
             <Polyline
               key={index}
               coordinates={polyline}
-              strokeColor={theme.colors.primary}
-              strokeWidth={4}
+              strokeColor={mapMarkColor}
+              strokeWidth={3}
             />
           ))}
         </MapView>
@@ -355,8 +364,20 @@ const useStyles = createStyleHook((theme) => ({
     width: 20,
     height: 20,
     backgroundColor: "white",
-    borderRadius: 10,
-    borderWidth: 4,
-    borderColor: theme.colors.primary,
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: mapMarkColor,
+  },
+  markerText: {
+    position: "absolute",
+    top: 4,
+    left: 22,
+    color: "white",
+    width: 150,
+    fontSize: 10,
+    fontWeight: "bold",
+    textShadowColor: "#000000FF",
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 4,
   },
 }));

@@ -16,7 +16,7 @@ export function stationLatLng(station: StationFull): LatLng {
 export function getBbox(stations: StationFull[]) {
   const lats = stations.map((s) => s.Location.coordinates[1]);
   const lons = stations.map((s) => s.Location.coordinates[0]);
-  const pad = 0.01; // ~1km padding
+  const pad = 0.1; // ~10km padding
   return {
     south: Math.min(...lats) - pad,
     west: Math.min(...lons) - pad,
