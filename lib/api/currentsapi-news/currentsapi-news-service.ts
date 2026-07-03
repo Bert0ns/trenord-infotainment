@@ -226,3 +226,29 @@ export async function getRelevantNews(
     return result.news;
   }
 }
+
+/**
+ * Fetches global/general news (not city-specific).
+ * Uses the latestNewsCache with a distinct key to avoid collisions with city-based fallback cache.
+ * Follows the same cache-first pattern as getRelevantNews.
+ */
+export async function getGlobalNews(language: string): Promise<NewsArticle[]> {
+  const store = useNewsStore.getState();
+  const cacheKey = `global-latest-${language}`;
+
+  let result = store.getValidLatestNews(cacheKey);
+
+  if (result) {
+    newsLogger.log("Using cached global news");
+  } else {
+    newsLogger.log("Fetching fresh global news");
+    result = await fetchLatestNews({
+      language,
+      country: "IT",
+      category: "general",
+    });
+    store.setLatestNews(cacheKey, result);
+  }
+
+  return result.news;
+}
