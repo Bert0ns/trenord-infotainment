@@ -1,4 +1,3 @@
-import { THEME } from "@/constants/theme";
 import { useLocationPermission } from "@/hooks/use-location";
 import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
 import { useRailwayPolylines } from "@/lib/api/overpass";
@@ -10,8 +9,6 @@ import { Text, View } from "react-native";
 import MapView, { Marker, Polyline } from "react-native-maps";
 import { getPassStatus } from "./journeyTimeline";
 import { capitalizeWords } from "@/utils/string";
-
-const mapMarkColor = THEME.colors.dark.primary;
 
 export type JourneyMapProps = {
   stations: PassList[];
@@ -62,7 +59,8 @@ export function JourneyMap({ stations, nextStop }: JourneyMapProps) {
                   styles.marker,
                   {
                     borderWidth: s === "current" ? 4 : 2,
-                    backgroundColor: s === "past" ? mapMarkColor : "white",
+                    backgroundColor:
+                      s === "past" ? theme.colors.primary : "white",
                   },
                 ]}
               />
@@ -76,7 +74,7 @@ export function JourneyMap({ stations, nextStop }: JourneyMapProps) {
           <Polyline
             key={index}
             coordinates={polyline}
-            strokeColor={mapMarkColor}
+            strokeColor={theme.colors.primary}
             strokeWidth={3}
           />
         ))}
@@ -142,7 +140,7 @@ const useStyles = createStyleHook((theme) => ({
     backgroundColor: "white",
     borderRadius: 20,
     borderWidth: 2,
-    borderColor: mapMarkColor,
+    borderColor: theme.colors.primary,
   },
   markerText: {
     position: "absolute",
