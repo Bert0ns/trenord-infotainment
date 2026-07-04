@@ -2,6 +2,7 @@ import SectionCard from "@/components/settings-componenents/sectionCard";
 import SettingSwitch from "@/components/settings-componenents/settingSwitch";
 import DropDownSelector from "@/components/ui/dropDownSelector";
 import { AppSettings, LanguageCode, useSettings } from "@/hooks/settings";
+import { useScreenStyles } from "@/hooks/use-screen-styles";
 import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
 import { useJourneyStore } from "@/store/journeyStore";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -16,7 +17,9 @@ const uiLogger = logger.extend("UI");
 
 export default function SettingsScreen() {
   const router = useRouter();
-  const styles = useStyles();
+  const screenStyles = useScreenStyles();
+  const baseStyles = useStyles();
+  const styles = { ...screenStyles, ...baseStyles };
   const theme = useTheme();
   const { t } = useTranslation("settings");
 
@@ -149,28 +152,6 @@ export default function SettingsScreen() {
 }
 
 const useStyles = createStyleHook((theme) => ({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.background,
-  },
-  content: {
-    padding: theme.spacing.md,
-    paddingBottom: 100, // Spazio extra per non sovrapporsi alla tua bottom nav bar
-  },
-  pageHeader: {
-    marginBottom: theme.spacing.lg,
-  },
-  pageTitle: {
-    fontSize: 32,
-    fontWeight: "800",
-    color: theme.colors.primary,
-    marginBottom: theme.spacing.sm,
-  },
-  pageSubtitle: {
-    fontSize: 16,
-    color: theme.colors.mutedForeground,
-    lineHeight: 22,
-  },
   themeRow: {
     flexDirection: "row",
     justifyContent: "space-between",

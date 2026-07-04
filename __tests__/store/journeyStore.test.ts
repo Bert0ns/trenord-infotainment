@@ -1,4 +1,9 @@
-import { useJourneyStore } from "../../store/journeyStore";
+import {
+  useJourneyStore,
+  selectDestinationPass,
+  selectIsJourneyCompleted,
+  selectNextStop,
+} from "../../store/journeyStore";
 
 // Get initial state to reset between tests
 const initialStoreState = useJourneyStore.getState();
@@ -53,5 +58,102 @@ describe("JourneyStore", () => {
     expect(state.trainId).toBeNull();
     expect(state.destinationStation).toBeNull();
     expect(state.trainData).toBeNull();
+  });
+
+  describe("Selectors", () => {
+    const mockState = {
+      trainId: "123",
+      destinationStation: {
+        station_id: "S02",
+        station_ori_name: "Station 2",
+      },
+      trainData: [
+        {
+          journey_list: [
+            {
+              train: { delay: 0 },
+              pass_list: [
+                {
+                  station: { station_id: "S01", station_ori_name: "Station 1" },
+                  actual_data: { dep_actual_time: "10:00:00" },
+                  cancelled: false,
+                },
+                {
+                  station: { station_id: "S02", station_ori_name: "Station 2" },
+                  actual_data: {},
+                  cancelled: false,
+                },
+                {
+                  station: { station_id: "S03", station_ori_name: "Station 3" },
+                  actual_data: {},
+                  cancelled: false,
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    };
+
+    it("should select the correct destination pass", () => {
+      const destPass = selectDestinationPass(mockState as any);
+      expect(destPass?.station.station_id).toBe("S02");
+    });
+
+    it("should return false for isJourneyCompleted when destination is not reached", () => {
+      expect(selectIsJourneyCompleted(mockState as any)).toBe(false);
+    });
+
+    it("should return true for isJourneyCompleted when destination is reached", () => {
+      const completedState = {
+        ...mockState,
+        trainData: [
+          {
+            journey_list: [
+              {
+                pass_list: [
+                  { ...mockState.trainData[0].journey_list[0].pass_list[0] },
+                  {
+                    station: {
+                      station_id: "S02",
+                      station_ori_name: "Station 2",
+                    },
+                    actual_data: { arr_actual_time: "10:15:00" },
+                    cancelled: false,
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      };
+      expect(selectIsJourneyCompleted(completedState as any)).toBe(true);
+    });
+
+    it("should return undefined for nextStop when journey is completed", () => {
+      const completedState = {
+        ...mockState,
+        trainData: [
+          {
+            journey_list: [
+              {
+                pass_list: [
+                  { ...mockState.trainData[0].journey_list[0].pass_list[0] },
+                  {
+                    station: {
+                      station_id: "S02",
+                      station_ori_name: "Station 2",
+                    },
+                    actual_data: { arr_actual_time: "10:15:00" },
+                    cancelled: false,
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      };
+      expect(selectNextStop(completedState as any)).toBeUndefined();
+    });
   });
 });
