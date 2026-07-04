@@ -156,6 +156,8 @@ export async function fetchTrainData(
 export async function fetchStationData(
   stationIDs: string[],
 ): Promise<StationResponse> {
+  if (stationIDs.length === 0) return [];
+
   // since i have no idea how to filter for multiple stations in the API (i
   // don't thinkg it's possible and if it is it's not documented) it is easier
   // and more practical to just fetch all stations and filter them quickly in JS
@@ -181,14 +183,19 @@ export async function fetchStationData(
     `Station data retrieved successfully for stations ${stationIDs.join(", ")}.`,
   );
 
-  const stationData: StationResponse = await response.json();
-  const filteredData = stationData
-    .filter((station) => stationIDs.includes(station.CodiceMIR))
-    .toSorted(
-      (a, b) =>
-        stationIDs.indexOf(a.CodiceMIR) - stationIDs.indexOf(b.CodiceMIR),
-    );
-  return filteredData;
+  try {
+    const stationData: StationResponse = await response.json();
+    const filteredData = stationData
+      .filter((station) => stationIDs.includes(station.CodiceMIR))
+      .toSorted(
+        (a, b) =>
+          stationIDs.indexOf(a.CodiceMIR) - stationIDs.indexOf(b.CodiceMIR),
+      );
+    return filteredData;
+  } catch (error) {
+    apiLogger.error("Failed to parse station data JSON:", error);
+    return [];
+  }
 }
 
 export function clearTrenordApiCache() {
