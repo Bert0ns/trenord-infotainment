@@ -2,7 +2,7 @@ import { THEME } from "@/constants/theme";
 import { useLocationPermission } from "@/hooks/use-location";
 import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
 import { useRailwayPolylines } from "@/lib/api/overpass";
-import { PassList } from "@/lib/api/types";
+import { PassList } from "@/lib/api/trenord/trenord-types";
 import { selectStations, useJourneyStore } from "@/store/journeyStore";
 import { bboxToRegion, getBbox, stationLatLng } from "@/utils/geometry";
 import { useTranslation } from "react-i18next";

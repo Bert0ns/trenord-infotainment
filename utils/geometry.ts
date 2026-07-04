@@ -1,4 +1,4 @@
-import { StationFull } from "@/lib/api/types";
+import { StationFull } from "@/lib/api/trenord/trenord-types";
 import { LatLng, Region } from "react-native-maps";
 
 /** coordinates object from a station full info */

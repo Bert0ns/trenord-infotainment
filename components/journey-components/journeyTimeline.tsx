@@ -1,9 +1,9 @@
-import React from "react";
-import { View, StyleSheet } from "react-native";
-import TimelineCard from "./timelineCard";
 import { capitalizeWords } from "@/utils/string";
+import React from "react";
+import { StyleSheet, View } from "react-native";
+import TimelineCard from "./timelineCard";
 
-import { PassList, Station, Train } from "@/lib/api/types";
+import { PassList, Station, Train } from "@/lib/api/trenord/trenord-types";
 
 interface JourneyTimelineProps {
   passListArray: PassList[];

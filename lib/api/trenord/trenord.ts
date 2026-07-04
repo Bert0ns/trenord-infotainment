@@ -7,9 +7,9 @@ import {
 import { nowSec } from "@/utils/time";
 import { KJUR, KEYUTIL } from "jsrsasign";
 import { Platform } from "react-native";
-import { StationResponse, TrainInfoResponse } from "./types";
+import { StationResponse, TrainInfoResponse } from "./trenord-types";
 
-const apiLogger = logger.extend("API");
+const apiLogger = logger.extend("TrenordAPI");
 
 async function proxiedFetch(url: string, options: RequestInit = {}) {
   if (Platform.OS === "web") {
@@ -193,4 +193,31 @@ export async function fetchStationData(
 
 export function clearTrenordApiCache() {
   clearCache();
+}
+
+export async function fetchStationMetadata(
+  stationName: string,
+): Promise<StationResponse> {
+  const accessToken = await getAccessToken();
+  const url = `${apiUrl}/stazioni_v2?NomeGeoStazioni=${encodeURIComponent(stationName)}`;
+
+  apiLogger.trace(`Fetching metadata for station ${stationName}...`);
+  const response = await proxiedFetch(url, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    apiLogger.error(
+      `Station metadata fetch failed with status ${response.status}`,
+    );
+    throw new Error(`Station API Call failed with status ${response.status}`);
+  }
+
+  apiLogger.trace(
+    `Station metadata retrieved successfully for ${stationName}.`,
+  );
+  return response.json();
 }

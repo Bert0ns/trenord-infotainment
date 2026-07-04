@@ -1,4 +1,8 @@
-import { StationFull, TrainInfoResponse } from "@/lib/api/types";
+import {
+  StationFull,
+  TrainInfoResponse,
+} from "@/lib/api/trenord/trenord-types";
+import { fetchStationMetadata } from "@/lib/api/trenord/trenord";
 import { logger } from "@/lib/logger";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
@@ -14,6 +18,8 @@ export interface Station {
 export interface JourneyStore {
   trainId: string | null;
   destinationStation: Station | null;
+  destinationMunicipality: string | null;
+  isMunicipalityLoading: boolean;
   trainData: TrainInfoResponse | null;
   stations: StationFull[];
   setJourney: (
@@ -27,16 +33,54 @@ export interface JourneyStore {
 
 export const useJourneyStore = create<JourneyStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       trainId: null,
       destinationStation: null,
+      destinationMunicipality: null,
+      isMunicipalityLoading: false,
       trainData: null,
       stations: [],
       setJourney: (trainId, destinationStation, trainData) => {
         storeLogger.info(
           `Setting journey to train ${trainId} towards ${destinationStation.station_ori_name}`,
         );
-        set({ trainId, destinationStation, trainData });
+
+        // Reset old municipality while we fetch the new one
+        set({
+          trainId,
+          destinationStation,
+          trainData,
+          destinationMunicipality: null,
+          isMunicipalityLoading: true,
+        });
+
+        // Fire-and-forget metadata fetch for the destination municipality
+        fetchStationMetadata(destinationStation.station_ori_name)
+          .then((metadataList) => {
+            if (get().trainId === trainId) {
+              if (
+                metadataList &&
+                metadataList.length > 0 &&
+                metadataList[0].Comune
+              ) {
+                set({
+                  destinationMunicipality: metadataList[0].Comune,
+                  isMunicipalityLoading: false,
+                });
+              } else {
+                set({ isMunicipalityLoading: false });
+              }
+            }
+          })
+          .catch((err) => {
+            if (get().trainId === trainId) {
+              storeLogger.warn(
+                "Failed to fetch station metadata for municipality fallback",
+                err,
+              );
+              set({ isMunicipalityLoading: false });
+            }
+          });
       },
       setStations: (stations) => {
         storeLogger.info(
@@ -51,6 +95,8 @@ export const useJourneyStore = create<JourneyStore>()(
           destinationStation: null,
           trainData: null,
           stations: [],
+          destinationMunicipality: null,
+          isMunicipalityLoading: false,
         });
       },
     }),

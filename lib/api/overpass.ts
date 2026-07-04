@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { logger as l } from "../logger";
-import { StationFull } from "./types";
+import { StationFull } from "./trenord/trenord-types";
 import { LatLng } from "react-native-maps";
 import { stationLatLng } from "@/utils/geometry";
 

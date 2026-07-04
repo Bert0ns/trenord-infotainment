@@ -1,4 +1,4 @@
-import { StationFull } from "@/lib/api/types";
+import { StationFull } from "@/lib/api/trenord/trenord-types";
 import { bboxToRegion, getBbox, stationLatLng } from "../../utils/geometry";
 
 function createStation(coordinates: [number, number]): StationFull {

@@ -3,7 +3,7 @@ import { fireEvent, render } from "@testing-library/react-native";
 import React from "react";
 import LoginScreen from "../app/login";
 import { SettingsProvider } from "../hooks/settings";
-import * as api from "../lib/api/trenord";
+import * as api from "../lib/api/trenord/trenord";
 import { useJourneyStore } from "../store/journeyStore";
 
 // Mock expo-router
@@ -22,8 +22,9 @@ jest.mock("@expo/vector-icons", () => ({
 }));
 
 // Mock the API
-jest.mock("../lib/api/trenord", () => ({
+jest.mock("../lib/api/trenord/trenord", () => ({
   fetchTrainData: jest.fn(),
+  fetchStationMetadata: jest.fn().mockResolvedValue([]),
 }));
 
 // Mock expo-camera to prevent async state updates from permissions hook during tests

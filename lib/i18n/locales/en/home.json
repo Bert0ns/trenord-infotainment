@@ -22,5 +22,15 @@
   "weatherCard": {
     "at": "at",
     "loadingWeather": "Loading weather..."
-  }
+  },
+  "newsCard": {
+    "videoArticle": "Video Article"
+  },
+  "unknown": "Unknown",
+  "na": "N/A",
+  "latestNews": "Latest News",
+  "newsSuffix": "{{city}} News",
+  "loadingNews": "Loading news...",
+  "noNews": "No news available.",
+  "discoverMilano": "Discover Milano"
 }

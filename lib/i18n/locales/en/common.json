@@ -12,5 +12,8 @@
   "loading": "Loading...",
   "loadingTrainData": "Loading or no train data available.",
   "livePosOn": "LIVE",
-  "livePosOff": "NO GPS"
+  "livePosOff": "NO GPS",
+  "errorBoundary": {
+    "somethingWentWrong": "Something went wrong."
+  }
 }
