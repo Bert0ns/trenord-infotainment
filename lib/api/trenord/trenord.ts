@@ -187,7 +187,7 @@ export async function fetchStationData(
     const stationData: StationResponse = await response.json();
     const filteredData = stationData
       .filter((station) => stationIDs.includes(station.CodiceMIR))
-      .toSorted(
+      .sort(
         (a, b) =>
           stationIDs.indexOf(a.CodiceMIR) - stationIDs.indexOf(b.CodiceMIR),
       );
