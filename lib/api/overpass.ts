@@ -23,8 +23,8 @@ async function fetchRailwayWays(stations: StationFull[]) {
 
   const query = `
     [out:json][timeout:30];
-    node(around:150, ${first.latitude}, ${first.longitude})["operator:short"="RFI"]["railway"~"station|halt|stop"]->.stA;
-    node(around:150, ${last.latitude}, ${last.longitude})["operator:short"="RFI"]["railway"~"station|halt|stop"]->.stB;
+    node(around:150, ${first.latitude}, ${first.longitude})["operator"~"RFI|Rete Ferroviaria Italiana"]["railway"~"station|halt|stop"]->.stA;
+    node(around:150, ${last.latitude}, ${last.longitude})["operator"~"RFI|Rete Ferroviaria Italiana"]["railway"~"station|halt|stop"]->.stB;
     relation(bn.stA)["route"="train"]["operator"~"[Tt]renord"]->.relsA;
     relation.relsA(bn.stB)->.segmentRels;
     way(r.segmentRels)["railway"="rail"];
