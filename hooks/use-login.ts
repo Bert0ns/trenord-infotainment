@@ -93,10 +93,12 @@ export function useLogin() {
       }));
       setStations(parsedStations);
       setTrainData(data);
-      const stationData = await fetchStationData(
-        parsedStations.map((s) => s.station_id),
-      );
-      setStationsFull(stationData);
+      try {
+        const stationData = await fetchStationData(
+          parsedStations?.map((s) => s.station_id).filter(Boolean),
+        );
+        setStationsFull(stationData);
+      } catch {}
 
       if (presetDestination) {
         const stationExists = parsedStations.some(
