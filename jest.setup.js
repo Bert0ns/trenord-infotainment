@@ -94,10 +94,20 @@ jest.mock("react-i18next", () => {
         options && options.keyPrefix ? options.keyPrefix : undefined;
       return {
         t: (k, opts) => replaceTemplate(lookup(namespace, k, keyPrefix), opts),
-        i18n: { changeLanguage: jest.fn() },
+        i18n: { changeLanguage: jest.fn(), language: "en" },
       };
     },
     Trans: ({ children }) => children,
+    Translation: ({ children, ns }) =>
+      children((k, opts) => replaceTemplate(lookup(ns || "common", k), opts), {
+        i18n: {},
+      }),
     initReactI18next: { type: "3rdParty", init: jest.fn() },
   };
 });
+
+jest.mock("@/lib/api/trenord/trenord", () => ({
+  fetchTrainData: jest.fn(),
+  fetchStationMetadata: jest.fn().mockResolvedValue([]),
+  clearTrenordApiCache: jest.fn(),
+}));

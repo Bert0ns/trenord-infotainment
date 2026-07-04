@@ -1,10 +1,11 @@
-import { renderHook, act } from "@testing-library/react-native";
 import { useRefreshTrainData } from "@/hooks/use-refresh-train-data";
+import { fetchTrainData } from "@/lib/api/trenord/trenord";
 import { useJourneyStore } from "@/store/journeyStore";
-import { fetchTrainData } from "@/lib/api/trenord";
+import { act, renderHook } from "@testing-library/react-native";
 
-jest.mock("@/lib/api/trenord", () => ({
+jest.mock("@/lib/api/trenord/trenord", () => ({
   fetchTrainData: jest.fn(),
+  fetchStationMetadata: jest.fn().mockResolvedValue([]),
 }));
 
 jest.mock("@/lib/logger", () => {
@@ -50,7 +51,7 @@ describe("useRefreshTrainData", () => {
       store.setJourney(
         "12345",
         { station_id: "S1", station_ori_name: "Milan" },
-        [] as unknown as import("@/lib/api/types").TrainInfoResponse,
+        [] as unknown as import("@/lib/api/trenord/trenord-types").TrainInfoResponse,
       );
     });
 

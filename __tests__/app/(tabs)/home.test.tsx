@@ -83,6 +83,29 @@ jest.mock("@/store/journeyStore", () => ({
   useJourneyStore: jest.fn(),
 }));
 
+jest.mock("@/hooks/settings", () => ({
+  useSettings: () => ({
+    settings: { enableNewsApi: true },
+    set: jest.fn(),
+  }),
+}));
+
+jest.mock("@/hooks/useNews", () => ({
+  useNews: () => ({
+    data: [
+      {
+        id: "1",
+        title: "Test News",
+        description: "Desc",
+        image: null,
+        url: "https://example.com",
+      },
+    ],
+    isLoading: false,
+    error: null,
+  }),
+}));
+
 describe("HomeScreen", () => {
   beforeEach(() => {
     jest.clearAllMocks();

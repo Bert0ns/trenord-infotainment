@@ -332,11 +332,11 @@ function CardContent({
             style={[
               styles.stationName,
               isCurrent && styles.currentStationName,
-              isUserDestination && styles.destinationStationName,
-              isFuture && styles.textMuted,
+              isFuture && !isUserDestination && styles.textMuted,
               (isPast || isPastDestination) &&
                 !isCurrent &&
                 !isUserDestination && { color: theme.colors.mutedForeground },
+              isUserDestination && styles.destinationStationName,
             ]}
           >
             {stationName}

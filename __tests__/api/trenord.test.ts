@@ -11,10 +11,13 @@ process.env.EXPO_PUBLIC_TRENORD_PRIVATE_JWK = JSON.stringify({
 });
 
 // Use require to ensure env variables are set before execution
+jest.unmock("@/lib/api/trenord/trenord");
+jest.unmock("../../lib/api/trenord/trenord");
 const {
   fetchTrainData,
+  fetchStationMetadata,
   clearTrenordApiCache,
-} = require("../../lib/api/trenord");
+} = require("../../lib/api/trenord/trenord");
 
 // Mock `jsrsasign` package to avoid real crypto in tests
 jest.mock("jsrsasign", () => {
@@ -112,6 +115,45 @@ describe("Trenord API", () => {
 
     await expect(fetchTrainData("1234")).rejects.toThrow(
       "Train API Call failed with status 404",
+    );
+  });
+
+  it("should fetch station metadata successfully", async () => {
+    // 1st fetch: access token
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ access_token: "mock-access-token" }),
+    });
+
+    // 2nd fetch: metadata
+    const mockMetadata = [{ Comune: "Milano" }];
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => mockMetadata,
+    });
+
+    const data = await fetchStationMetadata("MILANO CADORNA");
+    expect(data).toEqual(mockMetadata);
+
+    const apiCallArgs = fetchMock.mock.calls[1];
+    expect(apiCallArgs[0]).toBe(
+      "https://test.api.url/stazioni_v2?NomeGeoStazioni=MILANO%20CADORNA",
+    );
+  });
+
+  it("should throw an error if station metadata request fails", async () => {
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ access_token: "mock-access-token" }),
+    });
+
+    fetchMock.mockResolvedValueOnce({
+      ok: false,
+      status: 400,
+    });
+
+    await expect(fetchStationMetadata("INVALID")).rejects.toThrow(
+      "Station API Call failed with status 400",
     );
   });
 });
