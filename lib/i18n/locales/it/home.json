@@ -45,6 +45,13 @@
     "Very High": "Molto alto",
     "Extra protection": "Protezione extra",
     "Extreme": "Estremo",
-    "Avoid direct sun": "Evitare il sole diretto"
+    "Avoid direct sun": "Evitare il sole diretto",
+    "humidity": "Umidità",
+    "wind": "Vento",
+    "feelsLike": "Percepita",
+    "clouds": "Nuvole",
+    "rain": "Pioggia",
+    "precip": "Precipitazioni",
+    "direction": "Direzione"
   }
 }

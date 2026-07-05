@@ -1,4 +1,4 @@
-import JourneyScreen from "@/app/(tabs)/journey/journey";
+import JourneyScreen from "@/app/(tabs)/journey";
 import { useJourneyStore } from "@/store/journeyStore";
 import { render } from "@testing-library/react-native";
 
