@@ -5,10 +5,10 @@ import { useLogin } from "@/hooks/use-login";
 import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React from "react";
 import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
+  Image,
   ImageBackground,
   KeyboardAvoidingView,
   Platform,
@@ -72,9 +72,11 @@ export default function LoginScreen() {
           >
             <View style={styles.heroBlock}>
               <View style={styles.hero}>
-                <View style={styles.logoBadge}>
-                  <MaterialIcons name="train" size={34} color="#ffffff" />
-                </View>
+                <Image
+                  source={require("@/assets/images/trenord-icon.png")}
+                  style={styles.logoImage}
+                  resizeMode="cover"
+                />
                 <Text style={styles.title}>Trenord</Text>
                 <Text style={styles.subtitle}>{t("journeyStartsHere")}</Text>
               </View>
@@ -240,6 +242,16 @@ const useStyles = createStyleHook((theme) => ({
   },
   hero: {
     alignItems: "center",
+  },
+  logoImage: {
+    width: 64,
+    height: 64,
+    borderRadius: 20,
+    marginBottom: 12,
+    shadowColor: "#000000",
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 6 },
   },
   logoBadge: {
     width: 64,
