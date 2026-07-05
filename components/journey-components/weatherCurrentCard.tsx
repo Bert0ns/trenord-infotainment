@@ -5,11 +5,16 @@ import { Text, View } from "react-native";
 import Card from "../ui/card";
 
 export interface CurrentWeatherData {
+  city: string;
   temperature: number;
   code: number;
   isDay: boolean;
   humidity: number;
   windSpeed: number;
+  feelsLike?: number;
+  precipitation?: number;
+  cloudCover?: number;
+  windDirection?: number;
 }
 
 export default function CurrentWeatherCard({
@@ -25,7 +30,7 @@ export default function CurrentWeatherCard({
   if (!data) {
     return (
       <Card variant="muted" style={styles.card}>
-        <Text style={styles.label}>{t("loadingWeather")}</Text>
+        <Text style={styles.sectionLabel}>{t("loadingWeather")}</Text>
       </Card>
     );
   }
@@ -86,9 +91,39 @@ export default function CurrentWeatherCard({
 
   const iconInfo = getIcon();
 
+  const GridItem = ({
+    icon,
+    label,
+    value,
+    color,
+  }: {
+    icon: any;
+    label: string;
+    value: string | number;
+    color?: string;
+  }) => (
+    <View style={styles.gridItem}>
+      <MaterialIcons
+        name={icon}
+        size={26}
+        color={color ? color : theme.colors.mutedForeground}
+        style={styles.gridIcon}
+      />
+      <View style={styles.gridTextContainer}>
+        <Text style={styles.gridLabel}>{label}</Text>
+        <Text style={styles.gridValue}>{value}</Text>
+      </View>
+    </View>
+  );
+
   return (
     <View style={styles.card}>
-      <Text style={styles.sectionLabel}>{t("currentWeather")}</Text>
+      <View style={styles.headerContainer}>
+        <Text style={styles.cityLabel}>{data.city.toUpperCase()}</Text>
+        <Text style={styles.sectionLabel}>
+          {t("currentWeather").toUpperCase()}
+        </Text>
+      </View>
 
       <View style={styles.mainRow}>
         <View>
@@ -97,7 +132,7 @@ export default function CurrentWeatherCard({
         </View>
         <MaterialIcons
           name={iconInfo.name as any}
-          size={60}
+          size={72}
           color={iconInfo.color}
           style={styles.icon}
         />
@@ -105,22 +140,50 @@ export default function CurrentWeatherCard({
 
       <View style={styles.divider} />
 
-      <View style={styles.detailsRow}>
-        <View style={styles.detailItem}>
-          <MaterialIcons
-            name="water-drop"
-            size={14}
+      <View style={styles.detailsGrid}>
+        <View style={styles.detailsRow}>
+          <GridItem
+            icon="water-drop"
+            label={t("humidity")}
+            value={`${data.humidity}%`}
             color={theme.colors.info}
           />
-          <Text style={styles.detailText}>{data.humidity}%</Text>
-        </View>
-        <View style={styles.detailItem}>
-          <MaterialIcons
-            name="air"
-            size={14}
-            color={theme.colors.mutedForeground}
+          <GridItem
+            icon="thermostat"
+            label={t("feelsLike")}
+            value={`${data.feelsLike ?? "--"}°C`}
+            color={theme.colors.warning}
           />
-          <Text style={styles.detailText}>{data.windSpeed} km/h</Text>
+        </View>
+
+        <View style={styles.detailsRow}>
+          <GridItem
+            icon="filter-drama"
+            label={t("clouds")}
+            value={`${data.cloudCover ?? "--"}%`}
+            color={theme.colors.cloud}
+          />
+          <GridItem
+            icon="umbrella"
+            label={t("precip")}
+            value={`${data.precipitation ?? 0} mm`}
+            color={theme.colors.info}
+          />
+        </View>
+
+        <View style={styles.detailsRow}>
+          <GridItem
+            icon="air"
+            label={t("wind")}
+            value={`${data.windSpeed} km/h`}
+            color={theme.colors.cloud}
+          />
+          <GridItem
+            icon="explore"
+            label={t("direction")}
+            value={`${data.windDirection ?? "--"}°`}
+            color={theme.colors.cloud}
+          />
         </View>
       </View>
     </View>
@@ -131,17 +194,32 @@ const useStyles = createStyleHook((theme) => ({
   card: {
     backgroundColor: theme.colors.muted,
     borderRadius: theme.borderRadius.lg,
-    padding: theme.spacing.md,
+    padding: theme.spacing.lg,
     marginBottom: theme.spacing.md,
-    borderColor: theme.colors.border,
+    marginTop: theme.spacing.md,
   },
-  label: { fontSize: 14, color: theme.colors.mutedForeground },
+  headerContainer: {
+    flexDirection: "column",
+    alignItems: "flex-start",
+    marginBottom: theme.spacing.md,
+  },
+  cityLabel: {
+    fontSize: 26,
+    fontWeight: "900",
+    color: theme.colors.foreground,
+    letterSpacing: 0.5,
+  },
   sectionLabel: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: "700",
     color: theme.colors.mutedForeground,
     letterSpacing: 1,
-    marginBottom: theme.spacing.sm,
+    marginTop: 5,
+  },
+  headerRow: {
+    flexDirection: "row",
+    alignItems: "baseline",
+    marginBottom: theme.spacing.md,
   },
   mainRow: {
     flexDirection: "row",
@@ -149,31 +227,54 @@ const useStyles = createStyleHook((theme) => ({
     alignItems: "center",
   },
   temperature: {
-    fontSize: 36,
+    fontSize: 48,
     fontWeight: "800",
     color: theme.colors.foreground,
   },
   condition: {
-    fontSize: 16,
+    fontSize: 18,
     color: theme.colors.mutedForeground,
+    marginTop: -4,
   },
   divider: {
     height: 1,
     backgroundColor: theme.colors.border,
-    marginVertical: theme.spacing.md,
+    marginVertical: theme.spacing.lg,
+  },
+
+  detailsGrid: {
+    gap: theme.spacing.md,
   },
   detailsRow: {
     flexDirection: "row",
-    gap: theme.spacing.lg,
+    justifyContent: "space-between",
   },
-  detailItem: {
+  gridItem: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
+    flex: 0.5,
+    paddingVertical: 4,
   },
-  detailText: {
-    fontSize: 13,
+  gridIcon: {
+    marginRight: 12,
+  },
+  gridTextContainer: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  gridLabel: {
+    fontSize: 12,
+    fontWeight: "700",
     color: theme.colors.mutedForeground,
+    textTransform: "uppercase",
+    marginBottom: 2,
   },
-  icon: { marginRight: theme.spacing.md },
+  gridValue: {
+    fontSize: 16,
+    fontWeight: "800",
+    color: theme.colors.foreground,
+  },
+  icon: {
+    marginRight: 0,
+  },
 }));

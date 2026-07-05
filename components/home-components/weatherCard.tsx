@@ -1,6 +1,7 @@
 import Card from "@/components/ui/card";
 import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
 import { MaterialIcons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
 
@@ -12,7 +13,13 @@ export interface WeatherData {
   condition?: string;
 }
 
-export default function WeatherCard({ data }: { data: WeatherData | null }) {
+export default function WeatherCard({
+  data,
+  route,
+}: {
+  data: WeatherData | null;
+  route?: string;
+}) {
   const styles = useStyles();
   const theme = useTheme();
   const { t } = useTranslation("home", { keyPrefix: "weatherCard" });
@@ -82,8 +89,14 @@ export default function WeatherCard({ data }: { data: WeatherData | null }) {
 
   const iconInfo = getIcon();
 
+  const handlePress = () => {
+    if (route) {
+      router.push(route as any);
+    }
+  };
+
   return (
-    <Card variant="muted" style={styles.card}>
+    <Card variant="muted" style={styles.card} onPress={handlePress}>
       <MaterialIcons
         name={iconInfo.name as any}
         size={40}
