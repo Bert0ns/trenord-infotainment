@@ -1,4 +1,7 @@
+import { logger } from "@/lib/logger";
 import { fetchWeatherApi } from "openmeteo";
+
+const weatherLogger = logger.extend("Weather");
 
 export async function fetchWeather(latitude: number, longitude: number) {
   const params = {
@@ -28,7 +31,7 @@ export async function fetchWeather(latitude: number, longitude: number) {
   const long = response.longitude();
   const utcOffsetSeconds = response.utcOffsetSeconds();
 
-  console.log(`\nCoordinates: ${lat}°N ${long}°E`);
+  weatherLogger.info(`Coordinates: ${lat}°N ${long}°E`);
 
   const current = response.current()!;
 
@@ -47,17 +50,8 @@ export async function fetchWeather(latitude: number, longitude: number) {
     },
   };
 
-  console.log(
-    `\nCurrent time: ${weatherData.current.time}\n`,
-    `\nCurrent temperature_2m: ${weatherData.current.temperature_2m}`,
-    `\nCurrent is_day: ${weatherData.current.is_day}`,
-    `\nCurrent weather_code: ${weatherData.current.weather_code}`,
-    `\nCurrent precipitation: ${weatherData.current.precipitation}`,
-    `\nCurrent relative_humidity_2m: ${weatherData.current.relative_humidity_2m}`,
-    `\nCurrent wind_speed_10m: ${weatherData.current.wind_speed_10m}`,
-    `\nCurrent apparent_temperature: ${weatherData.current.apparent_temperature}`,
-    `\nCurrent wind_direction_10m: ${weatherData.current.wind_direction_10m}`,
-    `\nCurrent cloud_cover: ${weatherData.current.cloud_cover}`,
+  weatherLogger.info(
+    `Current time: ${weatherData.current.time}, temperature_2m: ${weatherData.current.temperature_2m}, is_day: ${weatherData.current.is_day}, weather_code: ${weatherData.current.weather_code}, precipitation: ${weatherData.current.precipitation}, relative_humidity_2m: ${weatherData.current.relative_humidity_2m}, wind_speed_10m: ${weatherData.current.wind_speed_10m}, apparent_temperature: ${weatherData.current.apparent_temperature}, wind_direction_10m: ${weatherData.current.wind_direction_10m}, cloud_cover: ${weatherData.current.cloud_cover}`,
   );
 
   if (!response) {

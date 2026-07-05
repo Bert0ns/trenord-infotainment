@@ -1,4 +1,3 @@
-import React from "react";
 import { render } from "@testing-library/react-native";
 import Index from "../app/index";
 import { useJourneyStore } from "../store/journeyStore";
@@ -27,6 +26,6 @@ describe("Index Auth Guard", () => {
     useJourneyStore.setState({ trainId: "12345" });
 
     const { getByTestId } = render(<Index />);
-    expect(getByTestId("redirect").props.children).toBe("/(tabs)/home");
+    expect(getByTestId("redirect").props.children).toBe("/(tabs)/home/home");
   });
 });

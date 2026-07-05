@@ -1,6 +1,6 @@
-import { useJourneyStore } from "@/store/journeyStore";
-import { fetchTrainData } from "@/lib/api/trenord";
+import { fetchTrainData } from "@/lib/api/trenord/trenord";
 import { logger } from "@/lib/logger";
+import { useJourneyStore } from "@/store/journeyStore";
 
 const syncLogger = logger.extend("Sync");
 

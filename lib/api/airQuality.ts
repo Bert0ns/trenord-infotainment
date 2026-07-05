@@ -1,4 +1,7 @@
+import { logger } from "@/lib/logger";
 import { fetchWeatherApi } from "openmeteo";
+
+const weatherLogger = logger.extend("Weather");
 
 export async function fetchAirQuality(latitude: number, longitude: number) {
   const params = {
@@ -19,10 +22,8 @@ export async function fetchAirQuality(latitude: number, longitude: number) {
   const elevation = response.elevation();
   const utcOffsetSeconds = response.utcOffsetSeconds();
 
-  console.log(
-    `\nCoordinates: ${lat}°N ${long}°E`,
-    `\nElevation: ${elevation}m asl`,
-    `\nTimezone difference to GMT+0: ${utcOffsetSeconds}s`,
+  weatherLogger.info(
+    `Coordinates: ${lat}°N ${long}°E, Elevation: ${elevation}m asl, Timezone difference to GMT+0: ${utcOffsetSeconds}s`,
   );
 
   const current = response.current()!;
@@ -37,10 +38,8 @@ export async function fetchAirQuality(latitude: number, longitude: number) {
   };
 
   // The 'weatherData' object now contains a simple structure, with arrays of datetimes and weather information
-  console.log(
-    `\nCurrent time: ${weatherData.current.time}\n`,
-    `\nCurrent european_aqi: ${weatherData.current.european_aqi}`,
-    `\nCurrent uv_index: ${weatherData.current.uv_index}`,
+  weatherLogger.info(
+    `Current time: ${weatherData.current.time}, european_aqi: ${weatherData.current.european_aqi}, uv_index: ${weatherData.current.uv_index}`,
   );
 
   if (!response) {

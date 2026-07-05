@@ -3,7 +3,8 @@ import {
   selectDestinationPass,
   selectIsJourneyCompleted,
   selectNextStop,
-} from "../../store/journeyStore";
+} from "@/store/journeyStore";
+import { fetchStationMetadata } from "@/lib/api/trenord/trenord";
 
 // Get initial state to reset between tests
 const initialStoreState = useJourneyStore.getState();
@@ -19,6 +20,7 @@ describe("JourneyStore", () => {
     const state = useJourneyStore.getState();
     expect(state.trainId).toBeNull();
     expect(state.destinationStation).toBeNull();
+    expect(state.destinationMunicipality).toBeNull();
     expect(state.trainData).toBeNull();
   });
 
@@ -30,6 +32,10 @@ describe("JourneyStore", () => {
     };
     const mockTrainData = { someData: true, journeys: [] };
 
+    (fetchStationMetadata as jest.Mock).mockResolvedValueOnce([
+      { Comune: "Milano" },
+    ]);
+
     useJourneyStore
       .getState()
       .setJourney(mockTrainId, mockStation, mockTrainData as any);
@@ -38,6 +44,35 @@ describe("JourneyStore", () => {
     expect(state.trainId).toBe(mockTrainId);
     expect(state.destinationStation).toEqual(mockStation);
     expect(state.trainData).toEqual(mockTrainData);
+    expect(state.destinationMunicipality).toBeNull(); // Still null initially before async completes
+  });
+
+  it("should update destinationMunicipality after fetch completes", async () => {
+    const mockTrainId = "12345";
+    const mockStation = {
+      station_id: "S01",
+      station_ori_name: "Milano Centrale",
+    };
+    const mockTrainData = { someData: true, journeys: [] };
+
+    let resolveFetch: any;
+    const fetchPromise = new Promise((resolve) => {
+      resolveFetch = resolve;
+    });
+    (fetchStationMetadata as jest.Mock).mockReturnValueOnce(fetchPromise);
+
+    useJourneyStore
+      .getState()
+      .setJourney(mockTrainId, mockStation, mockTrainData as any);
+
+    expect(useJourneyStore.getState().destinationMunicipality).toBeNull();
+
+    resolveFetch([{ Comune: "Milano" }]);
+    await fetchPromise;
+    // Wait a tick for the microtask queue to process the .then() in setJourney
+    await new Promise(process.nextTick);
+
+    expect(useJourneyStore.getState().destinationMunicipality).toBe("Milano");
   });
 
   it("should clear journey data correctly", () => {
@@ -46,6 +81,10 @@ describe("JourneyStore", () => {
       station_id: "S01",
       station_ori_name: "Milano Centrale",
     };
+
+    (fetchStationMetadata as jest.Mock).mockResolvedValueOnce([
+      { Comune: "Milano" },
+    ]);
 
     // First set the data
     useJourneyStore.getState().setJourney(mockTrainId, mockStation, {} as any);
@@ -57,6 +96,7 @@ describe("JourneyStore", () => {
     const state = useJourneyStore.getState();
     expect(state.trainId).toBeNull();
     expect(state.destinationStation).toBeNull();
+    expect(state.destinationMunicipality).toBeNull();
     expect(state.trainData).toBeNull();
   });
 

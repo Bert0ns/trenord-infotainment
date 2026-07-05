@@ -1,5 +1,7 @@
 import SectionCard from "@/components/settings-componenents/sectionCard";
 import SettingSwitch from "@/components/settings-componenents/settingSwitch";
+import ClearTrenordCacheButton from "@/components/settings-componenents/clearTrenordCacheButton";
+import ClearNewsCacheButton from "@/components/settings-componenents/clearNewsCacheButton";
 import DropDownSelector from "@/components/ui/dropDownSelector";
 import { AppSettings, LanguageCode, useSettings } from "@/hooks/settings";
 import { useScreenStyles } from "@/hooks/use-screen-styles";
@@ -129,6 +131,28 @@ export default function SettingsScreen() {
           onValueChange={(value) => set("weatherAlerts", value)}
         />
       </SectionCard>
+
+      {process.env.EXPO_PUBLIC_ENABLE_NEWS_API === "true" && (
+        <SectionCard iconName="newspaper" title={t("news.title")}>
+          <SettingSwitch
+            label={t("news.enableNews.title")}
+            description={t("news.enableNews.description")}
+            value={settings.enableNewsApi}
+            onValueChange={(value) => set("enableNewsApi", value)}
+          />
+        </SectionCard>
+      )}
+
+      {(process.env.EXPO_PUBLIC_SHOW_CLEAR_TRENORD_CACHE_BUTTON === "true" ||
+        process.env.EXPO_PUBLIC_SHOW_CLEAR_NEWS_CACHE_BUTTON === "true") && (
+        <SectionCard iconName="developer-board" title="Developer">
+          {process.env.EXPO_PUBLIC_SHOW_CLEAR_TRENORD_CACHE_BUTTON ===
+            "true" && <ClearTrenordCacheButton />}
+          {process.env.EXPO_PUBLIC_SHOW_CLEAR_NEWS_CACHE_BUTTON === "true" && (
+            <ClearNewsCacheButton />
+          )}
+        </SectionCard>
+      )}
 
       <View style={styles.card}>
         <View style={styles.footer}>

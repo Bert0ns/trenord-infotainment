@@ -1,13 +1,16 @@
 import DiscoveryCard from "@/components/discoveryCard";
+import { ErrorBoundary } from "@/components/errorBoundary";
 import CrowdingCard from "@/components/home-components/crowdCard";
 import LiveStatusCard from "@/components/home-components/liveStatusCard";
 import WeatherCard from "@/components/home-components/weatherCard";
 import LoadingScreen from "@/components/loadingScreen";
 import NewsCard from "@/components/newsCard";
 import SectionHeader from "@/components/sectionHeader";
+import { useSettings } from "@/hooks/settings";
 import { useRefreshTrainData } from "@/hooks/use-refresh-train-data";
 import { useScreenStyles } from "@/hooks/use-screen-styles";
 import { useTheme } from "@/hooks/use-theme-color";
+import { useNews } from "@/hooks/useNews";
 import {
   selectDestinationPass,
   selectIsAtStation,
@@ -21,10 +24,12 @@ import {
 import { useWeatherStore } from "@/store/weatherStore";
 import { capitalizeWords } from "@/utils/string";
 import { Redirect } from "expo-router";
-import { FlatList, RefreshControl, ScrollView } from "react-native";
+import { useTranslation } from "react-i18next";
+import { FlatList, RefreshControl, ScrollView, Text } from "react-native";
 
+import { useWeatherData } from "@/hooks/use-weather-data";
 import { logger } from "@/lib/logger";
-import { useEffect } from "react";
+import { useCallback } from "react";
 
 const uiLogger = logger.extend("UI");
 
@@ -33,6 +38,9 @@ export default function HomeScreen() {
   const theme = useTheme();
   const trainId = useJourneyStore((s) => s.trainId);
   const destinationStation = useJourneyStore((s) => s.destinationStation);
+  const destinationMunicipality = useJourneyStore(
+    (s) => s.destinationMunicipality,
+  );
   const origDestData = useJourneyStore(selectOrigDestData);
   const trainInfo = useJourneyStore(selectTrainInfo);
   const passListArray = useJourneyStore(selectPassList);
@@ -40,18 +48,20 @@ export default function HomeScreen() {
   const nextStop = useJourneyStore(selectNextStop);
   const isJourneyCompleted = useJourneyStore(selectIsJourneyCompleted);
   const isAtStation = useJourneyStore(selectIsAtStation);
-  const { isRefreshing, onRefresh } = useRefreshTrainData();
+  const { isRefreshing, onRefresh: onRefreshTrain } = useRefreshTrainData();
   const weather = useWeatherStore((state) => state.weather);
-  const startWeatherUpdates = useWeatherStore(
-    (state) => state.startWeatherUpdates,
-  );
-  useEffect(() => {
-    startWeatherUpdates(
-      destinationStation
-        ? destinationStation.station_ori_name.split(" ")[0]
-        : "None",
-    );
-  }, []);
+  const { refreshWeather } = useWeatherData();
+
+  const handleRefresh = useCallback(async () => {
+    refreshWeather();
+    if (onRefreshTrain) {
+      await onRefreshTrain();
+    }
+  }, [refreshWeather, onRefreshTrain]);
+
+  const { settings } = useSettings();
+  const { data: newsData, isLoading: isNewsLoading } = useNews();
+  const { t } = useTranslation("home");
 
   if (!trainId) return <Redirect href="/login" />;
 
@@ -70,7 +80,7 @@ export default function HomeScreen() {
       refreshControl={
         <RefreshControl
           refreshing={isRefreshing}
-          onRefresh={onRefresh}
+          onRefresh={handleRefresh}
           tintColor={theme.colors.primary}
         />
       }
@@ -81,26 +91,26 @@ export default function HomeScreen() {
             ? capitalizeWords(nextStop.station.station_ori_name)
             : isJourneyCompleted && destinationStation
               ? capitalizeWords(destinationStation.station_ori_name)
-              : "Unknown"
+              : t("unknown")
         }
         arrivalTime={
           nextStop?.arr_time
             ? nextStop.arr_time.slice(0, 5)
             : isJourneyCompleted && destinationPass?.arr_time
               ? destinationPass.arr_time.slice(0, 5)
-              : "Unknown"
+              : t("unknown")
         }
         destination={
           destinationStation
             ? capitalizeWords(destinationStation.station_ori_name)
-            : "Unknown"
+            : t("unknown")
         }
         destinationArrivalTime={
           destinationPass?.arr_time
             ? destinationPass.arr_time.slice(0, 5)
             : undefined
         }
-        speed="N/A"
+        speed={t("na")}
         trainNumber={`${trainInfo.train_category} ${trainId}`}
         delayMinutes={trainInfo.delay}
         isFirst={nextStop?.pass_count === 1}
@@ -108,7 +118,7 @@ export default function HomeScreen() {
           isAtStation || nextStop?.pass_count === 1
             ? nextStop?.dep_time
               ? nextStop.dep_time.slice(0, 5)
-              : "Unknown"
+              : t("unknown")
             : undefined
         }
         isCompleted={isJourneyCompleted}
@@ -125,9 +135,7 @@ export default function HomeScreen() {
       <WeatherCard
         data={{
           city: capitalizeWords(
-            destinationStation
-              ? destinationStation.station_ori_name
-              : "Unknown",
+            destinationMunicipality ? destinationMunicipality : "Unknown",
           ),
           temperature: Math.trunc(weather ? weather.temperature : 0),
           code: weather ? weather.weatherCode : 0,
@@ -136,36 +144,65 @@ export default function HomeScreen() {
         route="/home/weatherDetails"
       />
 
+      {settings.enableNewsApi && (
+        <ErrorBoundary>
+          <SectionHeader
+            title={
+              destinationMunicipality
+                ? t("newsSuffix", {
+                    city: capitalizeWords(destinationMunicipality),
+                  })
+                : destinationStation
+                  ? t("newsSuffix", {
+                      city: capitalizeWords(
+                        destinationStation.station_ori_name,
+                      ),
+                    })
+                  : t("latestNews")
+            }
+            type="home"
+            icon="newspaper"
+            isFirst
+          />
+          {isNewsLoading ? (
+            <Text
+              style={{
+                paddingHorizontal: theme.spacing.md,
+                color: theme.colors.mutedForeground,
+              }}
+            >
+              {t("loadingNews")}
+            </Text>
+          ) : newsData.length > 0 ? (
+            <FlatList
+              data={newsData}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => <NewsCard article={item} />}
+              contentContainerStyle={{
+                paddingLeft: theme.spacing.md,
+                paddingBottom: theme.spacing.md,
+              }}
+            />
+          ) : (
+            <Text
+              style={{
+                paddingHorizontal: theme.spacing.md,
+                color: theme.colors.mutedForeground,
+              }}
+            >
+              {t("noNews")}
+            </Text>
+          )}
+        </ErrorBoundary>
+      )}
+
       <SectionHeader
-        title="destinationNews"
-        type="home"
-        icon="newspaper"
-        isFirst
-      />
-      {/* News cards */}
-      <FlatList
-        data={[
-          {
-            id: "1",
-            title: "Milan Design Week",
-            text: "Milan Design Week kicks off today. Expect minor traffic.",
-          },
-          {
-            id: "2",
-            title: "Extra Train for M2",
-            text: "Metro line M2 operating with extra trains today.",
-          },
-        ]}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <NewsCard title={item.title} text={item.text} />
-        )}
-      />
-      <SectionHeader
-        title="discover"
-        destination="Milano"
+        title={"discover"}
+        destination={
+          destinationMunicipality ? destinationMunicipality : "Unknown"
+        }
         type="home"
         icon="explore"
       />

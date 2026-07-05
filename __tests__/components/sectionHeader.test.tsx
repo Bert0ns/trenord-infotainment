@@ -1,7 +1,6 @@
 import SectionHeader from "@/components/sectionHeader";
 import enCommon from "@/lib/i18n/locales/en/common.json";
 import { render } from "@testing-library/react-native";
-import React from "react";
 
 jest.mock("@expo/vector-icons", () => ({
   MaterialIcons: "MaterialIcons",
@@ -27,7 +26,11 @@ describe("SectionHeader", () => {
 
   it("renders correctly for home type", () => {
     const { getByText } = render(
-      <SectionHeader title="Home Title" type="home" />,
+      <SectionHeader
+        title="Home Title"
+        type="home"
+        route="/(tabs)/home/weatherDetails"
+      />,
     );
     expect(getByText("Home Title")).toBeTruthy();
     expect(getByText(enCommon.sectionHeader.seeMore)).toBeTruthy();

@@ -1,5 +1,5 @@
-import { fetchTrainData } from "@/lib/api/trenord";
-import { TrainInfoResponse } from "@/lib/api/types";
+import { fetchTrainData } from "@/lib/api/trenord/trenord";
+import { TrainInfoResponse } from "@/lib/api/trenord/trenord-types";
 import { logger } from "@/lib/logger";
 import { Station, useJourneyStore } from "@/store/journeyStore";
 import { useRouter } from "expo-router";

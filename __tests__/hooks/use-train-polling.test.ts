@@ -1,13 +1,14 @@
-import { renderHook } from "@testing-library/react-native";
 import {
-  useTrainPolling,
   FETCH_TRAIN_POLLING_RATE,
+  useTrainPolling,
 } from "@/hooks/use-train-polling";
+import { fetchTrainData } from "@/lib/api/trenord/trenord";
 import { useJourneyStore } from "@/store/journeyStore";
-import { fetchTrainData } from "@/lib/api/trenord";
+import { renderHook } from "@testing-library/react-native";
 
-jest.mock("@/lib/api/trenord", () => ({
+jest.mock("@/lib/api/trenord/trenord", () => ({
   fetchTrainData: jest.fn(),
+  fetchStationMetadata: jest.fn().mockResolvedValue([]),
 }));
 
 jest.mock("@/lib/logger", () => {

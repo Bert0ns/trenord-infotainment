@@ -3,28 +3,23 @@ import {
   UVIndexCard,
 } from "@/components/journey-components/enviromentWidgets";
 import CurrentWeatherCard from "@/components/journey-components/weatherCurrentCard";
-import { createStyleHook } from "@/hooks/use-theme-color";
+import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
+import { useWeatherData } from "@/hooks/use-weather-data";
 import { useJourneyStore } from "@/store/journeyStore";
 import { useWeatherStore } from "@/store/weatherStore";
 import { Redirect } from "expo-router";
-import { useEffect } from "react";
-import { ScrollView, View } from "react-native";
+import { RefreshControl, ScrollView, View } from "react-native";
 
 export default function HomeDestinationDetails() {
   const styles = useStyles();
+  const theme = useTheme();
   const trainId = useJourneyStore((s) => s.trainId);
-  const destinationStation = useJourneyStore((s) => s.destinationStation);
-  const weather = useWeatherStore((state) => state.weather);
-  const startWeatherUpdates = useWeatherStore(
-    (state) => state.startWeatherUpdates,
+  const destinationMunicipality = useJourneyStore(
+    (s) => s.destinationMunicipality,
   );
-  useEffect(() => {
-    startWeatherUpdates(
-      destinationStation
-        ? destinationStation.station_ori_name.split(" ")[0]
-        : "None",
-    );
-  }, []);
+  const weather = useWeatherStore((state) => state.weather);
+  const loading = useWeatherStore((state) => state.loading);
+  const { refreshWeather } = useWeatherData({ manageLifecycle: false });
 
   if (!trainId) return <Redirect href="/login" />;
 
@@ -33,12 +28,18 @@ export default function HomeDestinationDetails() {
       style={styles.container}
       bounces={false}
       showsVerticalScrollIndicator={false}
+      refreshControl={
+        <RefreshControl
+          refreshing={loading}
+          onRefresh={refreshWeather}
+          tintColor={theme.colors.primary}
+        />
+      }
     >
       <View style={styles.contentPadding}>
         <CurrentWeatherCard
           data={{
-            city:
-              destinationStation?.station_ori_name.split(" ")[0] || "Unknown",
+            city: destinationMunicipality ? destinationMunicipality : "Unknown",
             temperature: Math.trunc(weather ? weather.temperature : 0),
             code: weather ? weather.weatherCode : 0,
             isDay: weather?.isDay === 1,
