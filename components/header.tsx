@@ -10,7 +10,7 @@ export default function Header() {
   const styles = useStyles();
   const router = useRouter();
   const pathname = usePathname();
-  const isDestinationDetails = pathname.includes("destinationDetails");
+  const isDestinationDetails = pathname.includes("Details");
 
   return (
     <View style={[styles.headerContainer, { paddingTop: insets.top }]}>

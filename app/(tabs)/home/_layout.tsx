@@ -4,7 +4,7 @@ export default function HomeLayout() {
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="home" />
-      <Stack.Screen name="destinationDetails" />
+      <Stack.Screen name="weatherDetails" />
     </Stack>
   );
 }

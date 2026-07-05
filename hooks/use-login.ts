@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
-import { useRouter } from "expo-router";
 import { fetchTrainData } from "@/lib/api/trenord";
-import { useJourneyStore, Station } from "@/store/journeyStore";
-import { logger } from "@/lib/logger";
 import { TrainInfoResponse } from "@/lib/api/types";
+import { logger } from "@/lib/logger";
+import { Station, useJourneyStore } from "@/store/journeyStore";
+import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
 import { useQRScanner } from "./use-qr-scanner";
 
 const loginLogger = logger.extend("Login");
@@ -106,7 +106,7 @@ export function useLogin() {
               `Auto-starting journey! Train: ${codeToSearch}, Destination: ${destStation.station_ori_name}`,
             );
             setJourney(codeToSearch, destStation, data);
-            router.replace("/(tabs)/home");
+            router.replace("/(tabs)/home/home");
             return;
           }
         } else {
@@ -143,7 +143,7 @@ export function useLogin() {
         `Starting journey! Train: ${ticketCode}, Destination: ${destStation.station_ori_name}`,
       );
       setJourney(ticketCode, destStation, trainData!);
-      router.replace("/(tabs)/home");
+      router.replace("/(tabs)/home/home");
     }
   }
 

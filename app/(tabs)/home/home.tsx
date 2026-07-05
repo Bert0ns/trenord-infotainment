@@ -133,6 +133,7 @@ export default function HomeScreen() {
           code: weather ? weather.weatherCode : 0,
           isDay: weather?.isDay === 1,
         }}
+        route="/home/weatherDetails"
       />
 
       <SectionHeader
@@ -140,7 +141,6 @@ export default function HomeScreen() {
         type="home"
         icon="newspaper"
         isFirst
-        route="/home/destinationDetails"
       />
       {/* News cards */}
       <FlatList
@@ -168,7 +168,6 @@ export default function HomeScreen() {
         destination="Milano"
         type="home"
         icon="explore"
-        route="/home/destinationDetails"
       />
       {/* Tips cards */}
       <FlatList
