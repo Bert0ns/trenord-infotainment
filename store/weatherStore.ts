@@ -10,6 +10,9 @@ interface WeatherData {
   precipitation: number;
   humidity: number;
   windSpeed: number;
+  apparentTemperature: number;
+  windDirection: number;
+  cloudCover: number;
   aqi: number;
   uvIndex: number;
 }
@@ -62,6 +65,9 @@ export const useWeatherStore = create<WeatherState>((set) => ({
             precipitation: currentWeather?.variables(3)?.value() ?? 0,
             humidity: currentWeather?.variables(4)?.value() ?? 0,
             windSpeed: currentWeather?.variables(5)?.value() ?? 0,
+            apparentTemperature: currentWeather?.variables(6)?.value() ?? 0,
+            windDirection: currentWeather?.variables(7)?.value() ?? 0,
+            cloudCover: currentWeather?.variables(8)?.value() ?? 0,
             aqi: currentAir?.variables(0)?.value() ?? 0,
             uvIndex: currentAir?.variables(1)?.value() ?? 0,
           },

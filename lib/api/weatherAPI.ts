@@ -12,6 +12,9 @@ export async function fetchWeather(latitude: number, longitude: number) {
       "precipitation",
       "relative_humidity_2m",
       "wind_speed_10m",
+      "apparent_temperature",
+      "wind_direction_10m",
+      "cloud_cover",
     ],
     forecast_days: 1,
   };
@@ -23,18 +26,12 @@ export async function fetchWeather(latitude: number, longitude: number) {
 
   const lat = response.latitude();
   const long = response.longitude();
-  const elevation = response.elevation();
   const utcOffsetSeconds = response.utcOffsetSeconds();
 
-  console.log(
-    `\nCoordinates: ${lat}°N ${long}°E`,
-    `\nElevation: ${elevation}m asl`,
-    `\nTimezone difference to GMT+0: ${utcOffsetSeconds}s`,
-  );
+  console.log(`\nCoordinates: ${lat}°N ${long}°E`);
 
   const current = response.current()!;
 
-  // Note: The order of weather variables in the URL query and the indices below need to match!
   const weatherData = {
     current: {
       time: new Date((Number(current.time()) + utcOffsetSeconds) * 1000),
@@ -44,10 +41,12 @@ export async function fetchWeather(latitude: number, longitude: number) {
       precipitation: current.variables(3)!.value(),
       relative_humidity_2m: current.variables(4)!.value(),
       wind_speed_10m: current.variables(5)!.value(),
+      apparent_temperature: current.variables(6)!.value(),
+      wind_direction_10m: current.variables(7)!.value(),
+      cloud_cover: current.variables(8)!.value(),
     },
   };
 
-  // The 'weatherData' object now contains a simple structure, with arrays of datetimes and weather information
   console.log(
     `\nCurrent time: ${weatherData.current.time}\n`,
     `\nCurrent temperature_2m: ${weatherData.current.temperature_2m}`,
@@ -56,6 +55,9 @@ export async function fetchWeather(latitude: number, longitude: number) {
     `\nCurrent precipitation: ${weatherData.current.precipitation}`,
     `\nCurrent relative_humidity_2m: ${weatherData.current.relative_humidity_2m}`,
     `\nCurrent wind_speed_10m: ${weatherData.current.wind_speed_10m}`,
+    `\nCurrent apparent_temperature: ${weatherData.current.apparent_temperature}`,
+    `\nCurrent wind_direction_10m: ${weatherData.current.wind_direction_10m}`,
+    `\nCurrent cloud_cover: ${weatherData.current.cloud_cover}`,
   );
 
   if (!response) {
