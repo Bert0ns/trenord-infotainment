@@ -1,5 +1,5 @@
 import { useSettings } from "@/hooks/settings";
-import { useColorScheme } from "@/hooks/use-color-scheme";
+import { useSelectedScheme } from "@/hooks/use-theme-color";
 import { simpleID } from "@/utils/string";
 import { Dimensions, StyleSheet } from "react-native";
 import Animated, {
@@ -48,7 +48,7 @@ export interface MotionDotProps {
 }
 
 export function MotionDot({ acceleration }: MotionDotProps) {
-  const scheme = useColorScheme();
+  const scheme = useSelectedScheme();
   const position = useSharedValue<XY>({
     x: Math.floor(
       Math.random() * (width + OFF_SCREEN_LIMIT * 2) - OFF_SCREEN_LIMIT,
