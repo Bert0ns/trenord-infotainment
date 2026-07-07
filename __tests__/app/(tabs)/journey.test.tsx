@@ -43,6 +43,10 @@ jest.mock("@/lib/api/overpass", () => ({
   useRailwayPolylines: jest.fn(),
 }));
 
+jest.mock("@/hooks/use-location", () => ({
+  useLocationPermission: jest.fn(() => true),
+}));
+
 jest.mock("@/store/journeyStore", () => ({
   ...jest.requireActual("@/store/journeyStore"),
   useJourneyStore: jest.fn(),

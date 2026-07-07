@@ -1,4 +1,5 @@
 import { logger } from "@/lib/logger";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   clearCache,
   getCachedAccessToken,
@@ -8,6 +9,8 @@ import { nowSec } from "@/utils/time";
 import { KJUR, KEYUTIL } from "jsrsasign";
 import { Platform } from "react-native";
 import { StationResponse, TrainInfoResponse } from "./trenord-types";
+
+const CACHE_TTL_STATIONS_S = 24 * 60 * 60;
 
 const apiLogger = logger.extend("TrenordAPI");
 
@@ -44,16 +47,16 @@ if (!tokenUrl) throw new Error("Missing EXPO_PUBLIC_TRENORD_TOKEN_URL");
 if (!apiUrl) throw new Error("Missing EXPO_PUBLIC_TRENORD_API_URL");
 if (!jwkRaw) throw new Error("Missing EXPO_PUBLIC_TRENORD_PRIVATE_JWK");
 
+let cachedPrivateKey: jsrsasign.RSAKey | null = null;
+
 function getPrivateKey() {
+  if (cachedPrivateKey) return cachedPrivateKey;
   try {
-    // Eagerly compute the crypto key on app boot so the first login is instant
     const jwk = JSON.parse(jwkRaw);
-    return KEYUTIL.getKey(jwk) as jsrsasign.RSAKey;
+    cachedPrivateKey = KEYUTIL.getKey(jwk) as jsrsasign.RSAKey;
+    return cachedPrivateKey;
   } catch (error) {
-    apiLogger.error(
-      "Failed to eagerly parse JWK string or generate key",
-      error,
-    );
+    apiLogger.error("Failed to parse JWK string or generate key", error);
     return null;
   }
 }
@@ -158,10 +161,28 @@ export async function fetchStationData(
 ): Promise<StationResponse> {
   if (stationIDs.length === 0) return [];
 
-  // since i have no idea how to filter for multiple stations in the API (i
-  // don't thinkg it's possible and if it is it's not documented) it is easier
-  // and more practical to just fetch all stations and filter them quickly in JS
-  // For this reason this function should be called sparingly
+  try {
+    const cachedItem = await AsyncStorage.getItem("stazioni_v2_cache");
+    if (cachedItem) {
+      const parsed = JSON.parse(cachedItem);
+      // Cache valid for 24 hours
+      if (
+        parsed.timestamp &&
+        nowSec() - parsed.timestamp < CACHE_TTL_STATIONS_S
+      ) {
+        apiLogger.trace("Using cached stazioni_v2 data");
+        const filteredData = parsed.data
+          .filter((station: any) => stationIDs.includes(station.CodiceMIR))
+          .sort(
+            (a: any, b: any) =>
+              stationIDs.indexOf(a.CodiceMIR) - stationIDs.indexOf(b.CodiceMIR),
+          );
+        return filteredData;
+      }
+    }
+  } catch (e) {
+    apiLogger.warn("Failed to read station cache", e);
+  }
 
   const accessToken = await getAccessToken();
   const url = `${apiUrl}/stazioni_v2`;
@@ -185,6 +206,19 @@ export async function fetchStationData(
 
   try {
     const stationData: StationResponse = await response.json();
+
+    try {
+      await AsyncStorage.setItem(
+        "stazioni_v2_cache",
+        JSON.stringify({
+          timestamp: nowSec(),
+          data: stationData,
+        }),
+      );
+    } catch (e) {
+      apiLogger.warn("Failed to save station cache", e);
+    }
+
     const filteredData = stationData
       .filter((station) => stationIDs.includes(station.CodiceMIR))
       .sort(

@@ -93,12 +93,15 @@ export function useLogin() {
       }));
       setStations(parsedStations);
       setTrainData(data);
+      let fetchedStationsFull: StationFull[] = [];
       try {
-        const stationData = await fetchStationData(
-          parsedStations?.map((s) => s.station_id).filter(Boolean),
+        fetchedStationsFull = await fetchStationData(
+          parsedStations?.map((s: any) => s.station_id).filter(Boolean),
         );
-        setStationsFull(stationData);
-      } catch {}
+        setStationsFull(fetchedStationsFull);
+      } catch (err: any) {
+        loginLogger.error("Failed to fetch station data:", err.message);
+      }
 
       if (presetDestination) {
         const stationExists = parsedStations.some(
@@ -118,6 +121,7 @@ export function useLogin() {
               `Auto-starting journey! Train: ${codeToSearch}, Destination: ${destStation.station_ori_name}`,
             );
             setJourneyStore(codeToSearch, destStation, data);
+            setStationsStore(fetchedStationsFull);
             router.replace("/(tabs)/home");
             return;
           }
