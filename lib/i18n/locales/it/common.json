@@ -15,5 +15,6 @@
   "livePosOff": "NO GPS",
   "errorBoundary": {
     "somethingWentWrong": "Qualcosa è andato storto."
-  }
+  },
+  "mapNotAvailableWeb": "Mappa non disponibile nella versione web."
 }

@@ -42,6 +42,7 @@ All code written for this project must strictly respect **SOLID principles**:
 - **Localization:** Never hardcode user-facing strings in components. Always use the `useTranslation` hook from `react-i18next` and add keys to the appropriate language files.
 - **Styling:** Use React Native `StyleSheet` for styling. Ensure all components respect safe areas using `react-native-safe-area-context`.
 - **Security:** Never expose `EXPO_PUBLIC_TRENORD_PRIVATE_JWK` or other sensitive keys in public client code without proper security practices.
+- **Never git commit without approval**
 
 ## 5. Project Structure
 
