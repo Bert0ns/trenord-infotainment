@@ -5,8 +5,8 @@ import { PassList } from "@/lib/api/trenord/trenord-types";
 import { selectStations, useJourneyStore } from "@/store/journeyStore";
 import { bboxToRegion, getBbox, stationLatLng } from "@/utils/geometry";
 import { useTranslation } from "react-i18next";
-import { Text, View } from "react-native";
-import MapView, { Marker, Polyline } from "react-native-maps";
+import { Platform, Text, View } from "react-native";
+import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from "react-native-maps";
 import { getPassStatus } from "./journeyTimeline";
 import { capitalizeWords } from "@/utils/string";
 
@@ -31,6 +31,7 @@ export function JourneyMap({ stations, nextStop }: JourneyMapProps) {
   return (
     <View style={styles.mapContainer}>
       <MapView
+        provider={Platform.OS === "android" ? PROVIDER_GOOGLE : undefined}
         showsUserLocation
         userLocationPriority="low"
         rotateEnabled={false}

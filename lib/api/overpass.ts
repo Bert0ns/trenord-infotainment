@@ -33,6 +33,11 @@ async function fetchRailwayWays(stations: StationFull[]) {
   logger.trace(`Overpass query: \n${query.replace(/\s+/g, " ")}\n`);
   const res = await fetch("https://overpass-api.de/api/interpreter", {
     method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      "User-Agent": "TrenordInfotainment/1.0",
+      Accept: "application/osm3s+xml, application/json, */*",
+    },
     body: `data=${encodeURIComponent(query)}`,
   });
   if (!res.ok) {
