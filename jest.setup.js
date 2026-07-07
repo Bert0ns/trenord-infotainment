@@ -47,6 +47,11 @@ jest.mock("react-native-reanimated", () => {
       ScrollView: ScrollView,
       Image: Image,
     },
+    SensorType: {
+      ACCELEROMETER: "accelerometer",
+      GRAVITY: "gravity",
+    },
+    useAnimatedSensor: jest.fn(() => ({})),
   };
 });
 
