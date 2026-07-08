@@ -16,6 +16,7 @@ jest.unmock("../../lib/api/trenord/trenord");
 const {
   fetchTrainData,
   fetchStationMetadata,
+  fetchStationData,
   clearTrenordApiCache,
 } = require("../../lib/api/trenord/trenord");
 
@@ -155,5 +156,124 @@ describe("Trenord API", () => {
     await expect(fetchStationMetadata("INVALID")).rejects.toThrow(
       "Station API Call failed with status 400",
     );
+  });
+
+  describe("fetchStationData", () => {
+    const AsyncStorage = require("@react-native-async-storage/async-storage");
+
+    beforeEach(() => {
+      AsyncStorage.getItem.mockClear();
+      AsyncStorage.setItem.mockClear();
+    });
+
+    it("returns empty array if stationIDs is empty", async () => {
+      const data = await fetchStationData([]);
+      expect(data).toEqual([]);
+      expect(fetchMock).not.toHaveBeenCalled();
+    });
+
+    it("fetches from API when cache is empty and saves to cache", async () => {
+      AsyncStorage.getItem.mockResolvedValueOnce(null); // No cache
+
+      fetchMock.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ access_token: "mock-access-token" }),
+      });
+
+      const mockApiResponse = [
+        { CodiceMIR: "S2", NomeGeoStazioni: "Station 2" },
+        { CodiceMIR: "S1", NomeGeoStazioni: "Station 1" },
+        { CodiceMIR: "S3", NomeGeoStazioni: "Station 3" },
+      ];
+      fetchMock.mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockApiResponse,
+      });
+
+      const data = await fetchStationData(["S1", "S2"]);
+
+      // Should filter and sort correctly to match ["S1", "S2"]
+      expect(data).toEqual([
+        { CodiceMIR: "S1", NomeGeoStazioni: "Station 1" },
+        { CodiceMIR: "S2", NomeGeoStazioni: "Station 2" },
+      ]);
+
+      expect(AsyncStorage.getItem).toHaveBeenCalledWith("stazioni_v2_cache");
+      expect(AsyncStorage.setItem).toHaveBeenCalledWith(
+        "stazioni_v2_cache",
+        expect.stringContaining('"data":[{'),
+      );
+    });
+
+    it("uses cache if valid and skips API call", async () => {
+      const now = Math.floor(Date.now() / 1000);
+      const mockCachedData = {
+        timestamp: now, // recent
+        data: [
+          { CodiceMIR: "S3", NomeGeoStazioni: "Station 3" },
+          { CodiceMIR: "S1", NomeGeoStazioni: "Station 1" },
+          { CodiceMIR: "S2", NomeGeoStazioni: "Station 2" },
+        ],
+      };
+
+      AsyncStorage.getItem.mockResolvedValueOnce(
+        JSON.stringify(mockCachedData),
+      );
+
+      const data = await fetchStationData(["S2", "S1"]);
+
+      expect(fetchMock).not.toHaveBeenCalled(); // No API call!
+      expect(data).toEqual([
+        { CodiceMIR: "S2", NomeGeoStazioni: "Station 2" },
+        { CodiceMIR: "S1", NomeGeoStazioni: "Station 1" },
+      ]);
+    });
+
+    it("fetches from API if cache is expired", async () => {
+      const oldTimestamp = Math.floor(Date.now() / 1000) - 25 * 60 * 60; // 25 hours ago
+      const mockCachedData = {
+        timestamp: oldTimestamp,
+        data: [],
+      };
+
+      AsyncStorage.getItem.mockResolvedValueOnce(
+        JSON.stringify(mockCachedData),
+      );
+
+      fetchMock.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ access_token: "mock-access-token" }),
+      });
+
+      const mockApiResponse = [
+        { CodiceMIR: "S1", NomeGeoStazioni: "Station 1" },
+      ];
+      fetchMock.mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockApiResponse,
+      });
+
+      const data = await fetchStationData(["S1"]);
+      expect(fetchMock).toHaveBeenCalledTimes(2); // token + data
+      expect(data).toEqual(mockApiResponse);
+    });
+
+    it("throws error if API call fails", async () => {
+      AsyncStorage.getItem.mockResolvedValueOnce(null); // No cache
+
+      fetchMock.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ access_token: "mock-access-token" }),
+      });
+
+      fetchMock.mockResolvedValueOnce({
+        ok: false,
+        status: 500,
+      });
+
+      await expect(fetchStationData(["S1"])).rejects.toThrow(
+        "Station API Call failed with status 500",
+      );
+    });
   });
 });

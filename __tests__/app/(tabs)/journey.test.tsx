@@ -117,6 +117,23 @@ describe("JourneyScreen", () => {
               ],
             },
           ],
+          stations: [
+            {
+              CodiceMIR: "S1",
+              NomeGeoStazioni: "Milano Porta Garibaldi",
+              Location: { coordinates: [9.188, 45.484] },
+            },
+            {
+              CodiceMIR: "S2",
+              NomeGeoStazioni: "Monza",
+              Location: { coordinates: [9.273, 45.583] },
+            },
+            {
+              CodiceMIR: "S3",
+              NomeGeoStazioni: "Bergamo",
+              Location: { coordinates: [9.677, 45.698] },
+            },
+          ],
         }),
     );
 
