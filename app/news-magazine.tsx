@@ -1,7 +1,13 @@
 import { useRouter } from "expo-router";
 import React, { useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { ActivityIndicator, ScrollView, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  ScrollView,
+  Text,
+  View,
+  useWindowDimensions,
+} from "react-native";
 
 import {
   SheetContainer,
@@ -25,6 +31,7 @@ export default function NewsMagazinePage() {
   const { t, i18n } = useTranslation("home");
   const styles = useStyles();
   const sheetRef = useRef<SheetHandle>(null);
+  const { height } = useWindowDimensions();
 
   // Fetch city-specific, Italy, and world news
   const { data: cityNews, isLoading: isCityLoading } = useNews();
@@ -54,62 +61,67 @@ export default function NewsMagazinePage() {
 
   return (
     <SheetContainer ref={sheetRef} bottomInset={24} onClose={handleClose}>
-      <MagazineHeader
-        title={t("magazineTitle")}
-        onClose={() => sheetRef.current?.close()}
-      />
+      <View style={{ height: height * 0.85 }}>
+        <MagazineHeader
+          title={t("magazineTitle")}
+          onClose={() => sheetRef.current?.close()}
+        />
 
-      {isLoading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={styles.loaderColor.color} />
-          <Text style={styles.loadingText}>{t("loadingNews")}</Text>
-        </View>
-      ) : (
-        <ScrollView
-          style={styles.scrollView}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.scrollContent}
-        >
-          {cityNews.length > 0 && (
-            <View style={styles.section}>
-              <MagazineSectionLabel
-                title={resolvedCityName as string}
-                icon="location-on"
-              />
-              <MasonryGrid data={cityNews} columns={2} />
-            </View>
-          )}
-
-          {italyNews.length > 0 && (
-            <View style={styles.section}>
-              <MagazineSectionLabel title={t("italyNewsTitle")} icon="map" />
-              <MasonryGrid data={italyNews} columns={2} />
-            </View>
-          )}
-
-          {uniqueWorldNews.length > 0 && (
-            <View style={styles.section}>
-              <MagazineSectionLabel title={t("worldNewsTitle")} icon="public" />
-              <MasonryGrid data={uniqueWorldNews} columns={2} />
-            </View>
-          )}
-
-          {cityNews.length === 0 &&
-            italyNews.length === 0 &&
-            uniqueWorldNews.length === 0 && (
-              <View style={styles.emptyContainer}>
-                <Text style={styles.emptyText}>{t("noNewsAvailable")}</Text>
+        {isLoading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={styles.loaderColor.color} />
+            <Text style={styles.loadingText}>{t("loadingNews")}</Text>
+          </View>
+        ) : (
+          <ScrollView
+            style={styles.scrollView}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContent}
+          >
+            {cityNews.length > 0 && (
+              <View style={styles.section}>
+                <MagazineSectionLabel
+                  title={resolvedCityName as string}
+                  icon="location-on"
+                />
+                <MasonryGrid data={cityNews} columns={2} />
               </View>
             )}
-        </ScrollView>
-      )}
+
+            {italyNews.length > 0 && (
+              <View style={styles.section}>
+                <MagazineSectionLabel title={t("italyNewsTitle")} icon="map" />
+                <MasonryGrid data={italyNews} columns={2} />
+              </View>
+            )}
+
+            {uniqueWorldNews.length > 0 && (
+              <View style={styles.section}>
+                <MagazineSectionLabel
+                  title={t("worldNewsTitle")}
+                  icon="public"
+                />
+                <MasonryGrid data={uniqueWorldNews} columns={2} />
+              </View>
+            )}
+
+            {cityNews.length === 0 &&
+              italyNews.length === 0 &&
+              uniqueWorldNews.length === 0 && (
+                <View style={styles.emptyContainer}>
+                  <Text style={styles.emptyText}>{t("noNewsAvailable")}</Text>
+                </View>
+              )}
+          </ScrollView>
+        )}
+      </View>
     </SheetContainer>
   );
 }
 
 const useStyles = createStyleHook((theme) => ({
   scrollView: {
-    // flex: 1 removed to prevent collapsing to 0 height
+    flex: 1, // Restored to enable scrolling within bounded view
   },
   scrollContent: {
     paddingBottom: 24,

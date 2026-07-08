@@ -1,5 +1,5 @@
 import React, { type ReactNode, useEffect, useImperativeHandle } from "react";
-import { Dimensions, StyleSheet, View } from "react-native";
+import { StyleSheet, View, useWindowDimensions } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   runOnJS,
@@ -25,8 +25,6 @@ const POP_DOWN_DURATION_MS = 200;
 const SPRING_CONFIG = { damping: 60, stiffness: 700 };
 const DEFAULT_PADDING_BOTTOM = 16;
 
-const WINDOW_HEIGHT = Dimensions.get("window").height;
-
 export type SheetHandle = {
   close: () => void;
 };
@@ -35,7 +33,8 @@ export const SheetContainer = React.forwardRef<
   SheetHandle,
   SheetContainerProps
 >(function SheetContainer({ bottomInset, onClose, children }, ref) {
-  const translateY = useSharedValue(WINDOW_HEIGHT);
+  const { height: windowHeight } = useWindowDimensions();
+  const translateY = useSharedValue(windowHeight);
   const isClosing = useSharedValue(false);
   const theme = useTheme();
 
@@ -48,7 +47,7 @@ export const SheetContainer = React.forwardRef<
     if (isClosing.value) return;
     isClosing.value = true;
     translateY.value = withTiming(
-      WINDOW_HEIGHT,
+      windowHeight,
       { duration: POP_DOWN_DURATION_MS },
       (finished) => {
         if (finished) {
@@ -93,12 +92,21 @@ export const SheetContainer = React.forwardRef<
             {
               paddingBottom: Math.max(bottomInset, DEFAULT_PADDING_BOTTOM),
               backgroundColor: theme.colors.background,
+              maxHeight: windowHeight * 0.9,
             },
             sheetStyle,
           ]}
         >
           <GestureDetector gesture={dragGesture}>
-            <View style={styles.dragRegion}>
+            <View
+              style={[
+                styles.dragRegion,
+                {
+                  marginTop: -windowHeight,
+                  paddingTop: windowHeight - 16,
+                },
+              ]}
+            >
               <View
                 style={[styles.handle, { backgroundColor: theme.colors.muted }]}
               />
@@ -108,7 +116,10 @@ export const SheetContainer = React.forwardRef<
           <View
             style={[
               styles.bottomExtension,
-              { backgroundColor: theme.colors.background },
+              {
+                backgroundColor: theme.colors.background,
+                height: windowHeight,
+              },
             ]}
           />
         </Animated.View>
@@ -135,14 +146,11 @@ const styles = StyleSheet.create({
     shadowRadius: 18,
     shadowOffset: { width: 0, height: -6 },
     elevation: 12,
-    maxHeight: WINDOW_HEIGHT * 0.9,
   },
   dragRegion: {
-    marginTop: -WINDOW_HEIGHT,
     marginLeft: -20,
     marginRight: -20,
     marginBottom: -50,
-    paddingTop: WINDOW_HEIGHT - 16,
     paddingBottom: 34,
     //backgroundColor: "rgba(255, 99, 71, 0.2)", // Uncomment this if you want to see the drag region hitbox clearly during development
   },
@@ -160,7 +168,6 @@ const styles = StyleSheet.create({
     marginTop: -2, // Pull the extension up slightly to cover the sub-pixel rendering gap
     left: 0,
     right: 0,
-    height: WINDOW_HEIGHT,
     borderWidth: 0,
   },
 });
