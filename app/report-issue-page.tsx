@@ -67,9 +67,10 @@ export default function ReportIssuePage() {
       ref={sheetRef}
       bottomInset={insets.bottom}
       onClose={() => router.back()}
+      header={
+        <ReportHeader title={t("reportAnIssue")} onClose={requestClose} />
+      }
     >
-      <ReportHeader title={t("reportAnIssue")} onClose={requestClose} />
-
       <ScrollView
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}

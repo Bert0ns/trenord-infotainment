@@ -35,13 +35,18 @@ jest.mock("@/components/report-issue-components/sheet-container", () => {
   const { View } = require("react-native");
   return {
     SheetContainer: React.forwardRef(function SheetContainer(
-      { children, onClose }: any,
+      { children, header, onClose }: any,
       ref: any,
     ) {
       React.useImperativeHandle(ref, () => ({
         close: () => onClose && onClose(),
       }));
-      return <View testID="sheet-container">{children}</View>;
+      return (
+        <View testID="sheet-container">
+          {header}
+          {children}
+        </View>
+      );
     }),
   };
 });

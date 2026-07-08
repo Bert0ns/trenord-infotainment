@@ -1,3 +1,4 @@
+import { useTheme } from "@/hooks/use-theme-color";
 import React, { type ReactNode, useEffect, useImperativeHandle } from "react";
 import { StyleSheet, View, useWindowDimensions } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
@@ -9,11 +10,11 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "@/hooks/use-theme-color";
 
 type SheetContainerProps = {
   bottomInset: number;
   onClose: () => void;
+  header?: ReactNode;
   children: ReactNode;
 };
 
@@ -32,7 +33,7 @@ export type SheetHandle = {
 export const SheetContainer = React.forwardRef<
   SheetHandle,
   SheetContainerProps
->(function SheetContainer({ bottomInset, onClose, children }, ref) {
+>(function SheetContainer({ bottomInset, onClose, header, children }, ref) {
   const { height: windowHeight } = useWindowDimensions();
   const translateY = useSharedValue(windowHeight);
   const isClosing = useSharedValue(false);
@@ -84,32 +85,48 @@ export const SheetContainer = React.forwardRef<
   }));
 
   return (
-    <View style={styles.scrim}>
-      <SafeAreaView style={styles.safeArea} edges={["left", "right", "bottom"]}>
+    <View style={styles.scrim} pointerEvents="box-none">
+      <GestureDetector gesture={dragGesture}>
+        <View style={StyleSheet.absoluteFill} />
+      </GestureDetector>
+
+      <SafeAreaView
+        style={styles.safeArea}
+        edges={["left", "right", "bottom"]}
+        pointerEvents="box-none"
+      >
         <Animated.View
+          pointerEvents="auto"
           style={[
             styles.sheet,
             {
               paddingBottom: Math.max(bottomInset, DEFAULT_PADDING_BOTTOM),
               backgroundColor: theme.colors.background,
               maxHeight: windowHeight * 0.9,
+              borderColor: theme.colors.border,
             },
             sheetStyle,
           ]}
         >
           <GestureDetector gesture={dragGesture}>
-            <View
-              style={[
-                styles.dragRegion,
-                {
-                  marginTop: -windowHeight,
-                  paddingTop: windowHeight - 16,
-                },
-              ]}
-            >
+            <View>
               <View
-                style={[styles.handle, { backgroundColor: theme.colors.muted }]}
-              />
+                style={[
+                  styles.dragRegion,
+                  {
+                    marginTop: -windowHeight,
+                    paddingTop: windowHeight,
+                  },
+                ]}
+              >
+                <View
+                  style={[
+                    styles.handle,
+                    { backgroundColor: theme.colors.muted },
+                  ]}
+                />
+              </View>
+              {header}
             </View>
           </GestureDetector>
           {children}
@@ -140,6 +157,9 @@ const styles = StyleSheet.create({
   sheet: {
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
+    borderTopWidth: 1,
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
     paddingHorizontal: 20,
     paddingTop: 12,
     shadowOpacity: 0.15,
@@ -150,9 +170,9 @@ const styles = StyleSheet.create({
   dragRegion: {
     marginLeft: -20,
     marginRight: -20,
-    marginBottom: -50,
-    paddingBottom: 34,
-    //backgroundColor: "rgba(255, 99, 71, 0.2)", // Uncomment this if you want to see the drag region hitbox clearly during development
+    marginBottom: -60,
+    paddingBottom: 32,
+    //backgroundColor: "rgba(255,0,0,0.25)", // Uncomment this if you want to see the drag region hitbox clearly during development
   },
   handle: {
     alignSelf: "center",

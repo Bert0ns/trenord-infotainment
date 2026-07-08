@@ -17,14 +17,20 @@ jest.mock("@/components/report-issue-components", () => {
   const React = require("react");
   const { View, Text, TouchableOpacity, TextInput } = require("react-native");
 
-  const SheetContainer = React.forwardRef(
-    ({ children, onClose }: any, ref: any) => {
-      React.useImperativeHandle(ref, () => ({
-        close: () => onClose && onClose(),
-      }));
-      return <View testID="sheet-container">{children}</View>;
-    },
-  );
+  const SheetContainer = React.forwardRef(function SheetContainer(
+    { children, header, onClose }: any,
+    ref: any,
+  ) {
+    React.useImperativeHandle(ref, () => ({
+      close: () => onClose && onClose(),
+    }));
+    return (
+      <View testID="sheet-container">
+        {header}
+        {children}
+      </View>
+    );
+  });
 
   return {
     SheetContainer,

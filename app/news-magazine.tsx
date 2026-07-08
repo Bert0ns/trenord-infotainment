@@ -60,13 +60,18 @@ export default function NewsMagazinePage() {
   const uniqueWorldNews = worldNews.filter((n) => !existingIds.has(n.id));
 
   return (
-    <SheetContainer ref={sheetRef} bottomInset={24} onClose={handleClose}>
-      <View style={{ height: height * 0.85 }}>
+    <SheetContainer
+      ref={sheetRef}
+      bottomInset={24}
+      onClose={handleClose}
+      header={
         <MagazineHeader
           title={t("magazineTitle")}
           onClose={() => sheetRef.current?.close()}
         />
-
+      }
+    >
+      <View style={{ height: height * 0.85 }}>
         {isLoading ? (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color={styles.loaderColor.color} />
