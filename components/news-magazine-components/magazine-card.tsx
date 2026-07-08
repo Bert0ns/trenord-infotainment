@@ -3,7 +3,6 @@ import { createStyleHook } from "@/hooks/use-theme-color";
 import { BlurView } from "expo-blur";
 import React from "react";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useTranslation } from "react-i18next";
 import {
   ImageBackground,
   StyleSheet,
@@ -25,7 +24,6 @@ type MagazineCardProps = {
 
 export function MagazineCard({ article, height }: MagazineCardProps) {
   const styles = useStyles();
-  const { t } = useTranslation("home", { keyPrefix: "newsCard" });
 
   const resolvedUrl = extractMediaUrl(article.description) || article.url;
   const isVideo = isDirectVideoLink(resolvedUrl);
@@ -39,11 +37,6 @@ export function MagazineCard({ article, height }: MagazineCardProps) {
   const handlePress = async () => {
     await openMediaUrl(resolvedUrl, isVideo);
   };
-
-  const displayDescription =
-    isVideo && article.description === resolvedUrl
-      ? t("videoArticle")
-      : article.description;
 
   const effectiveImageUri = hasImage ? article.image : thumbnailUri;
 

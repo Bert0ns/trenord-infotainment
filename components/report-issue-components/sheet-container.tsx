@@ -135,6 +135,7 @@ const styles = StyleSheet.create({
     shadowRadius: 18,
     shadowOffset: { width: 0, height: -6 },
     elevation: 12,
+    maxHeight: WINDOW_HEIGHT * 0.9,
   },
   dragRegion: {
     marginTop: -WINDOW_HEIGHT,
