@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
     marginRight: -20,
     marginBottom: -60,
     paddingBottom: 32,
-    //backgroundColor: "rgba(255,0,0,0.25)", // Uncomment this if you want to see the drag region hitbox clearly during development
+    backgroundColor: "rgba(255,0,0,0.005)", // Bump up the alpha if you want to see the drag region hitbox clearly during development. Leave the line uncommented because it influences the area of the drag region (i don't know why)
   },
   handle: {
     alignSelf: "center",
