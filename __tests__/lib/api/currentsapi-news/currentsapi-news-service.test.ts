@@ -280,7 +280,7 @@ describe("Currents API News Service", () => {
     });
 
     describe("getWorldNews", () => {
-      it("should fetch fresh world news with 'esteri' keyword for 'it' language", async () => {
+      it("should fetch fresh world news with boolean query for 'it' language", async () => {
         mockGetValidLatestNews.mockReturnValue(null);
         global.fetch = jest.fn().mockResolvedValue({
           ok: true,
@@ -295,7 +295,9 @@ describe("Currents API News Service", () => {
           expect.any(Object),
         );
         expect(global.fetch).toHaveBeenCalledWith(
-          expect.stringContaining("keywords=esteri"),
+          expect.stringContaining(
+            "query=mondo+OR+esteri+OR+internazionale+OR+globale",
+          ),
           expect.any(Object),
         );
         expect(mockSetLatestNews).toHaveBeenCalledWith(
@@ -304,7 +306,7 @@ describe("Currents API News Service", () => {
         );
       });
 
-      it("should fetch fresh world news with 'world' keyword for 'en' language", async () => {
+      it("should fetch fresh world news with boolean query for 'en' language", async () => {
         mockGetValidLatestNews.mockReturnValue(null);
         global.fetch = jest.fn().mockResolvedValue({
           ok: true,
@@ -319,7 +321,7 @@ describe("Currents API News Service", () => {
           expect.any(Object),
         );
         expect(global.fetch).toHaveBeenCalledWith(
-          expect.stringContaining("keywords=world"),
+          expect.stringContaining("query=world+OR+international+OR+global"),
           expect.any(Object),
         );
         expect(mockSetLatestNews).toHaveBeenCalledWith(

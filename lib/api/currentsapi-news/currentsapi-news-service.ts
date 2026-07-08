@@ -1,6 +1,6 @@
 import { logger } from "@/lib/logger";
-import { NewsAPIResponse, NewsArticle } from "./currentsapi-news-types";
 import { useNewsStore } from "@/store/newsStore";
+import { NewsAPIResponse, NewsArticle } from "./currentsapi-news-types";
 
 const newsLogger = logger.extend("NewsAPI");
 
@@ -12,6 +12,7 @@ interface FetchNewsOptions {
   page_size?: number;
   category?: string;
   keywords?: string; // Only for search
+  query?: string; // Only for search (boolean queries)
 }
 
 const isApiEnabled = () => process.env.EXPO_PUBLIC_ENABLE_NEWS_API === "true";
@@ -157,6 +158,7 @@ export async function fetchSearchNews(
     ...(options?.country ? { country: options.country } : {}),
     ...(options?.category ? { category: options.category } : {}),
     ...(options?.keywords ? { keywords: options.keywords } : {}),
+    ...(options?.query ? { query: options.query } : {}),
   });
 }
 
@@ -266,12 +268,15 @@ export async function getWorldNews(language: string): Promise<NewsArticle[]> {
     newsLogger.log("Using cached world news");
   } else {
     newsLogger.log("Fetching fresh world news");
-    const keywords = language === "it" ? "esteri" : "world";
+    const query =
+      language === "it"
+        ? "mondo OR esteri OR internazionale OR globale"
+        : "world OR international OR global";
 
     result = await fetchSearchNews({
       language,
-      keywords,
-      category: "general",
+      query,
+      page_size: 20,
     });
     store.setLatestNews(cacheKey, result);
   }
