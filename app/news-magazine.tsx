@@ -9,7 +9,8 @@ import {
 } from "@/components/report-issue-components/sheet-container";
 import { useJourneyStore } from "@/store/journeyStore";
 import { useNews } from "@/hooks/useNews";
-import { useGlobalNews } from "@/hooks/useGlobalNews";
+import { useItalyNews } from "@/hooks/useItalyNews";
+import { useWorldNews } from "@/hooks/useWorldNews";
 import { createStyleHook } from "@/hooks/use-theme-color";
 import { getLocalizedCityName } from "@/utils/news";
 
@@ -25,9 +26,10 @@ export default function NewsMagazinePage() {
   const styles = useStyles();
   const sheetRef = useRef<SheetHandle>(null);
 
-  // Fetch both city-specific and global news
+  // Fetch city-specific, Italy, and world news
   const { data: cityNews, isLoading: isCityLoading } = useNews();
-  const { data: globalNews, isLoading: isGlobalLoading } = useGlobalNews();
+  const { data: italyNews, isLoading: isItalyLoading } = useItalyNews();
+  const { data: worldNews, isLoading: isWorldLoading } = useWorldNews();
 
   // If there's city news, get the city name for the label.
   const { destinationStation, destinationMunicipality } = useJourneyStore();
@@ -42,7 +44,13 @@ export default function NewsMagazinePage() {
     router.back();
   };
 
-  const isLoading = isCityLoading || isGlobalLoading;
+  const isLoading = isCityLoading || isItalyLoading || isWorldLoading;
+
+  const existingIds = new Set([
+    ...cityNews.map((n) => n.id),
+    ...italyNews.map((n) => n.id),
+  ]);
+  const uniqueWorldNews = worldNews.filter((n) => !existingIds.has(n.id));
 
   return (
     <SheetContainer ref={sheetRef} bottomInset={24} onClose={handleClose}>
@@ -72,21 +80,27 @@ export default function NewsMagazinePage() {
             </View>
           )}
 
-          {globalNews.length > 0 && (
+          {italyNews.length > 0 && (
             <View style={styles.section}>
-              <MagazineSectionLabel
-                title={t("globalNewsTitle")}
-                icon="public"
-              />
-              <MasonryGrid data={globalNews} columns={2} />
+              <MagazineSectionLabel title={t("italyNewsTitle")} icon="map" />
+              <MasonryGrid data={italyNews} columns={2} />
             </View>
           )}
 
-          {cityNews.length === 0 && globalNews.length === 0 && (
-            <View style={styles.emptyContainer}>
-              <Text style={styles.emptyText}>{t("noNewsAvailable")}</Text>
+          {uniqueWorldNews.length > 0 && (
+            <View style={styles.section}>
+              <MagazineSectionLabel title={t("worldNewsTitle")} icon="public" />
+              <MasonryGrid data={uniqueWorldNews} columns={2} />
             </View>
           )}
+
+          {cityNews.length === 0 &&
+            italyNews.length === 0 &&
+            uniqueWorldNews.length === 0 && (
+              <View style={styles.emptyContainer}>
+                <Text style={styles.emptyText}>{t("noNewsAvailable")}</Text>
+              </View>
+            )}
         </ScrollView>
       )}
     </SheetContainer>

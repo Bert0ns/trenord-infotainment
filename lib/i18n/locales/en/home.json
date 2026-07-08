@@ -34,7 +34,8 @@
   "noNews": "No news available.",
   "discoverMilano": "Discover Milano",
   "magazineTitle": "Digital Magazine",
-  "globalNewsTitle": "Global News",
+  "italyNewsTitle": "Italy News",
+  "worldNewsTitle": "World News",
   "noNewsAvailable": "No news available at the moment.",
   "cityNewsFallback": "Local News"
 }

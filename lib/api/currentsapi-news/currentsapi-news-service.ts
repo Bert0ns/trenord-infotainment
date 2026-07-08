@@ -228,23 +228,49 @@ export async function getRelevantNews(
 }
 
 /**
- * Fetches global/general news (not city-specific).
- * Uses the latestNewsCache with a distinct key to avoid collisions with city-based fallback cache.
- * Follows the same cache-first pattern as getRelevantNews.
+ * Fetches Italy news.
+ * Uses the latestNewsCache with a distinct key to avoid collisions.
  */
-export async function getGlobalNews(language: string): Promise<NewsArticle[]> {
+export async function getItalyNews(language: string): Promise<NewsArticle[]> {
   const store = useNewsStore.getState();
-  const cacheKey = `global-latest-${language}`;
+  const cacheKey = `italy-latest-${language}`;
 
   let result = store.getValidLatestNews(cacheKey);
 
   if (result) {
-    newsLogger.log("Using cached global news");
+    newsLogger.log("Using cached italy news");
   } else {
-    newsLogger.log("Fetching fresh global news");
+    newsLogger.log("Fetching fresh italy news");
     result = await fetchLatestNews({
       language,
       country: "IT",
+      category: "general",
+    });
+    store.setLatestNews(cacheKey, result);
+  }
+
+  return result.news;
+}
+
+/**
+ * Fetches world news (no country constraint).
+ * Uses the latestNewsCache with a distinct key.
+ */
+export async function getWorldNews(language: string): Promise<NewsArticle[]> {
+  const store = useNewsStore.getState();
+  const cacheKey = `world-latest-${language}`;
+
+  let result = store.getValidLatestNews(cacheKey);
+
+  if (result) {
+    newsLogger.log("Using cached world news");
+  } else {
+    newsLogger.log("Fetching fresh world news");
+    const keywords = language === "it" ? "esteri" : "world";
+
+    result = await fetchSearchNews({
+      language,
+      keywords,
       category: "general",
     });
     store.setLatestNews(cacheKey, result);

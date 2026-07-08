@@ -2,6 +2,8 @@ import {
   fetchLatestNews,
   fetchSearchNews,
   getRelevantNews,
+  getItalyNews,
+  getWorldNews,
 } from "@/lib/api/currentsapi-news/currentsapi-news-service";
 
 import { useNewsStore } from "@/store/newsStore";
@@ -229,6 +231,111 @@ describe("Currents API News Service", () => {
         mockEmptyData,
       );
       expect(mockSetLatestNews).toHaveBeenCalledWith("latest-en", mockNewsData);
+    });
+  });
+
+  describe("getItalyNews and getWorldNews", () => {
+    const mockGetValidLatestNews = jest.fn();
+    const mockSetLatestNews = jest.fn();
+    const mockNewsData = { news: [{ id: "1", title: "Global News" }] };
+
+    beforeEach(() => {
+      (useNewsStore.getState as jest.Mock).mockReturnValue({
+        getValidLatestNews: mockGetValidLatestNews,
+        setLatestNews: mockSetLatestNews,
+      });
+      process.env.EXPO_PUBLIC_ENABLE_NEWS_API = "true";
+      process.env.EXPO_PUBLIC_NEWS_API_KEY = "test_api_key";
+    });
+
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    describe("getItalyNews", () => {
+      it("should fetch fresh italy news if cache is invalid/empty", async () => {
+        mockGetValidLatestNews.mockReturnValue(null);
+        global.fetch = jest.fn().mockResolvedValue({
+          ok: true,
+          json: async () => mockNewsData,
+        });
+
+        const result = await getItalyNews("it");
+
+        expect(result).toEqual(mockNewsData.news);
+        expect(mockSetLatestNews).toHaveBeenCalledWith(
+          "italy-latest-it",
+          mockNewsData,
+        );
+      });
+
+      it("should use cached italy news if valid", async () => {
+        mockGetValidLatestNews.mockReturnValue(mockNewsData);
+
+        const result = await getItalyNews("it");
+
+        expect(result).toEqual(mockNewsData.news);
+        expect(global.fetch).not.toHaveBeenCalled();
+      });
+    });
+
+    describe("getWorldNews", () => {
+      it("should fetch fresh world news with 'esteri' keyword for 'it' language", async () => {
+        mockGetValidLatestNews.mockReturnValue(null);
+        global.fetch = jest.fn().mockResolvedValue({
+          ok: true,
+          json: async () => mockNewsData,
+        });
+
+        const result = await getWorldNews("it");
+
+        expect(result).toEqual(mockNewsData.news);
+        expect(global.fetch).toHaveBeenCalledWith(
+          expect.stringContaining("search"),
+          expect.any(Object),
+        );
+        expect(global.fetch).toHaveBeenCalledWith(
+          expect.stringContaining("keywords=esteri"),
+          expect.any(Object),
+        );
+        expect(mockSetLatestNews).toHaveBeenCalledWith(
+          "world-latest-it",
+          mockNewsData,
+        );
+      });
+
+      it("should fetch fresh world news with 'world' keyword for 'en' language", async () => {
+        mockGetValidLatestNews.mockReturnValue(null);
+        global.fetch = jest.fn().mockResolvedValue({
+          ok: true,
+          json: async () => mockNewsData,
+        });
+
+        const result = await getWorldNews("en");
+
+        expect(result).toEqual(mockNewsData.news);
+        expect(global.fetch).toHaveBeenCalledWith(
+          expect.stringContaining("search"),
+          expect.any(Object),
+        );
+        expect(global.fetch).toHaveBeenCalledWith(
+          expect.stringContaining("keywords=world"),
+          expect.any(Object),
+        );
+        expect(mockSetLatestNews).toHaveBeenCalledWith(
+          "world-latest-en",
+          mockNewsData,
+        );
+      });
+
+      it("should use cached world news if valid", async () => {
+        mockGetValidLatestNews.mockReturnValue(mockNewsData);
+
+        const result = await getWorldNews("it");
+
+        expect(result).toEqual(mockNewsData.news);
+        expect(global.fetch).not.toHaveBeenCalled();
+      });
     });
   });
 });

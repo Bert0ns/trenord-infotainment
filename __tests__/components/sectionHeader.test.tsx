@@ -1,6 +1,6 @@
 import SectionHeader from "@/components/sectionHeader";
 import enCommon from "@/lib/i18n/locales/en/common.json";
-import { render } from "@testing-library/react-native";
+import { render, fireEvent } from "@testing-library/react-native";
 import React from "react";
 
 jest.mock("@expo/vector-icons", () => ({
@@ -39,5 +39,21 @@ describe("SectionHeader", () => {
     );
     expect(getByText("Media Title")).toBeTruthy();
     expect(getByText(enCommon.sectionHeader.seeAll)).toBeTruthy();
+  });
+
+  it("calls onSeeMorePress when see more is pressed", () => {
+    const mockPress = jest.fn();
+    const { getByText } = render(
+      <SectionHeader
+        title="Home Title"
+        type="home"
+        onSeeMorePress={mockPress}
+      />,
+    );
+    const seeMoreText = getByText(enCommon.sectionHeader.seeMore);
+    // In React Native testing, pressing text nested in TouchableOpacity works
+    // if we use fireEvent.press
+    fireEvent.press(seeMoreText);
+    expect(mockPress).toHaveBeenCalled();
   });
 });

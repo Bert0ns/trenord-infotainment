@@ -1,4 +1,4 @@
-import { getGlobalNews } from "@/lib/api/currentsapi-news/currentsapi-news-service";
+import { getWorldNews } from "@/lib/api/currentsapi-news/currentsapi-news-service";
 import { NewsArticle } from "@/lib/api/currentsapi-news/currentsapi-news-types";
 import { logger } from "@/lib/logger";
 import { useSettings } from "@/hooks/settings";
@@ -11,10 +11,10 @@ import { deduplicateNews } from "@/utils/news";
 const hookLogger = logger.extend("GlobalNewsAPI");
 
 /**
- * Hook to fetch global/general news (not city-specific).
+ * Hook to fetch world/international news.
  * Follows the same pattern as useNews but does NOT depend on destination.
  */
-export function useGlobalNews() {
+export function useWorldNews() {
   const { settings } = useSettings();
   const trainId = useJourneyStore((s) => s.trainId);
   const cacheVersion = useNewsStore((s) => s.cacheVersion);
@@ -53,10 +53,10 @@ export function useGlobalNews() {
       setError(null);
 
       try {
-        const articles = await getGlobalNews(language);
+        const articles = await getWorldNews(language);
         if (isMounted) setData(deduplicateNews(articles));
       } catch (err: unknown) {
-        hookLogger.error("Error in useGlobalNews hook:", err);
+        hookLogger.error("Error in useWorldNews hook:", err);
         if (isMounted) setError(err as Error);
       } finally {
         if (isMounted) setIsLoading(false);
