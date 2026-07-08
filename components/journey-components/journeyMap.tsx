@@ -118,7 +118,7 @@ const useStyles = createStyleHook((theme) => ({
   mapInfoBox: {
     position: "absolute",
     top: 10,
-    right: 10,
+    left: 10,
     backgroundColor: theme.colors.backgroundTransparent,
     paddingHorizontal: theme.spacing.sm,
     paddingVertical: 4,
