@@ -14,5 +14,15 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         },
       },
     },
+    plugins: [
+      ...(config.plugins || []),
+      [
+        "react-native-maps",
+        {
+          androidGoogleMapsApiKey:
+            process.env.EXPO_PUBLIC_GOOGLE_MAPS_ANDROID_API_KEY || "",
+        },
+      ],
+    ],
   };
 };
