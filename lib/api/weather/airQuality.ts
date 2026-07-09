@@ -1,7 +1,7 @@
 import { logger } from "@/lib/logger";
 import { fetchWeatherApi } from "openmeteo";
 
-const weatherLogger = logger.extend("Weather");
+const weatherLogger = logger.extend("WeatherAPI");
 
 export async function fetchAirQuality(latitude: number, longitude: number) {
   try {

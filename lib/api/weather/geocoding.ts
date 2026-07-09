@@ -1,6 +1,6 @@
 import { logger } from "@/lib/logger";
 
-const geocodingLogger = logger.extend("Geocoding");
+const geocodingLogger = logger.extend("GeocodingAPI");
 
 export async function searchCity(city: string) {
   try {
