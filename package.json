@@ -15,6 +15,7 @@
     "format:check": "prettier . --check",
     "typecheck": "tsc --noEmit",
     "lint": "expo lint",
+    "eslint": "eslint .",
     "test": "jest",
     "test:cov": "jest --coverage",
     "test-watch": "jest --watchAll",

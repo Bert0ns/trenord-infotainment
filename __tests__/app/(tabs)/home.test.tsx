@@ -8,6 +8,7 @@ jest.mock("expo-router", () => {
   const { Text } = require("react-native");
   return {
     Redirect: () => React.createElement(Text, null, "Redirected to login"),
+    useRouter: () => ({ push: jest.fn(), back: jest.fn() }),
   };
 });
 

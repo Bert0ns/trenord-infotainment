@@ -74,6 +74,14 @@ export default function RootLayout() {
               headerShown: false,
             }}
           />
+          <Stack.Screen
+            name="news-magazine"
+            options={{
+              presentation: "transparentModal",
+              animation: "none",
+              headerShown: false,
+            }}
+          />
         </Stack>
         <StatusBar style="auto" />
       </SettingsProvider>

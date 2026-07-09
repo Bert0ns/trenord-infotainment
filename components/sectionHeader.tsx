@@ -9,6 +9,7 @@ interface SectionHeaderProps {
   type?: "journey" | "media" | "home";
   isFirst?: boolean;
   icon?: keyof typeof MaterialIcons.glyphMap;
+  onSeeMorePress?: () => void;
 }
 
 export default function SectionHeader({
@@ -16,6 +17,7 @@ export default function SectionHeader({
   type,
   icon,
   isFirst,
+  onSeeMorePress,
 }: SectionHeaderProps) {
   const styles = useStyles();
   const { t } = useTranslation("common", { keyPrefix: "sectionHeader" });
@@ -47,7 +49,7 @@ export default function SectionHeader({
         </TouchableOpacity>
       )}
       {type === "home" && (
-        <TouchableOpacity>
+        <TouchableOpacity onPress={onSeeMorePress}>
           <Text style={styles.seeAll}>{t("seeMore")}</Text>
         </TouchableOpacity>
       )}

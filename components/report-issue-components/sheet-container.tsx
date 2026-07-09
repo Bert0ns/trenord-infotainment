@@ -1,5 +1,6 @@
+import { useTheme } from "@/hooks/use-theme-color";
 import React, { type ReactNode, useEffect, useImperativeHandle } from "react";
-import { Dimensions, StyleSheet, View } from "react-native";
+import { StyleSheet, View, useWindowDimensions } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   runOnJS,
@@ -9,11 +10,11 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "@/hooks/use-theme-color";
 
 type SheetContainerProps = {
   bottomInset: number;
   onClose: () => void;
+  header?: ReactNode;
   children: ReactNode;
 };
 
@@ -25,8 +26,6 @@ const POP_DOWN_DURATION_MS = 200;
 const SPRING_CONFIG = { damping: 60, stiffness: 700 };
 const DEFAULT_PADDING_BOTTOM = 16;
 
-const WINDOW_HEIGHT = Dimensions.get("window").height;
-
 export type SheetHandle = {
   close: () => void;
 };
@@ -34,8 +33,9 @@ export type SheetHandle = {
 export const SheetContainer = React.forwardRef<
   SheetHandle,
   SheetContainerProps
->(function SheetContainer({ bottomInset, onClose, children }, ref) {
-  const translateY = useSharedValue(WINDOW_HEIGHT);
+>(function SheetContainer({ bottomInset, onClose, header, children }, ref) {
+  const { height: windowHeight } = useWindowDimensions();
+  const translateY = useSharedValue(windowHeight);
   const isClosing = useSharedValue(false);
   const theme = useTheme();
 
@@ -48,7 +48,7 @@ export const SheetContainer = React.forwardRef<
     if (isClosing.value) return;
     isClosing.value = true;
     translateY.value = withTiming(
-      WINDOW_HEIGHT,
+      windowHeight,
       { duration: POP_DOWN_DURATION_MS },
       (finished) => {
         if (finished) {
@@ -85,30 +85,58 @@ export const SheetContainer = React.forwardRef<
   }));
 
   return (
-    <View style={styles.scrim}>
-      <SafeAreaView style={styles.safeArea} edges={["left", "right", "bottom"]}>
+    <View style={styles.scrim} pointerEvents="box-none">
+      <GestureDetector gesture={dragGesture}>
+        <View style={StyleSheet.absoluteFill} />
+      </GestureDetector>
+
+      <SafeAreaView
+        style={styles.safeArea}
+        edges={["left", "right", "bottom"]}
+        pointerEvents="box-none"
+      >
         <Animated.View
+          pointerEvents="auto"
           style={[
             styles.sheet,
             {
               paddingBottom: Math.max(bottomInset, DEFAULT_PADDING_BOTTOM),
               backgroundColor: theme.colors.background,
+              maxHeight: windowHeight * 0.9,
+              borderColor: theme.colors.border,
             },
             sheetStyle,
           ]}
         >
           <GestureDetector gesture={dragGesture}>
-            <View style={styles.dragRegion}>
+            <View>
               <View
-                style={[styles.handle, { backgroundColor: theme.colors.muted }]}
-              />
+                style={[
+                  styles.dragRegion,
+                  {
+                    marginTop: -windowHeight,
+                    paddingTop: windowHeight,
+                  },
+                ]}
+              >
+                <View
+                  style={[
+                    styles.handle,
+                    { backgroundColor: theme.colors.muted },
+                  ]}
+                />
+              </View>
+              {header}
             </View>
           </GestureDetector>
           {children}
           <View
             style={[
               styles.bottomExtension,
-              { backgroundColor: theme.colors.background },
+              {
+                backgroundColor: theme.colors.background,
+                height: windowHeight,
+              },
             ]}
           />
         </Animated.View>
@@ -129,6 +157,9 @@ const styles = StyleSheet.create({
   sheet: {
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
+    borderTopWidth: 1,
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
     paddingHorizontal: 20,
     paddingTop: 12,
     shadowOpacity: 0.15,
@@ -137,13 +168,11 @@ const styles = StyleSheet.create({
     elevation: 12,
   },
   dragRegion: {
-    marginTop: -WINDOW_HEIGHT,
     marginLeft: -20,
     marginRight: -20,
-    marginBottom: -50,
-    paddingTop: WINDOW_HEIGHT - 16,
-    paddingBottom: 34,
-    //backgroundColor: "rgba(255, 99, 71, 0.2)", // Uncomment this if you want to see the drag region hitbox clearly during development
+    marginBottom: -60,
+    paddingBottom: 32,
+    backgroundColor: "rgba(255,0,0,0.005)", // Bump up the alpha if you want to see the drag region hitbox clearly during development. Leave the line uncommented because it influences the area of the drag region (i don't know why)
   },
   handle: {
     alignSelf: "center",
@@ -159,7 +188,6 @@ const styles = StyleSheet.create({
     marginTop: -2, // Pull the extension up slightly to cover the sub-pixel rendering gap
     left: 0,
     right: 0,
-    height: WINDOW_HEIGHT,
     borderWidth: 0,
   },
 });
