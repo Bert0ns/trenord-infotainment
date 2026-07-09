@@ -42,7 +42,7 @@
   "title": "Settings",
   "travelComfort": {
     "antiSickness": {
-      "description": "Reduces motion animations and increases contrast to mitigate travel nausea.",
+      "description": "Enable motion indicators at the edge of the screen to help reduce travel sickness.",
       "label": "Anti-Sickness Mode"
     },
     "title": "Travel Comfort"

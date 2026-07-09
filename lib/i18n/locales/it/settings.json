@@ -42,7 +42,7 @@
   "title": "Impostazioni",
   "travelComfort": {
     "antiSickness": {
-      "description": "Riduce le animazioni del movimento e aumenta il contrasto per mitigare la nausea da viaggio.",
+      "description": "Abilita indicatori di movimento a bordo schermo che aiutano a ridurre la nausea da viaggio.",
       "label": "Modalità Anti-Nausea"
     },
     "title": "Conforto del Viaggio"
