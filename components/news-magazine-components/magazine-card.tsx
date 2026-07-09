@@ -1,7 +1,6 @@
 import { NewsArticle } from "@/lib/api/currentsapi-news/currentsapi-news-types";
 import { createStyleHook } from "@/hooks/use-theme-color";
 import { BlurView } from "expo-blur";
-import React from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 import {
   ImageBackground,

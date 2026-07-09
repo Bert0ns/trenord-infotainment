@@ -658,6 +658,11 @@ const useStyles = createStyleHook((theme) => ({
     fontWeight: "500",
     color: theme.colors.primary,
   },
+  destinationText: {
+    fontSize: 15,
+    fontWeight: "500",
+    color: theme.colors.primary,
+  },
   delayBadge: {
     backgroundColor: theme.colors.destructive,
     flexDirection: "row",

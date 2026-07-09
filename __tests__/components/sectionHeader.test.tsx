@@ -27,7 +27,11 @@ describe("SectionHeader", () => {
 
   it("renders correctly for home type", () => {
     const { getByText } = render(
-      <SectionHeader title="Home Title" type="home" />,
+      <SectionHeader
+        title="Home Title"
+        type="home"
+        route="/(tabs)/home/weatherDetails"
+      />,
     );
     expect(getByText("Home Title")).toBeTruthy();
     expect(getByText(enCommon.sectionHeader.seeMore)).toBeTruthy();

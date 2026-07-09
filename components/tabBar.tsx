@@ -3,7 +3,6 @@ import { useJourneyStore } from "@/store/journeyStore";
 import { MaterialIcons } from "@expo/vector-icons";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { BlurView } from "expo-blur";
-import React from "react";
 import { Pressable, Text, View } from "react-native";
 
 export default function CustomTabBar({
