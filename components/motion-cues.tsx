@@ -59,20 +59,24 @@ export function MotionDot({ acceleration }: MotionDotProps) {
   });
 
   useDerivedValue(() => {
-    const { x, y } = acceleration.get();
-    position.set((value) => {
-      let px = value.x + x * MOVEMENT_SCALE;
-      let py = value.y + y * MOVEMENT_SCALE;
-      if (px < mind) px += fullx;
-      if (px > maxx) px -= fullx;
-      if (py < mind) py += fully;
-      if (py > maxy) py -= fully;
-      return { x: px, y: py };
-    });
+    const { x, y } = acceleration.value;
+    position.value = {
+      x: position.value.x + x * MOVEMENT_SCALE,
+      y: position.value.y + y * MOVEMENT_SCALE,
+    };
+
+    let px = position.value.x;
+    let py = position.value.y;
+    if (px < mind) px += fullx;
+    if (px > maxx) px -= fullx;
+    if (py < mind) py += fully;
+    if (py > maxy) py -= fully;
+
+    position.value = { x: px, y: py };
   });
 
   const opacity = useDerivedValue(() => {
-    const { x, y } = position.get();
+    const { x, y } = position.value;
     // distance from the nearest edge of the screen
     const depthX = Math.min(x, width - x);
     const depthY = Math.min(y, height - y);
@@ -88,7 +92,7 @@ export function MotionDot({ acceleration }: MotionDotProps) {
 
   const scale = useDerivedValue(() =>
     interpolate(
-      opacity.get(),
+      opacity.value,
       [0, 1, 1, 0],
       [0.5, 1, 1, 0.5],
       Extrapolation.CLAMP,
@@ -96,7 +100,7 @@ export function MotionDot({ acceleration }: MotionDotProps) {
   );
 
   const style = useAnimatedStyle(() => {
-    const { x, y } = position.get();
+    const { x, y } = position.value;
     return {
       position: "absolute",
       left: 0,
@@ -108,37 +112,47 @@ export function MotionDot({ acceleration }: MotionDotProps) {
         scheme === "dark"
           ? "rgba(200, 200, 200, 0.9)"
           : "rgba(60, 60, 60, 0.9)",
-      opacity: opacity.get(),
-      transform: [{ translateX: x }, { translateY: y }, { scale: scale.get() }],
+      opacity: opacity.value,
+      transform: [{ translateX: x }, { translateY: y }, { scale: scale.value }],
     };
   }, [scheme]);
 
   return <Animated.View style={style} />;
 }
 
+const dots = Array.from({ length: DOT_NUMBER }, () => simpleID());
+
 export default function VehicleMotionCues() {
   const isOn = useSettings().settings.antiSickness;
-  const gravity = useAnimatedSensor(SensorType.GRAVITY);
   const accelerometer = useAnimatedSensor(SensorType.ACCELEROMETER);
+  const gravity = useSharedValue({ x: 0, y: 0, z: 0 });
   const magnitudeOpacity = useSharedValue(0);
   // smoothed animation value
   const acceleration = useSharedValue<XY>({ x: 0, y: 0 });
 
   useDerivedValue(() => {
-    const g = gravity.sensor.get();
-    const sensor = accelerometer.sensor.get();
-    const x = sensor.x - g.x;
-    const y = sensor.y - g.y;
+    const sensor = accelerometer.sensor.value;
+
+    // Low-pass filter to isolate gravity
+    const alpha = 0.8;
+    const gx = alpha * gravity.value.x + (1 - alpha) * sensor.x;
+    const gy = alpha * gravity.value.y + (1 - alpha) * sensor.y;
+    const gz = alpha * gravity.value.z + (1 - alpha) * sensor.z;
+    gravity.value = { x: gx, y: gy, z: gz };
+
+    // High-pass filter to isolate linear acceleration
+    const x = sensor.x - gx;
+    const y = sensor.y - gy;
+
     const magnitude = Math.sqrt(x * x + y * y);
-    magnitudeOpacity.set(
-      withTiming(magnitude > 0.1 ? 1 : 0, { duration: 300 }),
-    );
-    acceleration.set({ x, y });
+    magnitudeOpacity.value = withTiming(magnitude > 0.1 ? 1 : 0, {
+      duration: 300,
+    });
+    acceleration.value = { x, y };
   });
 
-  const dots = Array.from({ length: DOT_NUMBER }, () => simpleID());
   const style = useAnimatedStyle(() => ({
-    opacity: magnitudeOpacity.get(),
+    opacity: magnitudeOpacity.value,
   }));
 
   if (!isOn) return null;
