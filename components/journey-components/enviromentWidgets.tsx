@@ -66,9 +66,6 @@ export function AirQualityCard({ value }: { value: number }) {
             strokeDasharray={circumference}
             strokeDashoffset={strokeDashoffset}
             strokeLinecap="round"
-            rotation="-90"
-            originX={size / 2}
-            originY={size / 2}
           />
         </Svg>
 
@@ -161,6 +158,7 @@ const useStyles = createStyleHook((theme) => ({
   },
   svgContainer: {
     position: "absolute",
+    transform: [{ rotate: "-90deg" }],
   },
   valueLarge: {
     fontSize: 24,
