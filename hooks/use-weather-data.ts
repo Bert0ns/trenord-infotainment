@@ -19,15 +19,18 @@ export function useWeatherData({
     (state) => state.stopWeatherUpdates,
   );
 
-  const refreshWeather = useCallback(() => {
-    if (
-      !destinationMunicipality ||
-      destinationMunicipality.toLowerCase() === "none"
-    ) {
-      return;
-    }
-    startWeatherUpdates(destinationMunicipality);
-  }, [destinationMunicipality, startWeatherUpdates]);
+  const refreshWeather = useCallback(
+    (force = false) => {
+      if (
+        !destinationMunicipality ||
+        destinationMunicipality.toLowerCase() === "none"
+      ) {
+        return Promise.resolve();
+      }
+      return startWeatherUpdates(destinationMunicipality, force);
+    },
+    [destinationMunicipality, startWeatherUpdates],
+  );
 
   useEffect(() => {
     if (!manageLifecycle) return;

@@ -53,10 +53,9 @@ export default function HomeScreen() {
   const { refreshWeather } = useWeatherData();
 
   const handleRefresh = useCallback(async () => {
-    refreshWeather();
-    if (onRefreshTrain) {
-      await onRefreshTrain();
-    }
+    const weatherPromise = refreshWeather(true);
+    const trainPromise = onRefreshTrain ? onRefreshTrain() : Promise.resolve();
+    await Promise.all([weatherPromise, trainPromise]);
   }, [refreshWeather, onRefreshTrain]);
 
   const { settings } = useSettings();
@@ -205,6 +204,7 @@ export default function HomeScreen() {
         }
         type="home"
         icon="explore"
+        route="/(tabs)/journey"
       />
       {/* Tips cards */}
       <FlatList

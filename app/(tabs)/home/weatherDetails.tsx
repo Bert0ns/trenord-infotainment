@@ -1,7 +1,7 @@
 import {
   AirQualityCard,
   UVIndexCard,
-} from "@/components/journey-components/enviromentWidgets";
+} from "@/components/journey-components/environmentWidgets";
 import CurrentWeatherCard from "@/components/journey-components/weatherCurrentCard";
 import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
 import { useWeatherData } from "@/hooks/use-weather-data";

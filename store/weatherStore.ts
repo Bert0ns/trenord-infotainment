@@ -24,13 +24,14 @@ interface WeatherState {
   lastFetchTimestamp: number | null;
   lastCity: string | null;
 
-  startWeatherUpdates: (city: string) => Promise<void>;
+  startWeatherUpdates: (city: string, force?: boolean) => Promise<void>;
 
   stopWeatherUpdates: () => void;
   clearCache: () => void;
 }
 
 let weatherInterval: NodeJS.Timeout | null = null;
+let currentUpdateId = 0;
 
 const WEATHER_CACHE_TTL = 5 * 60 * 1000;
 
@@ -41,9 +42,10 @@ export const useWeatherStore = create<WeatherState>((set, get) => ({
   lastFetchTimestamp: null,
   lastCity: null,
 
-  startWeatherUpdates: async (city) => {
+  startWeatherUpdates: async (city, force = false) => {
     const store = get();
     if (
+      !force &&
       store.weather &&
       store.lastCity === city &&
       store.lastFetchTimestamp &&
@@ -56,6 +58,8 @@ export const useWeatherStore = create<WeatherState>((set, get) => ({
       }
       return;
     }
+
+    const updateId = ++currentUpdateId;
 
     async function loadWeather() {
       try {
@@ -102,16 +106,19 @@ export const useWeatherStore = create<WeatherState>((set, get) => ({
 
     await loadWeather();
 
+    if (currentUpdateId !== updateId) return;
+
     if (weatherInterval) {
       clearInterval(weatherInterval);
     }
 
     weatherInterval = setInterval(() => {
-      loadWeather();
+      get().startWeatherUpdates(city);
     }, WEATHER_CACHE_TTL);
   },
 
   stopWeatherUpdates: () => {
+    currentUpdateId++;
     if (weatherInterval) {
       clearInterval(weatherInterval);
       weatherInterval = null;

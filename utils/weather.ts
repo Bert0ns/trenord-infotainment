@@ -12,7 +12,7 @@ export function getWeatherIcon(
   isDay: boolean,
   theme: Theme,
 ): WeatherIconInfo {
-  if ([0, 1, 2].includes(code)) {
+  if ([0, 1].includes(code)) {
     return {
       name: isDay ? "wb-sunny" : "bedtime",
       color: theme.colors.warning,

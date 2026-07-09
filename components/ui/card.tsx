@@ -1,12 +1,20 @@
 import { createStyleHook } from "@/hooks/use-theme-color";
 import React from "react";
-import { Pressable, StyleProp, View, ViewProps, ViewStyle } from "react-native";
+import {
+  Pressable,
+  PressableProps,
+  StyleProp,
+  View,
+  ViewProps,
+  ViewStyle,
+} from "react-native";
 
-export interface CardProps extends ViewProps {
-  children: React.ReactNode;
-  variant?: "default" | "outline" | "elevated" | "muted";
-  onPress?: () => void;
-}
+export type CardProps = ViewProps &
+  Omit<PressableProps, "style" | "children"> & {
+    children: React.ReactNode;
+    variant?: "default" | "outline" | "elevated" | "muted";
+    style?: StyleProp<ViewStyle>;
+  };
 
 export default function Card({
   children,
@@ -27,7 +35,7 @@ export default function Card({
       <Pressable
         onPress={onPress}
         style={({ pressed }) => [cardStyle, pressed && { opacity: 0.7 }]}
-        {...(props as any)}
+        {...props}
       >
         {children}
       </Pressable>
