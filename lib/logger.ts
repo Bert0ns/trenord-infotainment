@@ -34,6 +34,7 @@ const config = {
       NewsStore: "yellowBright" as const,
       WeatherAPI: "cyanBright" as const,
       GeocodingAPI: "blueBright" as const,
+      AirQualityAPI: "greenBright" as const,
     },
   },
   async: process.env.NODE_ENV !== "test",

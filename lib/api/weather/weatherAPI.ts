@@ -35,8 +35,6 @@ export async function fetchWeather(latitude: number, longitude: number) {
     const long = response.longitude();
     const utcOffsetSeconds = response.utcOffsetSeconds();
 
-    weatherLogger.info(`Coordinates: ${lat}°N ${long}°E`);
-
     const current = response.current();
     if (!current) {
       throw new Error("No current weather data available");
@@ -57,9 +55,7 @@ export async function fetchWeather(latitude: number, longitude: number) {
       },
     };
 
-    weatherLogger.info(
-      `Current time: ${weatherData.current.time}, temperature_2m: ${weatherData.current.temperature_2m}, is_day: ${weatherData.current.is_day}, weather_code: ${weatherData.current.weather_code}, precipitation: ${weatherData.current.precipitation}, relative_humidity_2m: ${weatherData.current.relative_humidity_2m}, wind_speed_10m: ${weatherData.current.wind_speed_10m}, apparent_temperature: ${weatherData.current.apparent_temperature}, wind_direction_10m: ${weatherData.current.wind_direction_10m}, cloud_cover: ${weatherData.current.cloud_cover}`,
-    );
+    weatherLogger.info(`Coordinates: ${lat}°N ${long}°E`, weatherData.current);
 
     return weatherData;
   } catch (error: any) {

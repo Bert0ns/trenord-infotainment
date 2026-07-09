@@ -1,7 +1,7 @@
 import { logger } from "@/lib/logger";
 import { fetchWeatherApi } from "openmeteo";
 
-const weatherLogger = logger.extend("WeatherAPI");
+const airQualityLogger = logger.extend("AirQualityAPI");
 
 export async function fetchAirQuality(latitude: number, longitude: number) {
   try {
@@ -24,10 +24,6 @@ export async function fetchAirQuality(latitude: number, longitude: number) {
     const elevation = response.elevation();
     const utcOffsetSeconds = response.utcOffsetSeconds();
 
-    weatherLogger.info(
-      `Coordinates: ${lat}°N ${long}°E, Elevation: ${elevation}m asl, Timezone difference to GMT+0: ${utcOffsetSeconds}s`,
-    );
-
     const current = response.current();
     if (!current) {
       throw new Error("No current air quality data available");
@@ -41,13 +37,17 @@ export async function fetchAirQuality(latitude: number, longitude: number) {
       },
     };
 
-    weatherLogger.info(
-      `Current time: ${weatherData.current.time}, european_aqi: ${weatherData.current.european_aqi}, uv_index: ${weatherData.current.uv_index}`,
-    );
+    airQualityLogger.info({
+      currentWeatherData: weatherData.current,
+      lat,
+      long,
+      elevation,
+      utcOffsetSeconds,
+    });
 
     return weatherData;
   } catch (error: any) {
-    weatherLogger.error("Failed to fetch air quality data:", error);
+    airQualityLogger.error("Failed to fetch air quality data:", error);
     throw new Error(error.message || "Failed to fetch air quality data");
   }
 }
