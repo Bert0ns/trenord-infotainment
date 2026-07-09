@@ -1,6 +1,6 @@
-import React from "react";
-import { render } from "@testing-library/react-native";
 import RootLayout from "@/app/_layout";
+import { render } from "@testing-library/react-native";
+import React from "react";
 
 jest.mock("react-native", () => {
   const RN = jest.requireActual("react-native");
@@ -40,6 +40,10 @@ jest.mock("@/hooks/settings", () => ({
   SettingsProvider: ({ children }: { children: React.ReactNode }) => (
     <>{children}</>
   ),
+  useSettings: () => ({
+    settings: { anitSicknessMode: false },
+    set: jest.fn(),
+  }),
 }));
 
 describe("RootLayout", () => {

@@ -47,6 +47,11 @@ jest.mock("react-native-reanimated", () => {
       ScrollView: ScrollView,
       Image: Image,
     },
+    SensorType: {
+      ACCELEROMETER: "accelerometer",
+      GRAVITY: "gravity",
+    },
+    useAnimatedSensor: jest.fn(() => ({})),
   };
 });
 
@@ -128,4 +133,27 @@ jest.mock("@/lib/api/trenord/trenord", () => ({
   fetchTrainData: jest.fn(),
   fetchStationMetadata: jest.fn().mockResolvedValue([]),
   clearTrenordApiCache: jest.fn(),
+}));
+
+// Mock @expo/vector-icons to avoid ESM parsing issues in tests
+jest.mock("@expo/vector-icons", () => ({
+  MaterialIcons: () => null,
+  MaterialCommunityIcons: () => null,
+  FontAwesome: () => null,
+  FontAwesome5: () => null,
+  Ionicons: () => null,
+  AntDesign: () => null,
+  Entypo: () => null,
+  EvilIcons: () => null,
+  Feather: () => null,
+  Foundation: () => null,
+  Octicons: () => null,
+  SimpleLineIcons: () => null,
+  Zocial: () => null,
+}));
+
+jest.mock("@/hooks/use-weather-data", () => ({
+  useWeatherData: jest.fn(() => ({
+    refreshWeather: jest.fn(),
+  })),
 }));

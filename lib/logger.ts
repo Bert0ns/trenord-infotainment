@@ -1,4 +1,4 @@
-import { logger as rnLogs, consoleTransport } from "react-native-logs";
+import { consoleTransport, logger as rnLogs } from "react-native-logs";
 
 const config = {
   levels: {
@@ -32,6 +32,10 @@ const config = {
       Settings: "white" as const,
       Store: "magentaBright" as const,
       NewsStore: "yellowBright" as const,
+      WeatherAPI: "cyanBright" as const,
+      GeocodingAPI: "blueBright" as const,
+      AirQualityAPI: "greenBright" as const,
+      LinkHandler: "grey" as const,
     },
   },
   async: process.env.NODE_ENV !== "test",

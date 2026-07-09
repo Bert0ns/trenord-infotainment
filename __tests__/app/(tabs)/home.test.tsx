@@ -1,13 +1,13 @@
-import React from "react";
-import { render } from "@testing-library/react-native";
-import HomeScreen from "@/app/(tabs)/home";
+import HomeScreen from "@/app/(tabs)/home/index";
 import { useJourneyStore } from "@/store/journeyStore";
+import { render } from "@testing-library/react-native";
 
 jest.mock("expo-router", () => {
   const React = require("react");
   const { Text } = require("react-native");
   return {
     Redirect: () => React.createElement(Text, null, "Redirected to login"),
+    useRouter: () => ({ push: jest.fn(), back: jest.fn() }),
   };
 });
 

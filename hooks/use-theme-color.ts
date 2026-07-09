@@ -42,6 +42,7 @@ export function useTheme(): Theme {
 
   return {
     colors: themeColors,
+    weatherColors: THEME.weatherColors[theme],
     spacing: THEME.spacing,
     borderRadius: THEME.borderRadius,
     typography: THEME.typography,

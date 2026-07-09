@@ -21,7 +21,38 @@
   },
   "weatherCard": {
     "at": "a",
-    "loadingWeather": "Caricamento meteo..."
+    "loadingWeather": "Caricamento meteo...",
+    "sunny": "Soleggiato",
+    "cloudy": "Nuvoloso",
+    "foggy": "Nebbioso",
+    "rainy": "Piovoso",
+    "snowy": "Nevoso",
+    "stormy": "Tempestoso",
+    "currentWeather": "METEO ATTUALE",
+    "airQuality": "QUALITA' DELL'ARIA",
+    "uvIndex": "INDICE UV",
+    "Good": "Buona",
+    "Fair": "Discreta",
+    "Moderate": "Moderata",
+    "Poor": "Scarsa",
+    "Very Poor": "Molto scarsa",
+    "Extremely Poor": "Estremamente scarsa",
+    "Low": "Basso",
+    "Minimal risk": "Rischio minimo",
+    "Protection recommended": "Protezione consigliata",
+    "High": "Alto",
+    "Protection required": "Protezione richiesta",
+    "Very High": "Molto alto",
+    "Extra protection": "Protezione extra",
+    "Extreme": "Estremo",
+    "Avoid direct sun": "Evitare il sole diretto",
+    "humidity": "Umidità",
+    "wind": "Vento",
+    "feelsLike": "Percepita",
+    "clouds": "Nuvole",
+    "rain": "Pioggia",
+    "precip": "Precipitazioni",
+    "direction": "Direzione"
   },
   "newsCard": {
     "videoArticle": "Articolo Video"
@@ -32,5 +63,10 @@
   "newsSuffix": "Notizie da {{city}}",
   "loadingNews": "Caricamento notizie...",
   "noNews": "Nessuna notizia disponibile.",
-  "discoverMilano": "Scopri Milano"
+  "discoverMilano": "Scopri Milano",
+  "magazineTitle": "Magazine Digitale",
+  "italyNewsTitle": "Notizie Italia",
+  "worldNewsTitle": "Notizie dal Mondo",
+  "noNewsAvailable": "Nessuna notizia disponibile al momento.",
+  "cityNewsFallback": "Notizie Locali"
 }

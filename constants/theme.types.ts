@@ -41,6 +41,23 @@ export type Colors = {
   homeLiveStatus: string;
   /** Background logout botton */
   logout: string;
+  /** Color for svg track */
+  svgTrack: string;
+};
+
+export type WeatherColors = {
+  /** Color for good */
+  scaleGood: string;
+  /** Color for fair */
+  scaleFair: string;
+  /** Color for moderate */
+  scaleModerate: string;
+  /** Color for poor */
+  scalePoor: string;
+  /** Color for very poor */
+  scaleVeryPoor: string;
+  /** Color for extreme */
+  scaleExtreme: string;
 };
 
 export type Sizes = {
@@ -59,6 +76,7 @@ export type Typography = {
 
 export type Theme = {
   colors: Colors;
+  weatherColors: WeatherColors;
   spacing: Sizes;
   borderRadius: Sizes;
   typography: Typography;
@@ -68,6 +86,10 @@ export type GlobalTheme = {
   colors: {
     light: Colors;
     dark: Colors;
+  };
+  weatherColors: {
+    light: WeatherColors;
+    dark: WeatherColors;
   };
   spacing: Sizes;
   borderRadius: Sizes;

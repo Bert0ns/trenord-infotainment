@@ -1,6 +1,5 @@
 import enLogin from "@/lib/i18n/locales/en/login.json";
 import { fireEvent, render } from "@testing-library/react-native";
-import React from "react";
 import LoginScreen from "../app/login";
 import { SettingsProvider } from "../hooks/settings";
 import * as api from "../lib/api/trenord/trenord";

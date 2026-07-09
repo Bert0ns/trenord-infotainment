@@ -1,6 +1,7 @@
 import SectionCard from "@/components/settings-componenents/sectionCard";
 import SettingSwitch from "@/components/settings-componenents/settingSwitch";
 import ClearTrenordCacheButton from "@/components/settings-componenents/clearTrenordCacheButton";
+import ClearWeatherCacheButton from "@/components/settings-componenents/clearWeatherCacheButton";
 import ClearNewsCacheButton from "@/components/settings-componenents/clearNewsCacheButton";
 import DropDownSelector from "@/components/ui/dropDownSelector";
 import { AppSettings, LanguageCode, useSettings } from "@/hooks/settings";
@@ -143,13 +144,14 @@ export default function SettingsScreen() {
         </SectionCard>
       )}
 
-      {(process.env.EXPO_PUBLIC_SHOW_CLEAR_TRENORD_CACHE_BUTTON === "true" ||
-        process.env.EXPO_PUBLIC_SHOW_CLEAR_NEWS_CACHE_BUTTON === "true") && (
+      {process.env.EXPO_PUBLIC_ENABLE_DEBUG_MENU === "true" && (
         <SectionCard iconName="developer-board" title="Developer">
-          {process.env.EXPO_PUBLIC_SHOW_CLEAR_TRENORD_CACHE_BUTTON ===
-            "true" && <ClearTrenordCacheButton />}
-          {process.env.EXPO_PUBLIC_SHOW_CLEAR_NEWS_CACHE_BUTTON === "true" && (
-            <ClearNewsCacheButton />
+          {process.env.EXPO_PUBLIC_ENABLE_DEBUG_MENU === "true" && (
+            <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 12 }}>
+              <ClearTrenordCacheButton />
+              <ClearWeatherCacheButton />
+              <ClearNewsCacheButton />
+            </View>
           )}
         </SectionCard>
       )}

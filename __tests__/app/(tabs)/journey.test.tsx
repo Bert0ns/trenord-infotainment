@@ -1,8 +1,7 @@
-import React from "react";
-import { render } from "@testing-library/react-native";
 import JourneyScreen from "@/app/(tabs)/journey";
 import { useJourneyStore } from "@/store/journeyStore";
 import { useRailwayPolylines } from "@/lib/api/overpass";
+import { render } from "@testing-library/react-native";
 
 jest.mock("expo-router", () => {
   const React = require("react");

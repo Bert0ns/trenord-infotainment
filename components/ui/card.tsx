@@ -1,22 +1,49 @@
 import { createStyleHook } from "@/hooks/use-theme-color";
 import React from "react";
-import { View, ViewProps } from "react-native";
+import {
+  Pressable,
+  PressableProps,
+  StyleProp,
+  View,
+  ViewProps,
+  ViewStyle,
+} from "react-native";
 
-export interface CardProps extends ViewProps {
-  children: React.ReactNode;
-  variant?: "default" | "outline" | "elevated" | "muted";
-}
+export type CardProps = ViewProps &
+  Omit<PressableProps, "style" | "children"> & {
+    children: React.ReactNode;
+    variant?: "default" | "outline" | "elevated" | "muted";
+    style?: StyleProp<ViewStyle>;
+  };
 
 export default function Card({
   children,
   style,
   variant = "default",
+  onPress,
   ...props
 }: CardProps) {
   const styles = useStyles();
+  const cardStyle = [
+    styles.card,
+    styles[variant],
+    style,
+  ] as StyleProp<ViewStyle>;
+
+  if (onPress) {
+    return (
+      <Pressable
+        onPress={onPress}
+        style={({ pressed }) => [cardStyle, pressed && { opacity: 0.7 }]}
+        {...props}
+      >
+        {children}
+      </Pressable>
+    );
+  }
 
   return (
-    <View style={[styles.card, styles[variant], style]} {...props}>
+    <View style={cardStyle} {...props}>
       {children}
     </View>
   );
@@ -39,7 +66,7 @@ const useStyles = createStyleHook((theme) => ({
     borderColor: theme.colors.border,
   },
   elevated: {
-    backgroundColor: theme.colors.backgroundTransparent,
+    backgroundColor: theme.colors.backgroundTransparent, // Or theme.colors.background if you prefer non-transparent
     shadowColor: "#000",
     shadowOpacity: 0.15,
     shadowRadius: 8,

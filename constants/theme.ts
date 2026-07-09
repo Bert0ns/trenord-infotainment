@@ -30,6 +30,7 @@ export const THEME: GlobalTheme = {
       cloud: "#BEC9C0",
       homeLiveStatus: "#004a2b",
       logout: "#383f3b",
+      svgTrack: "#e2e2e7",
     },
     dark: {
       background: "#181D19",
@@ -53,6 +54,25 @@ export const THEME: GlobalTheme = {
       cloud: "#BEC9C0",
       homeLiveStatus: "#438d64",
       logout: "#383f3b",
+      svgTrack: "#3f4942",
+    },
+  },
+  weatherColors: {
+    light: {
+      scaleGood: "#1fb456",
+      scaleFair: "#84CC16",
+      scaleModerate: "#EAB308",
+      scalePoor: "#F97316",
+      scaleVeryPoor: "#EF4444",
+      scaleExtreme: "#7E22CE",
+    },
+    dark: {
+      scaleGood: "#4ADE80",
+      scaleFair: "#A3E635",
+      scaleModerate: "#FACC15",
+      scalePoor: "#FB923C",
+      scaleVeryPoor: "#F87171",
+      scaleExtreme: "#C084FC",
     },
   },
   spacing: {

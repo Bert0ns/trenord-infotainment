@@ -5,6 +5,7 @@ import { Platform, StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "react-native-reanimated";
 
+import VehicleMotionCues from "@/components/motion-cues";
 import { SettingsProvider } from "@/hooks/settings";
 
 export const unstable_settings = {
@@ -62,12 +63,21 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={styles.root}>
       <SettingsProvider>
+        <VehicleMotionCues />
         <Stack>
           <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Screen name="login" options={{ headerShown: false }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen
             name="report-issue-page"
+            options={{
+              presentation: "transparentModal",
+              animation: "none",
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="news-magazine"
             options={{
               presentation: "transparentModal",
               animation: "none",

@@ -1,10 +1,9 @@
 import { createStyleHook, useSelectedScheme } from "@/hooks/use-theme-color";
+import { useJourneyStore } from "@/store/journeyStore";
 import { MaterialIcons } from "@expo/vector-icons";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { BlurView } from "expo-blur";
-import React from "react";
 import { Pressable, Text, View } from "react-native";
-import { useJourneyStore } from "@/store/journeyStore";
 
 export default function CustomTabBar({
   state,
@@ -161,6 +160,8 @@ const useStyles = createStyleHook((theme) => ({
     fontSize: theme.typography.fontSize,
     //lineHeight: theme.typography.lineHeight,
     letterSpacing: theme.typography.letterSpacing,
+    textAlign: "center",
+    width: 100,
   },
   labelFocused: {
     color: theme.colors.primary,
