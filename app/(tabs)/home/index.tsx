@@ -23,7 +23,7 @@ import {
 } from "@/store/journeyStore";
 import { useWeatherStore } from "@/store/weatherStore";
 import { capitalizeWords } from "@/utils/string";
-import { Redirect } from "expo-router";
+import { Redirect, useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { FlatList, RefreshControl, ScrollView, Text } from "react-native";
 
@@ -61,6 +61,7 @@ export default function HomeScreen() {
   const { settings } = useSettings();
   const { data: newsData, isLoading: isNewsLoading } = useNews();
   const { t } = useTranslation("home");
+  const router = useRouter();
 
   if (!trainId) return <Redirect href="/login" />;
 
@@ -162,6 +163,7 @@ export default function HomeScreen() {
             type="home"
             icon="newspaper"
             isFirst
+            onSeeMorePress={() => router.push("/news-magazine" as any)}
           />
           {isNewsLoading ? (
             <Text

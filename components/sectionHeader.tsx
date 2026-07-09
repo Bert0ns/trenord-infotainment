@@ -11,6 +11,7 @@ interface SectionHeaderProps {
   isFirst?: boolean;
   icon?: keyof typeof MaterialIcons.glyphMap;
   route?: Href;
+  onSeeMorePress?: () => void;
 }
 
 export default function SectionHeader({
@@ -20,6 +21,7 @@ export default function SectionHeader({
   icon,
   isFirst,
   route,
+  onSeeMorePress,
 }: SectionHeaderProps) {
   const styles = useStyles();
   const { t } = useTranslation("common", { keyPrefix: "sectionHeader" });
@@ -58,8 +60,10 @@ export default function SectionHeader({
           <Text style={styles.seeAll}>{t("seeAll")}</Text>
         </TouchableOpacity>
       )}
-      {type === "home" && route && (
-        <TouchableOpacity onPress={() => router.push(route)}>
+      {type === "home" && (route || onSeeMorePress) && (
+        <TouchableOpacity
+          onPress={route ? () => router.push(route) : onSeeMorePress}
+        >
           <Text style={styles.seeAll}>{t("seeMore")}</Text>
         </TouchableOpacity>
       )}

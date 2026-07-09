@@ -1,6 +1,6 @@
 import { logger } from "@/lib/logger";
-import { NewsAPIResponse, NewsArticle } from "./currentsapi-news-types";
 import { useNewsStore } from "@/store/newsStore";
+import { NewsAPIResponse, NewsArticle } from "./currentsapi-news-types";
 
 const newsLogger = logger.extend("NewsAPI");
 
@@ -12,6 +12,7 @@ interface FetchNewsOptions {
   page_size?: number;
   category?: string;
   keywords?: string; // Only for search
+  query?: string; // Only for search (boolean queries)
 }
 
 const isApiEnabled = () => process.env.EXPO_PUBLIC_ENABLE_NEWS_API === "true";
@@ -157,6 +158,7 @@ export async function fetchSearchNews(
     ...(options?.country ? { country: options.country } : {}),
     ...(options?.category ? { category: options.category } : {}),
     ...(options?.keywords ? { keywords: options.keywords } : {}),
+    ...(options?.query ? { query: options.query } : {}),
   });
 }
 
@@ -225,4 +227,59 @@ export async function getRelevantNews(
     }
     return result.news;
   }
+}
+
+/**
+ * Fetches Italy news.
+ * Uses the latestNewsCache with a distinct key to avoid collisions.
+ */
+export async function getItalyNews(language: string): Promise<NewsArticle[]> {
+  const store = useNewsStore.getState();
+  const cacheKey = `italy-latest-${language}`;
+
+  let result = store.getValidLatestNews(cacheKey);
+
+  if (result) {
+    newsLogger.log("Using cached italy news");
+  } else {
+    newsLogger.log("Fetching fresh italy news");
+    result = await fetchLatestNews({
+      language,
+      country: "IT",
+      category: "general",
+    });
+    store.setLatestNews(cacheKey, result);
+  }
+
+  return result.news;
+}
+
+/**
+ * Fetches world news (no country constraint).
+ * Uses the latestNewsCache with a distinct key.
+ */
+export async function getWorldNews(language: string): Promise<NewsArticle[]> {
+  const store = useNewsStore.getState();
+  const cacheKey = `world-latest-${language}`;
+
+  let result = store.getValidLatestNews(cacheKey);
+
+  if (result) {
+    newsLogger.log("Using cached world news");
+  } else {
+    newsLogger.log("Fetching fresh world news");
+    const query =
+      language === "it"
+        ? "mondo OR esteri OR internazionale OR globale"
+        : "world OR international OR global";
+
+    result = await fetchSearchNews({
+      language,
+      query,
+      page_size: 20,
+    });
+    store.setLatestNews(cacheKey, result);
+  }
+
+  return result.news;
 }

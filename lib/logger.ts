@@ -35,6 +35,7 @@ const config = {
       WeatherAPI: "cyanBright" as const,
       GeocodingAPI: "blueBright" as const,
       AirQualityAPI: "greenBright" as const,
+      LinkHandler: "grey" as const,
     },
   },
   async: process.env.NODE_ENV !== "test",

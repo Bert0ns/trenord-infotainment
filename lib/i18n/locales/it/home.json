@@ -63,5 +63,10 @@
   "newsSuffix": "Notizie da {{city}}",
   "loadingNews": "Caricamento notizie...",
   "noNews": "Nessuna notizia disponibile.",
-  "discoverMilano": "Scopri Milano"
+  "discoverMilano": "Scopri Milano",
+  "magazineTitle": "Magazine Digitale",
+  "italyNewsTitle": "Notizie Italia",
+  "worldNewsTitle": "Notizie dal Mondo",
+  "noNewsAvailable": "Nessuna notizia disponibile al momento.",
+  "cityNewsFallback": "Notizie Locali"
 }
