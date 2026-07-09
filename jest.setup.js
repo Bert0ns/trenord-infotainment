@@ -128,3 +128,9 @@ jest.mock("@expo/vector-icons", () => ({
   SimpleLineIcons: () => null,
   Zocial: () => null,
 }));
+
+jest.mock("@/hooks/use-weather-data", () => ({
+  useWeatherData: jest.fn(() => ({
+    refreshWeather: jest.fn(),
+  })),
+}));
