@@ -147,7 +147,7 @@ export default function SettingsScreen() {
       {process.env.EXPO_PUBLIC_ENABLE_DEBUG_MENU === "true" && (
         <SectionCard iconName="developer-board" title="Developer">
           {process.env.EXPO_PUBLIC_ENABLE_DEBUG_MENU === "true" && (
-            <View style={{ flexDirection: "row", gap: 12 }}>
+            <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 12 }}>
               <ClearTrenordCacheButton />
               <ClearWeatherCacheButton />
               <ClearNewsCacheButton />
