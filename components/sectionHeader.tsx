@@ -40,7 +40,7 @@ export default function SectionHeader({
               {destination && ` ${destination}`}
             </Text>
           ) : (
-            <Text style={styles.titleHome}>{t(title)}</Text>
+            <Text style={styles.titleHome}>{title}</Text>
           )}
         </View>
       ) : (

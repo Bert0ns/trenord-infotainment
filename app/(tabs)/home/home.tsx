@@ -1,22 +1,22 @@
 import DiscoveryCard from "@/components/discoveryCard";
+import { ErrorBoundary } from "@/components/errorBoundary";
 import CrowdingCard from "@/components/home-components/crowdCard";
 import LiveStatusCard from "@/components/home-components/liveStatusCard";
 import WeatherCard from "@/components/home-components/weatherCard";
 import LoadingScreen from "@/components/loadingScreen";
 import NewsCard from "@/components/newsCard";
-import { ErrorBoundary } from "@/components/errorBoundary";
 import SectionHeader from "@/components/sectionHeader";
-import { useNews } from "@/hooks/useNews";
 import { useSettings } from "@/hooks/settings";
 import { useRefreshTrainData } from "@/hooks/use-refresh-train-data";
-import { useTheme } from "@/hooks/use-theme-color";
 import { useScreenStyles } from "@/hooks/use-screen-styles";
+import { useTheme } from "@/hooks/use-theme-color";
+import { useNews } from "@/hooks/useNews";
 import {
+  selectDestinationPass,
   selectIsAtStation,
   selectIsJourneyCompleted,
   selectNextStop,
   selectOrigDestData,
-  selectDestinationPass,
   selectPassList,
   selectTrainInfo,
   useJourneyStore,
@@ -24,8 +24,8 @@ import {
 import { useWeatherStore } from "@/store/weatherStore";
 import { capitalizeWords } from "@/utils/string";
 import { Redirect } from "expo-router";
-import { FlatList, RefreshControl, ScrollView, Text } from "react-native";
 import { useTranslation } from "react-i18next";
+import { FlatList, RefreshControl, ScrollView, Text } from "react-native";
 
 import { useWeatherData } from "@/hooks/use-weather-data";
 import { logger } from "@/lib/logger";
