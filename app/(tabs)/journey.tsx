@@ -1,8 +1,8 @@
 import JourneyTimeline from "@/components/journey-components/journeyTimeline";
 import LoadingScreen from "@/components/loadingScreen";
 import { useRefreshTrainData } from "@/hooks/use-refresh-train-data";
-import { useScreenStyles } from "@/hooks/use-screen-styles";
 import { useTheme } from "@/hooks/use-theme-color";
+import { useScreenStyles } from "@/hooks/use-screen-styles";
 import {
   selectNextStop,
   selectOrigDestData,

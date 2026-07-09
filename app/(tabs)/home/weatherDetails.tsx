@@ -8,11 +8,13 @@ import { useWeatherData } from "@/hooks/use-weather-data";
 import { useJourneyStore } from "@/store/journeyStore";
 import { useWeatherStore } from "@/store/weatherStore";
 import { Redirect } from "expo-router";
+import { useTranslation } from "react-i18next";
 import { RefreshControl, ScrollView, View } from "react-native";
 
 export default function HomeDestinationDetails() {
   const styles = useStyles();
   const theme = useTheme();
+  const { t } = useTranslation("home");
   const trainId = useJourneyStore((s) => s.trainId);
   const destinationMunicipality = useJourneyStore(
     (s) => s.destinationMunicipality,
@@ -39,7 +41,9 @@ export default function HomeDestinationDetails() {
       <View style={styles.contentPadding}>
         <CurrentWeatherCard
           data={{
-            city: destinationMunicipality ? destinationMunicipality : "Unknown",
+            city: destinationMunicipality
+              ? destinationMunicipality
+              : t("unknown"),
             temperature: Math.trunc(weather ? weather.temperature : 0),
             code: weather ? weather.weatherCode : 0,
             isDay: weather?.isDay === 1,

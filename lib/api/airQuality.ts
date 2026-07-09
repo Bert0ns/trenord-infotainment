@@ -43,7 +43,7 @@ export async function fetchAirQuality(latitude: number, longitude: number) {
   );
 
   if (!response) {
-    throw new Error("Errore qualità aria");
+    throw new Error("Air quality error");
   }
 
   return response;

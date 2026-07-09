@@ -75,7 +75,7 @@ export const useWeatherStore = create<WeatherState>((set) => ({
         });
       } catch {
         set({
-          error: "Errore meteo",
+          error: "Weather error",
           loading: false,
         });
       }
