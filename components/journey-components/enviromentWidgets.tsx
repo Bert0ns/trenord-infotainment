@@ -31,7 +31,7 @@ export function AirQualityCard({ value }: { value: number }) {
   const { t } = useTranslation("home", { keyPrefix: "weatherCard" });
 
   const data = getAirQualityInfo(value);
-  const activeColor = theme.colors[data.colorKey];
+  const activeColor = theme.weatherColors[data.colorKey];
 
   const size = 70;
   const strokeWidth = 6;
@@ -67,7 +67,8 @@ export function AirQualityCard({ value }: { value: number }) {
             strokeDashoffset={strokeDashoffset}
             strokeLinecap="round"
             rotation="-90"
-            origin={`${size / 2}, ${size / 2}`}
+            originX={size / 2}
+            originY={size / 2}
           />
         </Svg>
 
@@ -118,7 +119,7 @@ export function UVIndexCard({ level }: { level: number }) {
   const { t } = useTranslation("home", { keyPrefix: "weatherCard" });
 
   const data = getUVIndexInfo(level);
-  const activeColor = theme.colors[data.colorKey];
+  const activeColor = theme.weatherColors[data.colorKey];
 
   return (
     <View style={styles.card}>

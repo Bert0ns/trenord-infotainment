@@ -1,4 +1,4 @@
-import HomeScreen from "@/app/(tabs)/home/home";
+import HomeScreen from "@/app/(tabs)/home/index";
 import { useJourneyStore } from "@/store/journeyStore";
 import { render } from "@testing-library/react-native";
 

@@ -26,6 +26,6 @@ describe("Index Auth Guard", () => {
     useJourneyStore.setState({ trainId: "12345" });
 
     const { getByTestId } = render(<Index />);
-    expect(getByTestId("redirect").props.children).toBe("/(tabs)/home/home");
+    expect(getByTestId("redirect").props.children).toBe("/(tabs)/home");
   });
 });

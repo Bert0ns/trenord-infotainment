@@ -106,7 +106,7 @@ export function useLogin() {
               `Auto-starting journey! Train: ${codeToSearch}, Destination: ${destStation.station_ori_name}`,
             );
             setJourney(codeToSearch, destStation, data);
-            router.replace("/(tabs)/home/home");
+            router.replace("/(tabs)/home");
             return;
           }
         } else {
@@ -143,7 +143,7 @@ export function useLogin() {
         `Starting journey! Train: ${ticketCode}, Destination: ${destStation.station_ori_name}`,
       );
       setJourney(ticketCode, destStation, trainData!);
-      router.replace("/(tabs)/home/home");
+      router.replace("/(tabs)/home");
     }
   }
 

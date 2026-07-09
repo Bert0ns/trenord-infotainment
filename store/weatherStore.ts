@@ -1,6 +1,6 @@
-import { fetchAirQuality } from "@/lib/api/airQuality";
-import { searchCity } from "@/lib/api/geocoding";
-import { fetchWeather } from "@/lib/api/weatherAPI";
+import { fetchAirQuality } from "@/lib/api/weather/airQuality";
+import { searchCity } from "@/lib/api/weather/geocoding";
+import { fetchWeather } from "@/lib/api/weather/weatherAPI";
 import { create } from "zustand";
 
 interface WeatherData {
@@ -21,20 +21,42 @@ interface WeatherState {
   weather: WeatherData | null;
   loading: boolean;
   error: string | null;
+  lastFetchTimestamp: number | null;
+  lastCity: string | null;
 
   startWeatherUpdates: (city: string) => Promise<void>;
 
   stopWeatherUpdates: () => void;
+  clearCache: () => void;
 }
 
 let weatherInterval: NodeJS.Timeout | null = null;
 
-export const useWeatherStore = create<WeatherState>((set) => ({
+const WEATHER_CACHE_TTL = 5 * 60 * 1000;
+
+export const useWeatherStore = create<WeatherState>((set, get) => ({
   weather: null,
   loading: false,
   error: null,
+  lastFetchTimestamp: null,
+  lastCity: null,
 
   startWeatherUpdates: async (city) => {
+    const store = get();
+    if (
+      store.weather &&
+      store.lastCity === city &&
+      store.lastFetchTimestamp &&
+      Date.now() - store.lastFetchTimestamp < WEATHER_CACHE_TTL
+    ) {
+      if (!weatherInterval) {
+        weatherInterval = setInterval(() => {
+          get().startWeatherUpdates(city);
+        }, WEATHER_CACHE_TTL);
+      }
+      return;
+    }
+
     async function loadWeather() {
       try {
         set({
@@ -44,34 +66,31 @@ export const useWeatherStore = create<WeatherState>((set) => ({
 
         const location = await searchCity(city);
 
-        const weather = await fetchWeather(
-          location.latitude,
-          location.longitude,
-        );
+        const [weather, air] = await Promise.all([
+          fetchWeather(location.latitude, location.longitude),
+          fetchAirQuality(location.latitude, location.longitude),
+        ]);
 
-        const air = await fetchAirQuality(
-          location.latitude,
-          location.longitude,
-        );
-
-        const currentWeather = weather.current();
-        const currentAir = air.current();
+        const currentWeather = weather.current;
+        const currentAir = air.current;
 
         set({
           weather: {
-            temperature: currentWeather?.variables(0)?.value() ?? 0,
-            isDay: currentWeather?.variables(1)?.value() ?? 0,
-            weatherCode: currentWeather?.variables(2)?.value() ?? 0,
-            precipitation: currentWeather?.variables(3)?.value() ?? 0,
-            humidity: currentWeather?.variables(4)?.value() ?? 0,
-            windSpeed: currentWeather?.variables(5)?.value() ?? 0,
-            apparentTemperature: currentWeather?.variables(6)?.value() ?? 0,
-            windDirection: currentWeather?.variables(7)?.value() ?? 0,
-            cloudCover: currentWeather?.variables(8)?.value() ?? 0,
-            aqi: currentAir?.variables(0)?.value() ?? 0,
-            uvIndex: currentAir?.variables(1)?.value() ?? 0,
+            temperature: currentWeather?.temperature_2m ?? 0,
+            isDay: currentWeather?.is_day ?? 0,
+            weatherCode: currentWeather?.weather_code ?? 0,
+            precipitation: currentWeather?.precipitation ?? 0,
+            humidity: currentWeather?.relative_humidity_2m ?? 0,
+            windSpeed: currentWeather?.wind_speed_10m ?? 0,
+            apparentTemperature: currentWeather?.apparent_temperature ?? 0,
+            windDirection: currentWeather?.wind_direction_10m ?? 0,
+            cloudCover: currentWeather?.cloud_cover ?? 0,
+            aqi: currentAir?.european_aqi ?? 0,
+            uvIndex: currentAir?.uv_index ?? 0,
           },
           loading: false,
+          lastFetchTimestamp: Date.now(),
+          lastCity: city,
         });
       } catch {
         set({
@@ -87,12 +106,9 @@ export const useWeatherStore = create<WeatherState>((set) => ({
       clearInterval(weatherInterval);
     }
 
-    weatherInterval = setInterval(
-      () => {
-        loadWeather();
-      },
-      10 * 60 * 1000,
-    );
+    weatherInterval = setInterval(() => {
+      loadWeather();
+    }, WEATHER_CACHE_TTL);
   },
 
   stopWeatherUpdates: () => {
@@ -100,5 +116,9 @@ export const useWeatherStore = create<WeatherState>((set) => ({
       clearInterval(weatherInterval);
       weatherInterval = null;
     }
+  },
+
+  clearCache: () => {
+    set({ lastFetchTimestamp: null, lastCity: null, weather: null });
   },
 }));

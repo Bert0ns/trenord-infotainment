@@ -58,7 +58,7 @@ const useStyles = createStyleHook((theme) => ({
     borderColor: theme.colors.border,
   },
   elevated: {
-    backgroundColor: theme.colors.backgroundTransparent, // O theme.colors.background se preferisci non trasparente
+    backgroundColor: theme.colors.backgroundTransparent, // Or theme.colors.background if you prefer non-transparent
     shadowColor: "#000",
     shadowOpacity: 0.15,
     shadowRadius: 8,

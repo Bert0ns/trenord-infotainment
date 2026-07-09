@@ -1,6 +1,7 @@
 import Card from "@/components/ui/card";
 import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
 import { MaterialIcons } from "@expo/vector-icons";
+import { getWeatherIcon } from "@/utils/weather";
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
@@ -23,7 +24,6 @@ export default function WeatherCard({
   const styles = useStyles();
   const theme = useTheme();
   const { t } = useTranslation("home", { keyPrefix: "weatherCard" });
-  let weatherCondition: string = "unknown";
 
   if (!data) {
     return (
@@ -33,61 +33,8 @@ export default function WeatherCard({
     );
   }
 
-  const getIcon = () => {
-    const { code, isDay } = data;
-
-    if ([0, 1, 2].includes(code)) {
-      weatherCondition = "sunny";
-      return {
-        name: isDay ? "wb-sunny" : "bedtime",
-        color: theme.colors.warning,
-      };
-    }
-
-    if ([2, 3].includes(code)) {
-      weatherCondition = "cloudy";
-      return {
-        name: "cloud",
-        color: theme.colors.cloud || theme.colors.mutedForeground,
-      };
-    }
-
-    if ([45, 48].includes(code)) {
-      weatherCondition = "foggy";
-      return {
-        name: "dehaze",
-        color: theme.colors.cloud || theme.colors.mutedForeground,
-      };
-    }
-
-    if ((code >= 51 && code <= 67) || [80, 81, 82].includes(code)) {
-      weatherCondition = "rainy";
-      return {
-        name: "water-drop",
-        color: theme.colors.info,
-      };
-    }
-
-    if ((code >= 71 && code <= 77) || [85, 86].includes(code)) {
-      weatherCondition = "snowy";
-      return {
-        name: "ac-unit",
-        color: theme.colors.info,
-      };
-    }
-
-    if ([95, 96, 99].includes(code)) {
-      weatherCondition = "stormy";
-      return {
-        name: "bolt",
-        color: theme.colors.warning,
-      };
-    }
-
-    return { name: "thermostat", color: theme.colors.primary };
-  };
-
-  const iconInfo = getIcon();
+  const iconInfo = getWeatherIcon(data.code, data.isDay, theme as any);
+  const weatherCondition = iconInfo.conditionKey;
 
   const handlePress = () => {
     if (route) {

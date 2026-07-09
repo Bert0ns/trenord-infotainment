@@ -6,7 +6,7 @@ export default function Index() {
 
   // Auth Guard: Direct to home if logged in, else login page
   if (trainId) {
-    return <Redirect href="/(tabs)/home/home" />;
+    return <Redirect href="/(tabs)/home" />;
   }
   return <Redirect href="/login" />;
 }

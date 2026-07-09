@@ -20,8 +20,13 @@ export function useWeatherData({
   );
 
   const refreshWeather = useCallback(() => {
-    const city = destinationMunicipality || "None";
-    startWeatherUpdates(city);
+    if (
+      !destinationMunicipality ||
+      destinationMunicipality.toLowerCase() === "none"
+    ) {
+      return;
+    }
+    startWeatherUpdates(destinationMunicipality);
   }, [destinationMunicipality, startWeatherUpdates]);
 
   useEffect(() => {

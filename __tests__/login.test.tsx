@@ -187,7 +187,7 @@ describe("LoginScreen", () => {
     expect(state.trainData).toEqual(mockData);
 
     // Verify router replacement
-    expect(mockReplace).toHaveBeenCalledWith("/(tabs)/home/home");
+    expect(mockReplace).toHaveBeenCalledWith("/(tabs)/home");
   });
 
   it("succeeds when logging in with train number 24869", async () => {
@@ -238,7 +238,7 @@ describe("LoginScreen", () => {
     expect(state.destinationStation?.station_ori_name).toBe("Milano Centrale");
 
     // Verify router replacement
-    expect(mockReplace).toHaveBeenCalledWith("/(tabs)/home/home");
+    expect(mockReplace).toHaveBeenCalledWith("/(tabs)/home");
   });
 
   it("navigates to settings when footer settings icon is pressed", () => {
