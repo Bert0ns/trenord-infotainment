@@ -42,6 +42,14 @@ jest.mock("@expo/vector-icons", () => ({
   Ionicons: "Ionicons",
 }));
 
+// Mock notifications to always grant permission in tests
+jest.mock("@/utils/notifications", () => ({
+  requestNotificationPermissionsAsync: jest.fn().mockResolvedValue(true),
+  cancelEventNotification: jest.fn(),
+  scheduleEventNotification: jest.fn(),
+  cancelAllEventNotifications: jest.fn(),
+}));
+
 const renderWithProvider = async (component: React.ReactElement) => {
   const result = render(<SettingsProvider>{component}</SettingsProvider>);
   // Flush the microtask queue to allow SettingsProvider's async useEffect to complete
@@ -94,16 +102,24 @@ describe("SettingsScreen", () => {
   it("toggles all configuration switches correctly", async () => {
     const { getByTestId } = await renderWithProvider(<SettingsScreen />);
 
-    fireEvent.press(getByTestId("toggle-Anti-Sickness Mode"));
+    await act(async () => {
+      fireEvent.press(getByTestId("toggle-Anti-Sickness Mode"));
+    });
     expect(getByTestId("value-Anti-Sickness Mode").props.children).toBe("ON");
 
-    fireEvent.press(getByTestId("toggle-Journey Progress"));
+    await act(async () => {
+      fireEvent.press(getByTestId("toggle-Journey Progress"));
+    });
     expect(getByTestId("value-Journey Progress").props.children).toBe("OFF");
 
-    fireEvent.press(getByTestId("toggle-Delay Alerts"));
+    await act(async () => {
+      fireEvent.press(getByTestId("toggle-Delay Alerts"));
+    });
     expect(getByTestId("value-Delay Alerts").props.children).toBe("OFF");
 
-    fireEvent.press(getByTestId("toggle-Weather & Disruptions"));
+    await act(async () => {
+      fireEvent.press(getByTestId("toggle-Weather & Disruptions"));
+    });
     expect(getByTestId("value-Weather & Disruptions").props.children).toBe(
       "ON",
     );

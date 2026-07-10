@@ -90,7 +90,7 @@ export async function scheduleEventNotification(
     utilLogger.log(
       `Target time changed for ${eventKey}, canceling previous notification: ${existing.id}`,
     );
-    await Notifications.cancelScheduledNotificationAsync(existing.id);
+    await Notifications.cancelScheduledNotificationAsync?.(existing.id);
     removeScheduledNotification(eventKey);
   }
 
@@ -101,7 +101,7 @@ export async function scheduleEventNotification(
     return;
   }
 
-  const notificationId = await Notifications.scheduleNotificationAsync({
+  const notificationId = await Notifications.scheduleNotificationAsync?.({
     content: {
       title,
       body,
@@ -130,7 +130,7 @@ export async function cancelEventNotification(eventKey: string) {
 
   if (existing) {
     utilLogger.log(`Canceling notification for ${eventKey}: ${existing.id}`);
-    await Notifications.cancelScheduledNotificationAsync(existing.id);
+    await Notifications.cancelScheduledNotificationAsync?.(existing.id);
     removeScheduledNotification(eventKey);
   }
 }
@@ -142,7 +142,7 @@ export async function cancelAllEventNotifications() {
   }
 
   utilLogger.log("Canceling all scheduled notifications.");
-  await Notifications.cancelAllScheduledNotificationsAsync();
+  await Notifications.cancelAllScheduledNotificationsAsync?.();
 
   const { clearAllScheduledNotifications } =
     useNotificationRegistryStore.getState();
