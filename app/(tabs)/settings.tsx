@@ -12,6 +12,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { getLocales } from "expo-localization";
 import { useRouter } from "expo-router";
 import React from "react";
+import { requestNotificationPermissionsAsync } from "@/utils/notifications";
 import { useTranslation } from "react-i18next";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { logger } from "@/lib/logger";
@@ -43,6 +44,21 @@ export default function SettingsScreen() {
     uiLogger.log("User requested to end journey. Clearing state...");
     clearJourney();
     router.replace("/login");
+  };
+
+  const handleNotificationToggle = async (
+    key: "journeyProgress" | "delayAlerts" | "weatherAlerts",
+    value: boolean,
+  ) => {
+    if (value) {
+      const hasPermission = await requestNotificationPermissionsAsync();
+      if (!hasPermission) {
+        uiLogger.log(`Permission denied, keeping ${key} disabled`);
+        set(key, false);
+        return;
+      }
+    }
+    set(key, value);
   };
 
   const ThemeOption = ({
@@ -117,19 +133,25 @@ export default function SettingsScreen() {
           label={t("notifications.journeyProgress.title")}
           description={t("notifications.journeyProgress.description")}
           value={settings.journeyProgress}
-          onValueChange={(value) => set("journeyProgress", value)}
+          onValueChange={(value) =>
+            handleNotificationToggle("journeyProgress", value)
+          }
         />
         <SettingSwitch
           label={t("notifications.delayAlerts.title")}
           description={t("notifications.delayAlerts.description")}
           value={settings.delayAlerts}
-          onValueChange={(value) => set("delayAlerts", value)}
+          onValueChange={(value) =>
+            handleNotificationToggle("delayAlerts", value)
+          }
         />
         <SettingSwitch
           label={t("notifications.weatherAlerts.title")}
           description={t("notifications.weatherAlerts.description")}
           value={settings.weatherAlerts}
-          onValueChange={(value) => set("weatherAlerts", value)}
+          onValueChange={(value) =>
+            handleNotificationToggle("weatherAlerts", value)
+          }
         />
       </SectionCard>
 

@@ -1,10 +1,32 @@
-import * as Notifications from "expo-notifications";
 import { useNotificationRegistryStore } from "@/store/notificationRegistryStore";
 import { logger } from "@/lib/logger";
 
 const utilLogger = logger.extend("NotificationsUtil");
 
+let Notifications: any;
+try {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  Notifications = require("expo-notifications");
+
+  // Global handler behavior
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: false,
+      shouldShowBanner: true,
+      shouldShowList: true,
+    }),
+  });
+} catch {
+  utilLogger.warn(
+    "expo-notifications is not available (likely running in Expo Go on Android). Notifications will be disabled.",
+  );
+  Notifications = null;
+}
+
 export async function requestNotificationPermissionsAsync(): Promise<boolean> {
+  if (!Notifications) return false;
   const permissions: any = await Notifications.getPermissionsAsync();
   let isGranted = permissions.granted;
 
@@ -23,6 +45,11 @@ export async function scheduleEventNotification(
   title: string,
   body: string,
 ) {
+  if (!Notifications) {
+    utilLogger.warn("Notifications module unavailable, cannot schedule.");
+    return;
+  }
+
   if (!isEnabled) {
     utilLogger.log(
       `Skipping notification for ${eventKey} because it is disabled in settings.`,
@@ -71,10 +98,7 @@ export async function scheduleEventNotification(
       title,
       body,
     },
-    trigger: {
-      type: "date",
-      date: triggerDate,
-    } as Notifications.NotificationTriggerInput,
+    trigger: { type: "date", date: new Date(triggerTimestamp) } as any,
   });
 
   utilLogger.log(
@@ -87,6 +111,11 @@ export async function scheduleEventNotification(
 }
 
 export async function cancelEventNotification(eventKey: string) {
+  if (!Notifications) {
+    utilLogger.warn("Notifications module unavailable, cannot cancel.");
+    return;
+  }
+
   const { scheduledNotifications, removeScheduledNotification } =
     useNotificationRegistryStore.getState();
   const existing = scheduledNotifications[eventKey];
@@ -98,13 +127,16 @@ export async function cancelEventNotification(eventKey: string) {
   }
 }
 
-// Global handler behavior
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-    shouldShowBanner: true,
-    shouldShowList: true,
-  }),
-});
+export async function cancelAllEventNotifications() {
+  if (!Notifications) {
+    utilLogger.warn("Notifications module unavailable, cannot cancel all.");
+    return;
+  }
+
+  utilLogger.log("Canceling all scheduled notifications.");
+  await Notifications.cancelAllScheduledNotificationsAsync();
+
+  const { clearAllScheduledNotifications } =
+    useNotificationRegistryStore.getState();
+  clearAllScheduledNotifications();
+}

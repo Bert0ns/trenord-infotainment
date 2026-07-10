@@ -4,6 +4,7 @@ import { logger } from "@/lib/logger";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
+import { cancelAllEventNotifications } from "@/utils/notifications";
 
 const storeLogger = logger.extend("Store");
 
@@ -78,6 +79,7 @@ export const useJourneyStore = create<JourneyStore>()(
       },
       clearJourney: () => {
         storeLogger.info("Clearing journey data");
+        cancelAllEventNotifications();
         set({
           trainId: null,
           destinationStation: null,

@@ -98,10 +98,10 @@ To ensure notifications fire at the correct times under dynamic train conditions
 **Description:** Update the existing Settings screen (which already has localized toggles) to request OS notification permissions automatically when a notification switch is toggled to `true` (if permission isn't already granted).
 **Acceptance criteria:**
 
-- [ ] Switches are mapped to the existing `useSettings` store.
-- [ ] Automatically requests OS permissions when a switch is toggled to `true` and permissions are not yet granted.
+- [x] Switches are mapped to the existing `useSettings` store.
+- [x] Automatically requests OS permissions when a switch is toggled to `true` and permissions are not yet granted.
       **Verification:**
-- [ ] Manual check: Open settings, toggle switches, verify permission prompt is triggered, verify state persists.
+- [x] Manual check: Open settings, toggle switches, verify permission prompt is triggered, verify state persists.
       **Dependencies:** Task 2
       **Files likely touched:**
 - `app/(tabs)/settings.tsx`
@@ -112,11 +112,11 @@ To ensure notifications fire at the correct times under dynamic train conditions
 **Description:** Trigger the utility functions from the actual components/hooks where data is loaded or actions are taken, and clean up on logout/journey clear.
 **Acceptance criteria:**
 
-- [ ] Journey Updates (Approaching Stop, Delay Alert) are scheduled when journey data fetches.
-- [ ] Contextual Updates (Weather) are scheduled based on journey timestamps.
-- [ ] System Feedback prompt is scheduled exactly 30 seconds after the `report-issue-page.tsx` submission.
-- [ ] All scheduled notifications are canceled when the journey is ended or cleared.
-- [ ] Notifications are recalculated/rescheduled when the app state transitions back to `active`.
+- [x] Journey Updates (Approaching Stop, Delay Alert) are scheduled when journey data fetches.
+- [x] Contextual Updates (Weather) are scheduled based on journey timestamps.
+- [x] System Feedback prompt is scheduled exactly 30 seconds after the `report-issue-page.tsx` submission.
+- [x] All scheduled notifications are canceled when the journey is ended or cleared.
+- [x] Notifications are recalculated/rescheduled when the app state transitions back to `active`.
       **Verification:**
 - [ ] Manual check: Load journey, verify in dev console that notifications are scheduled.
 - [ ] Manual check: Submit an issue, verify the local OS notification pops up 30 seconds later.

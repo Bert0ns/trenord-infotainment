@@ -16,6 +16,7 @@ import {
 } from "@/components/report-issue-components";
 import { logger } from "@/lib/logger";
 import { useTranslation } from "react-i18next";
+import { scheduleEventNotification } from "@/utils/notifications";
 
 const reportLogger = logger.extend("Report");
 
@@ -23,6 +24,7 @@ export default function ReportIssuePage() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { t } = useTranslation("reportIssue");
+  const { t: tNotif } = useTranslation("notifications");
   const sheetRef = useRef<SheetHandle | null>(null);
   const [selectedIssues, setSelectedIssues] = useState<Set<string>>(
     () => new Set(["other-issue"]),
@@ -59,6 +61,15 @@ export default function ReportIssuePage() {
       details,
     });
     alert(t("reportSubmittedSuccessfully"));
+
+    scheduleEventNotification(
+      "system.feedback",
+      true,
+      Date.now() + 30000,
+      tNotif("system.feedbackPromptTitle"),
+      tNotif("system.feedbackPromptBody"),
+    );
+
     requestClose();
   };
 

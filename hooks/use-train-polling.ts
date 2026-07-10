@@ -6,9 +6,17 @@ import {
   selectTrainInfo,
   useJourneyStore,
 } from "@/store/journeyStore";
+import { selectPassList } from "@/store/journeySelectors";
 import { parseAndAddDelay } from "@/utils/time";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useSyncJourney } from "./use-sync-journey";
+import {
+  scheduleEventNotification,
+  cancelEventNotification,
+} from "@/utils/notifications";
+import { useSettings } from "@/hooks/settings";
+import { useTranslation } from "react-i18next";
+import { useWeatherStore } from "@/store/weatherStore";
 
 const pollingLogger = logger.extend("Polling");
 export const FETCH_TRAIN_POLLING_RATE = 120000; // 2 min (exported for tests)
@@ -22,6 +30,102 @@ export function useTrainPolling() {
   const nextStop = useJourneyStore(selectNextStop);
   const trainInfo = useJourneyStore(selectTrainInfo);
   const isAtStation = useJourneyStore(selectIsAtStation);
+  const passListArray = useJourneyStore(selectPassList);
+  const { settings } = useSettings();
+  const { t: tNotif } = useTranslation("notifications");
+  const weather = useWeatherStore((s) => s.weather);
+  const previousDelayRef = useRef(trainInfo?.delay ?? 0);
+
+  // Scheduling journey updates
+  useEffect(() => {
+    if (!trainId || isJourneyCompleted) return;
+
+    // 1. Approaching Stop Notification
+    if (nextStop) {
+      const delayMinutes = trainInfo?.delay || 0;
+      const arrTimeStr = nextStop.arr_time || nextStop.dep_time;
+      const arrivalDate = arrTimeStr
+        ? parseAndAddDelay(arrTimeStr, delayMinutes)
+        : null;
+      if (arrivalDate) {
+        const triggerTimestamp = arrivalDate.getTime() - 2 * 60 * 1000;
+
+        scheduleEventNotification(
+          "journey.approachingStop",
+          settings.journeyProgress,
+          triggerTimestamp,
+          tNotif("journeyProgress.approachingStopTitle"),
+          tNotif("journeyProgress.approachingStopBody", {
+            stationName: nextStop.station.station_ori_name,
+          }),
+        );
+      }
+    } else {
+      cancelEventNotification("journey.approachingStop");
+    }
+
+    // 2. Delay Change Notification
+    const currentDelay = trainInfo?.delay ?? 0;
+    const previousDelay = previousDelayRef.current;
+    if (currentDelay - previousDelay >= 3 && settings.delayAlerts) {
+      scheduleEventNotification(
+        `journey.delay.${Date.now()}`,
+        true, // Already checked settings
+        Date.now() + 1000,
+        tNotif("delayAlerts.delayIncreasedTitle"),
+        tNotif("delayAlerts.delayIncreasedBody", { delay: currentDelay }),
+      );
+    }
+    previousDelayRef.current = currentDelay;
+
+    // 3. Destination Weather Notification
+    if (destinationStation && weather) {
+      let destArrTime: Date | null = null;
+      if (passListArray && passListArray.length > 0) {
+        const destStop = passListArray.find(
+          (s) =>
+            s.station.station_ori_name === destinationStation.station_ori_name,
+        );
+        if (destStop) {
+          const timeStr = destStop.arr_time || destStop.dep_time;
+          destArrTime = timeStr
+            ? parseAndAddDelay(timeStr, currentDelay)
+            : null;
+        }
+      }
+
+      if (destArrTime) {
+        // Schedule 10 mins before arrival
+        const triggerTimestamp = destArrTime.getTime() - 10 * 60 * 1000;
+        const condition = "weather"; // Basic placeholder
+
+        scheduleEventNotification(
+          "journey.destinationWeather",
+          settings.weatherAlerts,
+          triggerTimestamp,
+          tNotif("weatherAlerts.destinationWeatherTitle", {
+            stationName: destinationStation.station_ori_name,
+          }),
+          tNotif("weatherAlerts.destinationWeatherBody", {
+            weatherCondition: condition,
+            temperature: weather.temperature.toFixed(0),
+          }),
+        );
+      }
+    }
+  }, [
+    trainId,
+    isJourneyCompleted,
+    nextStop,
+    trainInfo,
+    settings.journeyProgress,
+    settings.delayAlerts,
+    settings.weatherAlerts,
+    tNotif,
+    weather,
+    destinationStation,
+    passListArray,
+  ]);
 
   useEffect(() => {
     if (!trainId || !destinationStation || isJourneyCompleted) return;
@@ -53,10 +157,14 @@ export function useTrainPolling() {
     if (nextStop) {
       if (isAtStation) {
         // Waiting for departure
-        nextCriticalTime = parseAndAddDelay(nextStop.dep_time, delayMinutes);
+        if (nextStop.dep_time) {
+          nextCriticalTime = parseAndAddDelay(nextStop.dep_time, delayMinutes);
+        }
       } else {
         // Waiting for arrival
-        nextCriticalTime = parseAndAddDelay(nextStop.arr_time, delayMinutes);
+        if (nextStop.arr_time) {
+          nextCriticalTime = parseAndAddDelay(nextStop.arr_time, delayMinutes);
+        }
       }
     }
 
