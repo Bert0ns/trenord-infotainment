@@ -1,0 +1,18 @@
+{
+  "journeyProgress": {
+    "approachingStopTitle": "Approaching Stop",
+    "approachingStopBody": "We are arriving at {{stationName}} in approximately 2 minutes."
+  },
+  "delayAlerts": {
+    "delayIncreasedTitle": "Delay Update",
+    "delayIncreasedBody": "Your train's delay has increased. The current delay is {{delay}} minutes."
+  },
+  "weatherAlerts": {
+    "destinationWeatherTitle": "Weather at {{stationName}}",
+    "destinationWeatherBody": "Expect {{weatherCondition}} with a temperature of {{temperature}}°C upon arrival."
+  },
+  "system": {
+    "feedbackPromptTitle": "Feedback Received",
+    "feedbackPromptBody": "Thank you for reporting an issue. We are reviewing it to improve your journey."
+  }
+}

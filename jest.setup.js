@@ -68,6 +68,7 @@ jest.mock("react-i18next", () => {
     media: path("./lib/i18n/locales/en/media.json"),
     reportIssue: path("./lib/i18n/locales/en/reportIssue.json"),
     settings: path("./lib/i18n/locales/en/settings.json"),
+    notifications: path("./lib/i18n/locales/en/notifications.json"),
   };
 
   function lookup(namespace, key, keyPrefix) {
@@ -138,4 +139,14 @@ jest.mock("@/hooks/use-weather-data", () => ({
   useWeatherData: jest.fn(() => ({
     refreshWeather: jest.fn(),
   })),
+}));
+
+jest.mock("expo-notifications", () => ({
+  scheduleNotificationAsync: jest
+    .fn()
+    .mockResolvedValue("mock-notification-id"),
+  cancelScheduledNotificationAsync: jest.fn().mockResolvedValue(undefined),
+  requestPermissionsAsync: jest.fn().mockResolvedValue({ status: "granted" }),
+  getPermissionsAsync: jest.fn().mockResolvedValue({ status: "granted" }),
+  setNotificationHandler: jest.fn(),
 }));

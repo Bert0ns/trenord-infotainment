@@ -5,6 +5,7 @@ import login from "./login.json";
 import media from "./media.json";
 import reportIssue from "./reportIssue.json";
 import settings from "./settings.json";
+import notifications from "./notifications.json";
 export default {
   common,
   home,
@@ -13,4 +14,5 @@ export default {
   media,
   reportIssue,
   settings,
+  notifications,
 } as const;
