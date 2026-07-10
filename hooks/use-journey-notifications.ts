@@ -16,7 +16,6 @@ import { parseAndAddDelay } from "@/utils/time";
 import { getWeatherIcon } from "@/utils/weather";
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { useSyncJourney } from "./use-sync-journey";
 
 // Helper function to find the arrival time at the destination station
 function getDestinationArrivalTime(
@@ -34,7 +33,8 @@ function getDestinationArrivalTime(
 }
 
 export function useJourneyNotifications() {
-  const { trainId, destinationStation } = useSyncJourney();
+  const trainId = useJourneyStore((s) => s.trainId);
+  const destinationStation = useJourneyStore((s) => s.destinationStation);
   const isJourneyCompleted = useJourneyStore(selectIsJourneyCompleted);
   const nextStop = useJourneyStore(selectNextStop);
   const trainInfo = useJourneyStore(selectTrainInfo);

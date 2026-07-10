@@ -1,16 +1,13 @@
 import DiscoveryCard from "@/components/discoveryCard";
-import { ErrorBoundary } from "@/components/errorBoundary";
 import CrowdingCard from "@/components/home-components/crowdCard";
 import LiveStatusCard from "@/components/home-components/liveStatusCard";
 import WeatherCard from "@/components/home-components/weatherCard";
 import LoadingScreen from "@/components/loadingScreen";
-import NewsCard from "@/components/newsCard";
 import SectionHeader from "@/components/sectionHeader";
 import { useSettings } from "@/hooks/settings";
 import { useRefreshTrainData } from "@/hooks/use-refresh-train-data";
 import { useScreenStyles } from "@/hooks/use-screen-styles";
 import { useTheme } from "@/hooks/use-theme-color";
-import { useNews } from "@/hooks/useNews";
 import {
   selectDestinationPass,
   selectIsAtStation,
@@ -23,13 +20,14 @@ import {
 } from "@/store/journeyStore";
 import { useWeatherStore } from "@/store/weatherStore";
 import { capitalizeWords } from "@/utils/string";
-import { Redirect, useRouter } from "expo-router";
+import { Redirect } from "expo-router";
 import { useTranslation } from "react-i18next";
-import { FlatList, RefreshControl, ScrollView, Text } from "react-native";
+import { FlatList, RefreshControl, ScrollView } from "react-native";
 
 import { useWeatherData } from "@/hooks/use-weather-data";
 import { logger } from "@/lib/logger";
 import { useCallback } from "react";
+import HomeNewsSection from "@/components/home-components/homeNewsSection";
 
 const uiLogger = logger.extend("UI");
 
@@ -59,9 +57,7 @@ export default function HomeScreen() {
   }, [refreshWeather, onRefreshTrain]);
 
   const { settings } = useSettings();
-  const { data: newsData, isLoading: isNewsLoading } = useNews();
   const { t } = useTranslation("home");
-  const router = useRouter();
 
   if (!trainId) return <Redirect href="/login" />;
 
@@ -145,58 +141,10 @@ export default function HomeScreen() {
       />
 
       {settings.enableNewsApi && (
-        <ErrorBoundary>
-          <SectionHeader
-            title={
-              destinationMunicipality
-                ? t("newsSuffix", {
-                    city: capitalizeWords(destinationMunicipality),
-                  })
-                : destinationStation
-                  ? t("newsSuffix", {
-                      city: capitalizeWords(
-                        destinationStation.station_ori_name,
-                      ),
-                    })
-                  : t("latestNews")
-            }
-            type="home"
-            icon="newspaper"
-            isFirst
-            onSeeMorePress={() => router.push("/news-magazine" as any)}
-          />
-          {isNewsLoading ? (
-            <Text
-              style={{
-                paddingHorizontal: theme.spacing.md,
-                color: theme.colors.mutedForeground,
-              }}
-            >
-              {t("loadingNews")}
-            </Text>
-          ) : newsData.length > 0 ? (
-            <FlatList
-              data={newsData}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => <NewsCard article={item} />}
-              contentContainerStyle={{
-                paddingLeft: theme.spacing.md,
-                paddingBottom: theme.spacing.md,
-              }}
-            />
-          ) : (
-            <Text
-              style={{
-                paddingHorizontal: theme.spacing.md,
-                color: theme.colors.mutedForeground,
-              }}
-            >
-              {t("noNews")}
-            </Text>
-          )}
-        </ErrorBoundary>
+        <HomeNewsSection
+          destinationMunicipality={destinationMunicipality}
+          destinationStation={destinationStation}
+        />
       )}
 
       <SectionHeader
