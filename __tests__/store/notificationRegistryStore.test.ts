@@ -3,43 +3,54 @@ import { useNotificationRegistryStore } from "@/store/notificationRegistryStore"
 describe("notificationRegistryStore", () => {
   beforeEach(() => {
     // Reset state before each test
-    useNotificationRegistryStore.setState({ scheduledIds: {} });
+    useNotificationRegistryStore.setState({ scheduledNotifications: {} });
     jest.clearAllMocks();
   });
 
-  it("initializes with empty scheduledIds", () => {
-    const { scheduledIds } = useNotificationRegistryStore.getState();
-    expect(scheduledIds).toEqual({});
+  it("initializes with empty scheduledNotifications", () => {
+    const { scheduledNotifications } = useNotificationRegistryStore.getState();
+    expect(scheduledNotifications).toEqual({});
   });
 
-  it("addScheduledId updates the store state correctly", () => {
-    const { addScheduledId } = useNotificationRegistryStore.getState();
-    addScheduledId("test-event", "test-id");
-    const { scheduledIds } = useNotificationRegistryStore.getState();
-    expect(scheduledIds).toEqual({ "test-event": "test-id" });
-  });
-
-  it("removeScheduledId updates the store state correctly", () => {
-    const { addScheduledId, removeScheduledId } =
+  it("addScheduledNotification updates the store state correctly", () => {
+    const { addScheduledNotification } =
       useNotificationRegistryStore.getState();
-    addScheduledId("test-event", "test-id");
-    addScheduledId("test-event-2", "test-id-2");
-
-    removeScheduledId("test-event");
-    const { scheduledIds } = useNotificationRegistryStore.getState();
-
-    expect(scheduledIds).toEqual({ "test-event-2": "test-id-2" });
+    addScheduledNotification("test-event", { id: "test-id", timestamp: 1000 });
+    const { scheduledNotifications } = useNotificationRegistryStore.getState();
+    expect(scheduledNotifications).toEqual({
+      "test-event": { id: "test-id", timestamp: 1000 },
+    });
   });
 
-  it("clearAllScheduledIds resets the state", () => {
-    const { addScheduledId, clearAllScheduledIds } =
+  it("removeScheduledNotification updates the store state correctly", () => {
+    const { addScheduledNotification, removeScheduledNotification } =
       useNotificationRegistryStore.getState();
-    addScheduledId("test-event", "test-id");
-    addScheduledId("test-event-2", "test-id-2");
+    addScheduledNotification("test-event", { id: "test-id", timestamp: 1000 });
+    addScheduledNotification("test-event-2", {
+      id: "test-id-2",
+      timestamp: 2000,
+    });
 
-    clearAllScheduledIds();
-    const { scheduledIds } = useNotificationRegistryStore.getState();
+    removeScheduledNotification("test-event");
+    const { scheduledNotifications } = useNotificationRegistryStore.getState();
 
-    expect(scheduledIds).toEqual({});
+    expect(scheduledNotifications).toEqual({
+      "test-event-2": { id: "test-id-2", timestamp: 2000 },
+    });
+  });
+
+  it("clearAllScheduledNotifications resets the state", () => {
+    const { addScheduledNotification, clearAllScheduledNotifications } =
+      useNotificationRegistryStore.getState();
+    addScheduledNotification("test-event", { id: "test-id", timestamp: 1000 });
+    addScheduledNotification("test-event-2", {
+      id: "test-id-2",
+      timestamp: 2000,
+    });
+
+    clearAllScheduledNotifications();
+    const { scheduledNotifications } = useNotificationRegistryStore.getState();
+
+    expect(scheduledNotifications).toEqual({});
   });
 });

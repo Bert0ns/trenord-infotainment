@@ -5,39 +5,47 @@ import { logger } from "@/lib/logger";
 
 const storeLogger = logger.extend("NotificationRegistry");
 
+export interface ScheduledNotificationInfo {
+  id: string;
+  timestamp: number;
+}
+
 export interface NotificationRegistryState {
-  scheduledIds: Record<string, string>;
-  addScheduledId: (eventKey: string, notificationId: string) => void;
-  removeScheduledId: (eventKey: string) => void;
-  clearAllScheduledIds: () => void;
+  scheduledNotifications: Record<string, ScheduledNotificationInfo>;
+  addScheduledNotification: (
+    eventKey: string,
+    info: ScheduledNotificationInfo,
+  ) => void;
+  removeScheduledNotification: (eventKey: string) => void;
+  clearAllScheduledNotifications: () => void;
 }
 
 export const useNotificationRegistryStore = create<NotificationRegistryState>()(
   persist(
     (set) => ({
-      scheduledIds: {},
-      addScheduledId: (eventKey, notificationId) => {
+      scheduledNotifications: {},
+      addScheduledNotification: (eventKey, info) => {
         storeLogger.info(
-          `Adding scheduled ID for ${eventKey}: ${notificationId}`,
+          `Adding scheduled notification for ${eventKey}: ${info.id} at ${info.timestamp}`,
         );
         set((state) => ({
-          scheduledIds: {
-            ...state.scheduledIds,
-            [eventKey]: notificationId,
+          scheduledNotifications: {
+            ...state.scheduledNotifications,
+            [eventKey]: info,
           },
         }));
       },
-      removeScheduledId: (eventKey) => {
-        storeLogger.info(`Removing scheduled ID for ${eventKey}`);
+      removeScheduledNotification: (eventKey) => {
+        storeLogger.info(`Removing scheduled notification for ${eventKey}`);
         set((state) => {
-          const newScheduledIds = { ...state.scheduledIds };
-          delete newScheduledIds[eventKey];
-          return { scheduledIds: newScheduledIds };
+          const newScheduledNotifications = { ...state.scheduledNotifications };
+          delete newScheduledNotifications[eventKey];
+          return { scheduledNotifications: newScheduledNotifications };
         });
       },
-      clearAllScheduledIds: () => {
-        storeLogger.info("Clearing all scheduled notification IDs");
-        set({ scheduledIds: {} });
+      clearAllScheduledNotifications: () => {
+        storeLogger.info("Clearing all scheduled notifications");
+        set({ scheduledNotifications: {} });
       },
     }),
     {

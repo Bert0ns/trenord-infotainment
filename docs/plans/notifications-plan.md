@@ -34,13 +34,13 @@ To ensure notifications fire at the correct times under dynamic train conditions
 **Description:** Install the required Expo package and add the English and Italian translation strings for the notification payloads.
 **Acceptance criteria:**
 
-- [ ] `expo-notifications` is installed.
-- [ ] `lib/i18n/locales/en/notifications.json` contains the `notifications` keys.
-- [ ] `lib/i18n/locales/it/notifications.json` contains the translated `notifications` keys.
-- [ ] `jest.setup.js` is updated to mock the new `notifications` translation namespace.
+- [x] `expo-notifications` is installed.
+- [x] `lib/i18n/locales/en/notifications.json` contains the `notifications` keys.
+- [x] `lib/i18n/locales/it/notifications.json` contains the translated `notifications` keys.
+- [x] `jest.setup.js` is updated to mock the new `notifications` translation namespace.
       **Verification:**
-- [ ] Run `pnpm install` and verify it succeeds.
-- [ ] Build succeeds: `pnpm typecheck`
+- [x] Run `pnpm install` and verify it succeeds.
+- [x] Build succeeds: `pnpm typecheck`
       **Dependencies:** None
       **Files likely touched:**
 - `package.json`
@@ -56,11 +56,11 @@ To ensure notifications fire at the correct times under dynamic train conditions
 **Description:** Create a Zustand store `useNotificationRegistryStore` to keep a registry of currently scheduled notification IDs (for easy cancellation and rescheduling).
 **Acceptance criteria:**
 
-- [ ] Store contains a `scheduledIds` dictionary mapping event keys to OS notification IDs.
-- [ ] Store contains functions to add, remove, and clear scheduled IDs.
-- [ ] Store is persisted to AsyncStorage.
+- [x] Store contains a `scheduledIds` dictionary mapping event keys to OS notification IDs.
+- [x] Store contains functions to add, remove, and clear scheduled IDs.
+- [x] Store is persisted to AsyncStorage.
       **Verification:**
-- [ ] Tests pass: `pnpm test -- --grep "notificationRegistryStore"`
+- [x] Tests pass: `pnpm test -- --grep "notificationRegistryStore"`
       **Dependencies:** None
       **Files likely touched:**
 - `store/notificationRegistryStore.ts`
@@ -72,12 +72,12 @@ To ensure notifications fire at the correct times under dynamic train conditions
 **Description:** Create a utility service that requests OS permissions and uses `expo-notifications` to schedule timers. It must cancel any existing timer for a specific event before setting a new one, and avoid rescheduling if the target timestamp is identical.
 **Acceptance criteria:**
 
-- [ ] Utility checks user preferences from `useSettings` before scheduling.
-- [ ] Utility requests OS permissions if not already granted.
-- [ ] Utility cancels the previous `scheduledId` before setting a new one for the same event key.
-- [ ] Utility avoids calling schedule APIs if the new calculated trigger timestamp is identical to the previously scheduled one.
+- [x] Utility checks user preferences from `useSettings` before scheduling.
+- [x] Utility requests OS permissions if not already granted.
+- [x] Utility cancels the previous `scheduledId` before setting a new one for the same event key.
+- [x] Utility avoids calling schedule APIs if the new calculated trigger timestamp is identical to the previously scheduled one.
       **Verification:**
-- [ ] Tests pass: `pnpm test -- --grep "notificationsUtil"`
+- [x] Tests pass: `pnpm test -- --grep "notificationsUtil"`
       **Dependencies:** Task 1, Task 2
       **Files likely touched:**
 - `utils/notifications.ts`
