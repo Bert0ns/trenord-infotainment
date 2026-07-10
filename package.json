@@ -16,12 +16,12 @@
     "format:check": "prettier . --check",
     "typecheck": "tsc --noEmit",
     "lint": "expo lint",
-    "eslint": "eslint .",
+    "eslint:run": "eslint .",
     "test": "jest",
     "test:cov": "jest --coverage",
     "test-watch": "jest --watchAll",
     "prepare": "husky",
-    "fallow": "fallow"
+    "fallow:run": "fallow"
   },
   "dependencies": {
     "@expo-google-fonts/inter": "^0.4.2",
