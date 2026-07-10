@@ -101,3 +101,27 @@ Use `pnpm` exclusively for installs and updates in this repository.
   ```
 
 _(When upgrading the Expo SDK itself, follow the official Expo SDK upgrade guide and then re-run the alignment command above)._
+
+**Other useful commands**
+
+`npx expo-doctor`
+
+## EAS cli deploy and test
+
+Install eas cli
+`npm install -g eas-cli`
+
+EAS Cloud
+
+```bash
+eas build --profile development --platform android
+eas build --profile development --platform ios --simulator
+eas build --profile development --platform ios #(For physical iOS devices, you will need to register your device's UDID with EAS during the prompt).
+```
+
+EAS local
+
+```bash
+eas build --profile development --platform android --local
+eas build --profile development --platform ios --local --simulator
+```
