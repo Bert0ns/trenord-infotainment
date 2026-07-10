@@ -1,41 +1,49 @@
+import { Platform } from "react-native";
 import { useNotificationRegistryStore } from "@/store/notificationRegistryStore";
 import { logger } from "@/lib/logger";
 
 const utilLogger = logger.extend("NotificationsUtil");
 
 let Notifications: any;
-try {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  Notifications = require("expo-notifications");
+if (Platform.OS !== "web") {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    Notifications = require("expo-notifications");
 
-  // Global handler behavior
-  Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-      shouldShowAlert: true,
-      shouldPlaySound: true,
-      shouldSetBadge: false,
-      shouldShowBanner: true,
-      shouldShowList: true,
-    }),
-  });
-} catch {
-  utilLogger.warn(
-    "expo-notifications is not available (likely running in Expo Go on Android). Notifications will be disabled.",
-  );
-  Notifications = null;
+    // Global handler behavior
+    Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: true,
+        shouldSetBadge: false,
+        shouldShowBanner: true,
+        shouldShowList: true,
+      }),
+    });
+  } catch {
+    utilLogger.warn(
+      "expo-notifications is not available (likely running in Expo Go on Android). Notifications will be disabled.",
+    );
+    Notifications = null;
+  }
 }
 
 export async function requestNotificationPermissionsAsync(): Promise<boolean> {
   if (!Notifications) return false;
-  const permissions: any = await Notifications.getPermissionsAsync();
-  let isGranted = permissions.granted;
+  try {
+    const permissions: any = await Notifications.getPermissionsAsync();
+    let isGranted = permissions?.granted;
 
-  if (!isGranted && permissions.canAskAgain) {
-    const requested: any = await Notifications.requestPermissionsAsync();
-    isGranted = requested.granted;
+    if (!isGranted && permissions?.canAskAgain) {
+      const requested: any = await Notifications.requestPermissionsAsync();
+      isGranted = requested?.granted;
+    }
+
+    return Boolean(isGranted);
+  } catch (error) {
+    utilLogger.warn("Failed to request notification permissions:", error);
+    return false;
   }
-
-  return Boolean(isGranted);
 }
 
 export async function scheduleEventNotification(
