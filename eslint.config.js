@@ -9,6 +9,9 @@ module.exports = defineConfig([
   expoConfig,
   eslintPluginPrettierRecommended,
   {
+    linterOptions: {
+      reportUnusedDisableDirectives: "off",
+    },
     plugins: {
       "unused-imports": unusedImports,
     },
@@ -25,6 +28,17 @@ module.exports = defineConfig([
           argsIgnorePattern: "^_",
         },
       ],
+    },
+  },
+  {
+    files: [
+      "__tests__/**/*.ts",
+      "__tests__/**/*.tsx",
+      "**/*.test.ts",
+      "**/*.test.tsx",
+    ],
+    rules: {
+      "@typescript-eslint/no-require-imports": "off",
     },
   },
   {

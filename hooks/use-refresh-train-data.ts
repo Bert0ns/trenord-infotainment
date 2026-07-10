@@ -11,7 +11,7 @@ export function useRefreshTrainData() {
     setIsRefreshing(true);
     try {
       await syncJourney();
-    } catch (error: unknown) {
+    } catch {
       // The error is already logged in useSyncJourney
     } finally {
       setIsRefreshing(false);

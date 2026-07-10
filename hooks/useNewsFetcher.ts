@@ -90,6 +90,7 @@ export function useNewsFetcher({
     fetchFunction,
     hookLogger,
     hookName,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     ...extraDependencies,
   ]);
 

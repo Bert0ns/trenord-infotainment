@@ -77,9 +77,7 @@ describe("SettingsScreen", () => {
   });
 
   it("initializes with default settings", async () => {
-    const { getByTestId, getByText } = await renderWithProvider(
-      <SettingsScreen />,
-    );
+    const { getByTestId } = await renderWithProvider(<SettingsScreen />);
 
     expect(
       getByTestId(`value-${enSettings.travelComfort.antiSickness.label}`).props

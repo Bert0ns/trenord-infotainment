@@ -62,6 +62,7 @@ export async function scheduleEventNotification(
     utilLogger.log(
       `Skipping notification for ${eventKey} because it is disabled in settings.`,
     );
+    await cancelEventNotification(eventKey);
     return;
   }
 
