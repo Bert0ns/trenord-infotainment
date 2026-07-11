@@ -90,10 +90,14 @@ export default function HomeScreen() {
               : t("unknown")
         }
         arrivalTime={
-          nextStop?.arr_time
-            ? nextStop.arr_time.slice(0, 5)
-            : isJourneyCompleted && destinationPass?.arr_time
-              ? destinationPass.arr_time.slice(0, 5)
+          nextStop?.arr_time || nextStop?.dep_time
+            ? (nextStop?.arr_time || nextStop?.dep_time)!.slice(0, 5)
+            : isJourneyCompleted &&
+                (destinationPass?.arr_time || destinationPass?.dep_time)
+              ? (destinationPass?.arr_time || destinationPass?.dep_time)!.slice(
+                  0,
+                  5,
+                )
               : t("unknown")
         }
         destination={
@@ -112,8 +116,8 @@ export default function HomeScreen() {
         isFirst={nextStop?.pass_count === 1}
         departureTime={
           isAtStation || nextStop?.pass_count === 1
-            ? nextStop?.dep_time
-              ? nextStop.dep_time.slice(0, 5)
+            ? nextStop?.dep_time || nextStop?.arr_time
+              ? (nextStop?.dep_time || nextStop?.arr_time)!.slice(0, 5)
               : t("unknown")
             : undefined
         }
