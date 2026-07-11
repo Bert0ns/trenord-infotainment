@@ -65,6 +65,7 @@ Put it in `docs/plans`, you can either choose to write a `.md` file or an `.html
 - **Verification:** After completing a coding task, always verify your work by running `pnpm lint`, `pnpm format`, `pnpm typecheck`, and/or the relevant tests to ensure you haven't broken existing features.
 - **Subagents for Research:** If a task requires extensive reading of the codebase or searching the web, delegate the research phase to a background subagent to keep your main context clean and focused.
 - **Feedback:** If the human is making a mistake, tell him what he is doing wrong and why, and propose a better solution.
+- **Always put you plans in the docs/plans/ project directory**
 
 ## 7. Domain Knowledge & APIs
 

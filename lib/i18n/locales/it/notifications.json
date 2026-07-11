@@ -1,0 +1,26 @@
+{
+  "journeyProgress": {
+    "approachingStopTitle": "Prossima Fermata",
+    "approachingStopBody": "Siamo in arrivo a {{stationName}} tra circa 2 minuti."
+  },
+  "delayAlerts": {
+    "delayIncreasedTitle": "Aggiornamento Ritardo",
+    "delayIncreasedBody": "Il ritardo del tuo treno è aumentato. Il ritardo attuale è di {{delay}} minuti."
+  },
+  "weatherAlerts": {
+    "destinationWeatherTitle": "Meteo a {{stationName}}",
+    "destinationWeatherBody": "All'arrivo è previsto {{weatherCondition}} con una temperatura di {{temperature}}°C."
+  },
+  "system": {
+    "feedbackPromptTitle": "Feedback Ricevuto",
+    "feedbackPromptBody": "Grazie per aver segnalato un problema. Lo stiamo esaminando per migliorare il tuo viaggio."
+  },
+  "timeline": {
+    "title": "Cronologia Notifiche",
+    "future": "In programma",
+    "past": "Passate",
+    "clearAll": "Cancella tutto",
+    "noNotifications": "Nessuna notifica recente",
+    "scheduledBody": "Una notifica è programmata per questo orario."
+  }
+}

@@ -1,7 +1,7 @@
 import enLogin from "@/lib/i18n/locales/en/login.json";
 import { fireEvent, render } from "@testing-library/react-native";
 import LoginScreen from "../app/login";
-import { SettingsProvider } from "../hooks/settings";
+
 import * as api from "../lib/api/trenord/trenord";
 import { useJourneyStore } from "../store/journeyStore";
 
@@ -78,11 +78,7 @@ describe("LoginScreen", () => {
   });
 
   it("renders correctly and disables search button initially", () => {
-    const { getByPlaceholderText, getByText } = render(
-      <SettingsProvider>
-        <LoginScreen />
-      </SettingsProvider>,
-    );
+    const { getByPlaceholderText, getByText } = render(<LoginScreen />);
 
     expect(getByPlaceholderText(enLogin.enterTicketCode)).toBeTruthy();
     expect(getByText(enLogin.searchTrain)).toBeTruthy();
@@ -94,9 +90,7 @@ describe("LoginScreen", () => {
     );
 
     const { getByPlaceholderText, getByText, findByText } = render(
-      <SettingsProvider>
-        <LoginScreen />
-      </SettingsProvider>,
+      <LoginScreen />,
     );
 
     const input = getByPlaceholderText(enLogin.enterTicketCode);
@@ -115,9 +109,7 @@ describe("LoginScreen", () => {
     (api.fetchTrainData as jest.Mock).mockResolvedValueOnce([]); // Empty response
 
     const { getByPlaceholderText, getByText, findByText } = render(
-      <SettingsProvider>
-        <LoginScreen />
-      </SettingsProvider>,
+      <LoginScreen />,
     );
 
     const input = getByPlaceholderText(enLogin.enterTicketCode);
@@ -158,9 +150,7 @@ describe("LoginScreen", () => {
     (api.fetchTrainData as jest.Mock).mockResolvedValueOnce(mockData);
 
     const { getByPlaceholderText, getByText, getByTestId, findByText } = render(
-      <SettingsProvider>
-        <LoginScreen />
-      </SettingsProvider>,
+      <LoginScreen />,
     );
 
     // Type code
@@ -210,9 +200,7 @@ describe("LoginScreen", () => {
     (api.fetchTrainData as jest.Mock).mockResolvedValueOnce(mockData);
 
     const { getByPlaceholderText, getByText, getByTestId, findByText } = render(
-      <SettingsProvider>
-        <LoginScreen />
-      </SettingsProvider>,
+      <LoginScreen />,
     );
 
     // Type code
@@ -242,11 +230,7 @@ describe("LoginScreen", () => {
   });
 
   it("navigates to settings when footer settings icon is pressed", () => {
-    const { getByText } = render(
-      <SettingsProvider>
-        <LoginScreen />
-      </SettingsProvider>,
-    );
+    const { getByText } = render(<LoginScreen />);
 
     // Find the settings button in the footer by text
     const settingsBtn = getByText(enLogin.settings);

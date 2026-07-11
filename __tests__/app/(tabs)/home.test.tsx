@@ -83,11 +83,11 @@ jest.mock("@/store/journeyStore", () => ({
   useJourneyStore: jest.fn(),
 }));
 
-jest.mock("@/hooks/settings", () => ({
-  useSettings: () => ({
-    settings: { enableNewsApi: true },
-    set: jest.fn(),
-  }),
+jest.mock("@/store/settingsStore", () => ({
+  useSettingsStore: (selector: any) => {
+    if (selector) return selector({ settings: { enableNewsApi: true } });
+    return { settings: { enableNewsApi: true } };
+  },
 }));
 
 jest.mock("@/hooks/useNews", () => ({

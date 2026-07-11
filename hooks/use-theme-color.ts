@@ -7,7 +7,7 @@ import { ColorName, THEME } from "@/constants/theme";
 import { Theme } from "@/constants/theme.types";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { StyleSheet } from "react-native";
-import { useSettings } from "./settings";
+import { useSettingsStore } from "@/store/settingsStore";
 
 /**
  * Hook to get the currently selected color scheme (light or dark).
@@ -15,12 +15,12 @@ import { useSettings } from "./settings";
  * This hook checks user preference from settings, and if set to "system", it uses the device's color scheme.
  */
 export function useSelectedScheme() {
-  const { settings } = useSettings();
+  const themeSetting = useSettingsStore((s) => s.settings.theme);
   const systemScheme = useColorScheme();
-  if (settings.theme === "system") {
+  if (themeSetting === "system") {
     return systemScheme !== "unspecified" ? systemScheme : "light";
   } else {
-    return settings.theme;
+    return themeSetting;
   }
 }
 

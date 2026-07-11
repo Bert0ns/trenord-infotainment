@@ -7,7 +7,6 @@
     "icon": "./assets/images/trenord-icon.png",
     "scheme": "trenordinfotainment",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.toto04.trenord-infotainment"
@@ -19,7 +18,8 @@
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
-      }
+      },
+      "predictiveBackGestureEnabled": false
     },
     "web": {
       "output": "static",
@@ -59,6 +59,6 @@
         "projectId": "62adad34-592f-43ab-963c-94a40aeba9c3"
       }
     },
-    "owner": "toto04"
+    "owner": "dima-project"
   }
 }

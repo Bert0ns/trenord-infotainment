@@ -14,13 +14,12 @@ jest.mock("expo-router", () => ({
   useRouter: () => ({ back: jest.fn() }),
 }));
 
-jest.mock("@/hooks/settings", () => ({
-  useSettings: () => ({
-    settings: {
-      theme: "light",
-      enableNewsApi: true,
-    },
-  }),
+jest.mock("@/store/settingsStore", () => ({
+  useSettingsStore: (selector: any) => {
+    if (selector)
+      return selector({ settings: { theme: "light", enableNewsApi: true } });
+    return { settings: { theme: "light", enableNewsApi: true } };
+  },
 }));
 
 jest.mock("@expo/vector-icons", () => ({
@@ -28,13 +27,13 @@ jest.mock("@expo/vector-icons", () => ({
   MaterialIcons: "MaterialIcons",
 }));
 
-jest.mock("@/components/report-issue-components/sheet-container", () => {
+jest.mock("@/components/ui/slide-sheet", () => {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const React = require("react");
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { View } = require("react-native");
   return {
-    SheetContainer: React.forwardRef(function SheetContainer(
+    SlideSheet: React.forwardRef(function SlideSheet(
       { children, header, onClose }: any,
       ref: any,
     ) {

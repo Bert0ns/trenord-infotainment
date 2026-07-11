@@ -2,7 +2,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { act, fireEvent, render } from "@testing-library/react-native";
 import { useRouter } from "expo-router";
 
-import { SettingsProvider } from "@/hooks/settings";
 import enSettings from "@/lib/i18n/locales/en/settings.json";
 import SettingsScreen from "../app/(tabs)/settings";
 
@@ -42,12 +41,16 @@ jest.mock("@expo/vector-icons", () => ({
   Ionicons: "Ionicons",
 }));
 
+// Mock notifications to always grant permission in tests
+jest.mock("@/utils/notifications", () => ({
+  requestNotificationPermissionsAsync: jest.fn().mockResolvedValue(true),
+  cancelEventNotification: jest.fn(),
+  scheduleEventNotification: jest.fn(),
+  cancelAllEventNotifications: jest.fn(),
+}));
+
 const renderWithProvider = async (component: React.ReactElement) => {
-  const result = render(<SettingsProvider>{component}</SettingsProvider>);
-  // Flush the microtask queue to allow SettingsProvider's async useEffect to complete
-  await act(async () => {
-    await Promise.resolve();
-  });
+  const result = render(component);
   return result;
 };
 
@@ -69,9 +72,7 @@ describe("SettingsScreen", () => {
   });
 
   it("initializes with default settings", async () => {
-    const { getByTestId, getByText } = await renderWithProvider(
-      <SettingsScreen />,
-    );
+    const { getByTestId } = await renderWithProvider(<SettingsScreen />);
 
     expect(
       getByTestId(`value-${enSettings.travelComfort.antiSickness.label}`).props
@@ -80,11 +81,11 @@ describe("SettingsScreen", () => {
     expect(
       getByTestId(`value-${enSettings.notifications.journeyProgress.title}`)
         .props.children,
-    ).toBe("ON");
+    ).toBe("OFF");
     expect(
       getByTestId(`value-${enSettings.notifications.delayAlerts.title}`).props
         .children,
-    ).toBe("ON");
+    ).toBe("OFF");
     expect(
       getByTestId(`value-${enSettings.notifications.weatherAlerts.title}`).props
         .children,
@@ -94,16 +95,24 @@ describe("SettingsScreen", () => {
   it("toggles all configuration switches correctly", async () => {
     const { getByTestId } = await renderWithProvider(<SettingsScreen />);
 
-    fireEvent.press(getByTestId("toggle-Anti-Sickness Mode"));
+    await act(async () => {
+      fireEvent.press(getByTestId("toggle-Anti-Sickness Mode"));
+    });
     expect(getByTestId("value-Anti-Sickness Mode").props.children).toBe("ON");
 
-    fireEvent.press(getByTestId("toggle-Journey Progress"));
-    expect(getByTestId("value-Journey Progress").props.children).toBe("OFF");
+    await act(async () => {
+      fireEvent.press(getByTestId("toggle-Journey Progress"));
+    });
+    expect(getByTestId("value-Journey Progress").props.children).toBe("ON");
 
-    fireEvent.press(getByTestId("toggle-Delay Alerts"));
-    expect(getByTestId("value-Delay Alerts").props.children).toBe("OFF");
+    await act(async () => {
+      fireEvent.press(getByTestId("toggle-Delay Alerts"));
+    });
+    expect(getByTestId("value-Delay Alerts").props.children).toBe("ON");
 
-    fireEvent.press(getByTestId("toggle-Weather & Disruptions"));
+    await act(async () => {
+      fireEvent.press(getByTestId("toggle-Weather & Disruptions"));
+    });
     expect(getByTestId("value-Weather & Disruptions").props.children).toBe(
       "ON",
     );

@@ -53,10 +53,14 @@ export function useTrainPolling() {
     if (nextStop) {
       if (isAtStation) {
         // Waiting for departure
-        nextCriticalTime = parseAndAddDelay(nextStop.dep_time, delayMinutes);
+        if (nextStop.dep_time) {
+          nextCriticalTime = parseAndAddDelay(nextStop.dep_time, delayMinutes);
+        }
       } else {
         // Waiting for arrival
-        nextCriticalTime = parseAndAddDelay(nextStop.arr_time, delayMinutes);
+        if (nextStop.arr_time) {
+          nextCriticalTime = parseAndAddDelay(nextStop.arr_time, delayMinutes);
+        }
       }
     }
 

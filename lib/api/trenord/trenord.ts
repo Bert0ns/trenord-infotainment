@@ -82,8 +82,8 @@ async function getAccessToken(): Promise<string> {
     aud: issuer,
     jti: jti,
     requested_audiences: [audience],
-    iat: nowSec(),
-    exp: nowSec() + 300, // Expires in 5 minutes
+    iat: nowSec() - 300, // 5 minutes in the past to tolerate device clock skew
+    exp: nowSec() + 900, // Expires in 15 minutes
   };
 
   const jwt = KJUR.jws.JWS.sign(
@@ -133,24 +133,31 @@ async function getAccessToken(): Promise<string> {
   return token;
 }
 
-export async function fetchTrainData(
-  trainId: string,
-): Promise<TrainInfoResponse> {
+async function authenticatedFetch(url: string, errorPrefix: string) {
   const accessToken = await getAccessToken();
-  const url = `${apiUrl}/train/${trainId}`;
-
-  apiLogger.trace(`Fetching live data for train ${trainId}...`);
   const response = await proxiedFetch(url, {
     method: "GET",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
+    headers: { Authorization: `Bearer ${accessToken}` },
   });
 
   if (!response.ok) {
-    apiLogger.error(`Train fetch failed with status ${response.status}`);
-    throw new Error(`Train API Call failed with status ${response.status}`);
+    apiLogger.error(
+      `${errorPrefix} fetch failed with status ${response.status}`,
+    );
+    throw new Error(
+      `${errorPrefix} API Call failed with status ${response.status}`,
+    );
   }
+
+  return response;
+}
+
+export async function fetchTrainData(
+  trainId: string,
+): Promise<TrainInfoResponse> {
+  const url = `${apiUrl}/train/${trainId}`;
+  apiLogger.trace(`Fetching live data for train ${trainId}...`);
+  const response = await authenticatedFetch(url, "Train");
 
   apiLogger.trace(`Train data retrieved successfully for train ${trainId}.`);
   return response.json();
@@ -239,23 +246,9 @@ export function clearTrenordApiCache() {
 export async function fetchStationMetadata(
   stationName: string,
 ): Promise<StationResponse> {
-  const accessToken = await getAccessToken();
   const url = `${apiUrl}/stazioni_v2?NomeGeoStazioni=${encodeURIComponent(stationName)}`;
-
   apiLogger.trace(`Fetching metadata for station ${stationName}...`);
-  const response = await proxiedFetch(url, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
-
-  if (!response.ok) {
-    apiLogger.error(
-      `Station metadata fetch failed with status ${response.status}`,
-    );
-    throw new Error(`Station API Call failed with status ${response.status}`);
-  }
+  const response = await authenticatedFetch(url, "Station");
 
   apiLogger.trace(
     `Station metadata retrieved successfully for ${stationName}.`,

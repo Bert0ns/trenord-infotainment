@@ -13,11 +13,10 @@ jest.mock("react-native-safe-area-context", () => ({
   useSafeAreaInsets: () => ({ bottom: 20 }),
 }));
 
-jest.mock("@/components/report-issue-components", () => {
+jest.mock("@/components/ui/slide-sheet", () => {
   const React = require("react");
-  const { View, Text, TouchableOpacity, TextInput } = require("react-native");
-
-  const SheetContainer = React.forwardRef(function SheetContainer(
+  const { View } = require("react-native");
+  const SlideSheet = React.forwardRef(function SlideSheet(
     { children, header, onClose }: any,
     ref: any,
   ) {
@@ -31,9 +30,13 @@ jest.mock("@/components/report-issue-components", () => {
       </View>
     );
   });
+  return { SlideSheet };
+});
 
+jest.mock("@/components/report-issue-components", () => {
+  const React = require("react");
+  const { View, Text, TouchableOpacity, TextInput } = require("react-native");
   return {
-    SheetContainer,
     ActionButtons: ({ onSubmit, onCancel }: any) => (
       <View>
         <TouchableOpacity testID="submit-btn" onPress={onSubmit}>

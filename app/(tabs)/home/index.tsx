@@ -1,16 +1,13 @@
 import DiscoveryCard from "@/components/discoveryCard";
-import { ErrorBoundary } from "@/components/errorBoundary";
 import CrowdingCard from "@/components/home-components/crowdCard";
 import LiveStatusCard from "@/components/home-components/liveStatusCard";
 import WeatherCard from "@/components/home-components/weatherCard";
 import LoadingScreen from "@/components/loadingScreen";
-import NewsCard from "@/components/newsCard";
 import SectionHeader from "@/components/sectionHeader";
-import { useSettings } from "@/hooks/settings";
+import { useSettingsStore } from "@/store/settingsStore";
 import { useRefreshTrainData } from "@/hooks/use-refresh-train-data";
 import { useScreenStyles } from "@/hooks/use-screen-styles";
 import { useTheme } from "@/hooks/use-theme-color";
-import { useNews } from "@/hooks/useNews";
 import {
   selectDestinationPass,
   selectIsAtStation,
@@ -19,17 +16,19 @@ import {
   selectOrigDestData,
   selectPassList,
   selectTrainInfo,
+  selectLiveDelay,
   useJourneyStore,
 } from "@/store/journeyStore";
 import { useWeatherStore } from "@/store/weatherStore";
 import { capitalizeWords } from "@/utils/string";
-import { Redirect, useRouter } from "expo-router";
+import { Redirect } from "expo-router";
 import { useTranslation } from "react-i18next";
-import { FlatList, RefreshControl, ScrollView, Text } from "react-native";
+import { FlatList, RefreshControl, ScrollView } from "react-native";
 
 import { useWeatherData } from "@/hooks/use-weather-data";
 import { logger } from "@/lib/logger";
 import { useCallback } from "react";
+import HomeNewsSection from "@/components/home-components/homeNewsSection";
 
 const uiLogger = logger.extend("UI");
 
@@ -48,6 +47,7 @@ export default function HomeScreen() {
   const nextStop = useJourneyStore(selectNextStop);
   const isJourneyCompleted = useJourneyStore(selectIsJourneyCompleted);
   const isAtStation = useJourneyStore(selectIsAtStation);
+  const liveDelay = useJourneyStore(selectLiveDelay);
   const { isRefreshing, onRefresh: onRefreshTrain } = useRefreshTrainData();
   const weather = useWeatherStore((state) => state.weather);
   const { refreshWeather } = useWeatherData();
@@ -58,10 +58,8 @@ export default function HomeScreen() {
     await Promise.all([weatherPromise, trainPromise]);
   }, [refreshWeather, onRefreshTrain]);
 
-  const { settings } = useSettings();
-  const { data: newsData, isLoading: isNewsLoading } = useNews();
+  const enableNewsApi = useSettingsStore((s) => s.settings.enableNewsApi);
   const { t } = useTranslation("home");
-  const router = useRouter();
 
   if (!trainId) return <Redirect href="/login" />;
 
@@ -94,10 +92,14 @@ export default function HomeScreen() {
               : t("unknown")
         }
         arrivalTime={
-          nextStop?.arr_time
-            ? nextStop.arr_time.slice(0, 5)
-            : isJourneyCompleted && destinationPass?.arr_time
-              ? destinationPass.arr_time.slice(0, 5)
+          nextStop?.arr_time || nextStop?.dep_time
+            ? (nextStop?.arr_time || nextStop?.dep_time)!.slice(0, 5)
+            : isJourneyCompleted &&
+                (destinationPass?.arr_time || destinationPass?.dep_time)
+              ? (destinationPass?.arr_time || destinationPass?.dep_time)!.slice(
+                  0,
+                  5,
+                )
               : t("unknown")
         }
         destination={
@@ -112,12 +114,12 @@ export default function HomeScreen() {
         }
         speed={t("na")}
         trainNumber={`${trainInfo.train_category} ${trainId}`}
-        delayMinutes={trainInfo.delay}
+        delayMinutes={liveDelay}
         isFirst={nextStop?.pass_count === 1}
         departureTime={
           isAtStation || nextStop?.pass_count === 1
-            ? nextStop?.dep_time
-              ? nextStop.dep_time.slice(0, 5)
+            ? nextStop?.dep_time || nextStop?.arr_time
+              ? (nextStop?.dep_time || nextStop?.arr_time)!.slice(0, 5)
               : t("unknown")
             : undefined
         }
@@ -144,59 +146,11 @@ export default function HomeScreen() {
         route="/home/weatherDetails"
       />
 
-      {settings.enableNewsApi && (
-        <ErrorBoundary>
-          <SectionHeader
-            title={
-              destinationMunicipality
-                ? t("newsSuffix", {
-                    city: capitalizeWords(destinationMunicipality),
-                  })
-                : destinationStation
-                  ? t("newsSuffix", {
-                      city: capitalizeWords(
-                        destinationStation.station_ori_name,
-                      ),
-                    })
-                  : t("latestNews")
-            }
-            type="home"
-            icon="newspaper"
-            isFirst
-            onSeeMorePress={() => router.push("/news-magazine" as any)}
-          />
-          {isNewsLoading ? (
-            <Text
-              style={{
-                paddingHorizontal: theme.spacing.md,
-                color: theme.colors.mutedForeground,
-              }}
-            >
-              {t("loadingNews")}
-            </Text>
-          ) : newsData.length > 0 ? (
-            <FlatList
-              data={newsData}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => <NewsCard article={item} />}
-              contentContainerStyle={{
-                paddingLeft: theme.spacing.md,
-                paddingBottom: theme.spacing.md,
-              }}
-            />
-          ) : (
-            <Text
-              style={{
-                paddingHorizontal: theme.spacing.md,
-                color: theme.colors.mutedForeground,
-              }}
-            >
-              {t("noNews")}
-            </Text>
-          )}
-        </ErrorBoundary>
+      {enableNewsApi && (
+        <HomeNewsSection
+          destinationMunicipality={destinationMunicipality}
+          destinationStation={destinationStation}
+        />
       )}
 
       <SectionHeader

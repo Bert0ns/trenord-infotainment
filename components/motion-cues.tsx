@@ -1,4 +1,4 @@
-import { useSettings } from "@/hooks/settings";
+import { useSettingsStore } from "@/store/settingsStore";
 import { useSelectedScheme } from "@/hooks/use-theme-color";
 import { simpleID } from "@/utils/string";
 import { Dimensions, StyleSheet } from "react-native";
@@ -123,7 +123,7 @@ export function MotionDot({ acceleration }: MotionDotProps) {
 const dots = Array.from({ length: DOT_NUMBER }, () => simpleID());
 
 export default function VehicleMotionCues() {
-  const isOn = useSettings().settings.antiSickness;
+  const isOn = useSettingsStore((s) => s.settings.antiSickness);
   const accelerometer = useAnimatedSensor(SensorType.ACCELEROMETER);
   const gravity = useSharedValue({ x: 0, y: 0, z: 0 });
   const magnitudeOpacity = useSharedValue(0);

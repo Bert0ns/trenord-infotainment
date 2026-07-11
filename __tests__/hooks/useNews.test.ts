@@ -1,12 +1,12 @@
 import { renderHook, waitFor } from "@testing-library/react-native";
 import { useNews } from "@/hooks/useNews";
 import { getRelevantNews } from "@/lib/api/currentsapi-news/currentsapi-news-service";
-import { useSettings } from "@/hooks/settings";
+import { useSettingsStore } from "@/store/settingsStore";
 import { useJourneyStore } from "@/store/journeyStore";
 import { useNewsStore } from "@/store/newsStore";
 
 jest.mock("@/lib/api/currentsapi-news/currentsapi-news-service");
-jest.mock("@/hooks/settings");
+jest.mock("@/store/settingsStore");
 jest.mock("@/store/journeyStore");
 jest.mock("@/store/newsStore");
 
@@ -21,9 +21,12 @@ describe("useNews Hook", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    (useSettings as jest.Mock).mockReturnValue({
-      settings: { enableNewsApi: true },
-    });
+    (useSettingsStore as unknown as jest.Mock).mockImplementation(
+      (selector) => {
+        if (selector) return selector({ settings: { enableNewsApi: true } });
+        return { settings: { enableNewsApi: true } };
+      },
+    );
 
     (useJourneyStore as unknown as jest.Mock).mockReturnValue({
       destinationStation: null,
@@ -49,9 +52,12 @@ describe("useNews Hook", () => {
   });
 
   it("should return empty array if enableNewsApi setting is false", async () => {
-    (useSettings as jest.Mock).mockReturnValue({
-      settings: { enableNewsApi: false },
-    });
+    (useSettingsStore as unknown as jest.Mock).mockImplementation(
+      (selector) => {
+        if (selector) return selector({ settings: { enableNewsApi: false } });
+        return { settings: { enableNewsApi: false } };
+      },
+    );
 
     const { result } = renderHook(() => useNews());
 

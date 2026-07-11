@@ -1,9 +1,9 @@
-import { act, fireEvent, render } from "@testing-library/react-native";
+import { fireEvent, render } from "@testing-library/react-native";
 import { useRouter } from "expo-router";
 import React from "react";
 
 import ReportIssuePage from "@/app/report-issue-page";
-import { SettingsProvider } from "@/hooks/settings";
+
 import enReportIssue from "@/lib/i18n/locales/en/reportIssue.json";
 
 declare const global: any;
@@ -64,10 +64,7 @@ describe("ReportIssuePage", () => {
   const mockBack = jest.fn();
 
   const renderWithProvider = async (component: React.ReactElement) => {
-    const result = render(<SettingsProvider>{component}</SettingsProvider>);
-    await act(async () => {
-      await Promise.resolve();
-    });
+    const result = render(component);
     return result;
   };
 

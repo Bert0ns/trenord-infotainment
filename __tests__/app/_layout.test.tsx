@@ -36,14 +36,11 @@ jest.mock("react-native-gesture-handler", () => ({
 }));
 
 // Mock useSettings
-jest.mock("@/hooks/settings", () => ({
-  SettingsProvider: ({ children }: { children: React.ReactNode }) => (
-    <>{children}</>
-  ),
-  useSettings: () => ({
-    settings: { anitSicknessMode: false },
-    set: jest.fn(),
-  }),
+jest.mock("@/store/settingsStore", () => ({
+  useSettingsStore: (selector: any) => {
+    if (selector) return selector({ settings: { antiSickness: false } });
+    return { settings: { antiSickness: false } };
+  },
 }));
 
 describe("RootLayout", () => {
