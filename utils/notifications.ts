@@ -4,6 +4,9 @@ import { logger } from "@/lib/logger";
 
 const utilLogger = logger.extend("NotificationsUtil");
 
+// In-memory lock to prevent race conditions during React Strict Mode double-renders
+const pendingSchedules = new Map<string, number>();
+
 let Notifications: any;
 if (Platform.OS !== "web") {
   try {
@@ -66,12 +69,6 @@ export async function scheduleEventNotification(
     return;
   }
 
-  const hasPermission = await requestNotificationPermissionsAsync();
-  if (!hasPermission) {
-    utilLogger.warn("Notification permissions not granted, skipping schedule.");
-    return;
-  }
-
   const {
     scheduledNotifications,
     addScheduledNotification,
@@ -79,44 +76,66 @@ export async function scheduleEventNotification(
   } = useNotificationRegistryStore.getState();
   const existing = scheduledNotifications[eventKey];
 
-  if (existing) {
-    if (existing.timestamp === triggerTimestamp) {
-      utilLogger.log(
-        `Trigger timestamp for ${eventKey} is unchanged (${triggerTimestamp}). Skipping schedule.`,
+  // Prevent concurrent identical schedules
+  if (
+    (existing && existing.timestamp === triggerTimestamp) ||
+    pendingSchedules.get(eventKey) === triggerTimestamp
+  ) {
+    utilLogger.log(
+      `Trigger timestamp for ${eventKey} is unchanged or already pending (${triggerTimestamp}). Skipping schedule.`,
+    );
+    return;
+  }
+
+  // Lock this specific event + timestamp
+  pendingSchedules.set(eventKey, triggerTimestamp);
+
+  try {
+    const hasPermission = await requestNotificationPermissionsAsync();
+    if (!hasPermission) {
+      utilLogger.warn(
+        "Notification permissions not granted, skipping schedule.",
       );
       return;
     }
 
-    // Target time changed, cancel the old one
+    if (existing) {
+      // Target time changed, cancel the old one
+      utilLogger.log(
+        `Target time changed for ${eventKey}, canceling previous notification: ${existing.id}`,
+      );
+      await Notifications.cancelScheduledNotificationAsync?.(existing.id);
+      removeScheduledNotification(eventKey);
+    }
+
+    const triggerDate = new Date(triggerTimestamp);
+
+    if (triggerDate.getTime() <= Date.now()) {
+      utilLogger.log(`Trigger date for ${eventKey} is in the past. Skipping.`);
+      return;
+    }
+
+    const notificationId = await Notifications.scheduleNotificationAsync?.({
+      content: {
+        title,
+        body,
+      },
+      trigger: { type: "date", date: new Date(triggerTimestamp) } as any,
+    });
+
     utilLogger.log(
-      `Target time changed for ${eventKey}, canceling previous notification: ${existing.id}`,
+      `Scheduled new notification for ${eventKey} with ID ${notificationId} at ${triggerDate.toISOString()}`,
     );
-    await Notifications.cancelScheduledNotificationAsync?.(existing.id);
-    removeScheduledNotification(eventKey);
+    addScheduledNotification(eventKey, {
+      id: notificationId,
+      timestamp: triggerTimestamp,
+    });
+  } finally {
+    // Release lock if it hasn't been overwritten by a newer request
+    if (pendingSchedules.get(eventKey) === triggerTimestamp) {
+      pendingSchedules.delete(eventKey);
+    }
   }
-
-  const triggerDate = new Date(triggerTimestamp);
-
-  if (triggerDate.getTime() <= Date.now()) {
-    utilLogger.log(`Trigger date for ${eventKey} is in the past. Skipping.`);
-    return;
-  }
-
-  const notificationId = await Notifications.scheduleNotificationAsync?.({
-    content: {
-      title,
-      body,
-    },
-    trigger: { type: "date", date: new Date(triggerTimestamp) } as any,
-  });
-
-  utilLogger.log(
-    `Scheduled new notification for ${eventKey} with ID ${notificationId} at ${triggerDate.toISOString()}`,
-  );
-  addScheduledNotification(eventKey, {
-    id: notificationId,
-    timestamp: triggerTimestamp,
-  });
 }
 
 export async function cancelEventNotification(eventKey: string) {
@@ -134,6 +153,8 @@ export async function cancelEventNotification(eventKey: string) {
     await Notifications.cancelScheduledNotificationAsync?.(existing.id);
     removeScheduledNotification(eventKey);
   }
+
+  pendingSchedules.delete(eventKey);
 }
 
 export async function cancelAllEventNotifications() {
@@ -148,4 +169,5 @@ export async function cancelAllEventNotifications() {
   const { clearAllScheduledNotifications } =
     useNotificationRegistryStore.getState();
   clearAllScheduledNotifications();
+  pendingSchedules.clear();
 }

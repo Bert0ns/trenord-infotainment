@@ -321,4 +321,162 @@ describe("useJourneyNotifications hook", () => {
 
     expect(cancelAllEventNotifications).toHaveBeenCalled();
   });
+
+  it("simulates a full journey end-to-end, testing all notifications in sequence", () => {
+    // 1. Initial Setup at 08:00 AM
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date("2026-07-11T08:00:00Z"));
+
+    const mockTrainData = {
+      0: {
+        journey_list: [
+          {
+            train: { delay: 0 },
+            pass_list: [
+              {
+                station: { station_id: "S1", station_ori_name: "Stop A" }, // First stop
+                arr_time: "08:20",
+                dep_time: "08:22",
+                actual_data: {},
+              },
+              {
+                station: { station_id: "S2", station_ori_name: "Milan" }, // Destination
+                arr_time: "09:00",
+                actual_data: {},
+              },
+            ],
+          },
+        ],
+      },
+    };
+
+    act(() => {
+      useJourneyStore
+        .getState()
+        .setJourney(
+          "12345",
+          { station_id: "S2", station_ori_name: "Milan" },
+          mockTrainData as any,
+        );
+      useWeatherStore.setState({
+        weather: {
+          temperature: 25,
+          weatherCode: 0, // sunny
+          isDay: 1,
+        } as any,
+      });
+    });
+
+    const { rerender } = renderHook(() => useJourneyNotifications());
+
+    // Expectation at 08:00:
+    // - Approaching Stop A scheduled for 08:18 (2 mins before 08:20)
+    // - Destination Weather scheduled for 08:50 (10 mins before 09:00)
+    expect(scheduleEventNotification).toHaveBeenCalledWith(
+      "journey.approachingStop",
+      true,
+      expect.any(Number),
+      "journeyProgress.approachingStopTitle",
+      "journeyProgress.approachingStopBody",
+    );
+
+    expect(scheduleEventNotification).toHaveBeenCalledWith(
+      "journey.destinationWeather",
+      true,
+      expect.any(Number),
+      "weatherAlerts.destinationWeatherTitle",
+      "weatherAlerts.destinationWeatherBody",
+    );
+
+    jest.clearAllMocks();
+
+    // 2. Simulate Delay: advance time to 08:10 and add a 5 minute delay
+    act(() => {
+      jest.setSystemTime(new Date("2026-07-11T08:10:00Z"));
+      mockTrainData[0].journey_list[0].train.delay = 5;
+      useJourneyStore
+        .getState()
+        .setJourney(
+          "12345",
+          { station_id: "S2", station_ori_name: "Milan" },
+          mockTrainData as any,
+        );
+    });
+
+    rerender({});
+
+    // Delay should trigger IMMEDIATELY (timestamp = Date.now() + 1000)
+    expect(scheduleEventNotification).toHaveBeenCalledWith(
+      "journey.delay",
+      true,
+      expect.any(Number),
+      "delayAlerts.delayIncreasedTitle",
+      "delayAlerts.delayIncreasedBody",
+    );
+
+    // Weather and Approaching Stop should be rescheduled to account for the +5 min delay
+    expect(scheduleEventNotification).toHaveBeenCalledWith(
+      "journey.approachingStop",
+      true,
+      expect.any(Number),
+      "journeyProgress.approachingStopTitle",
+      "journeyProgress.approachingStopBody",
+    );
+
+    jest.clearAllMocks();
+
+    // 3. Train passes Stop A: time advances to 08:25
+    act(() => {
+      jest.setSystemTime(new Date("2026-07-11T08:25:00Z"));
+      mockTrainData[0].journey_list[0].pass_list[0].actual_data = {
+        arr_actual_time: "08:24",
+        dep_actual_time: "08:25",
+      } as any;
+
+      useJourneyStore
+        .getState()
+        .setJourney(
+          "12345",
+          { station_id: "S2", station_ori_name: "Milan" },
+          mockTrainData as any,
+        );
+    });
+
+    rerender({});
+
+    // Since Stop A is passed, the nextStop becomes Milan (S2).
+    // Approaching Stop should be scheduled for Milan.
+    expect(scheduleEventNotification).toHaveBeenCalledWith(
+      "journey.approachingStop",
+      true,
+      expect.any(Number),
+      "journeyProgress.approachingStopTitle",
+      "journeyProgress.approachingStopBody",
+    );
+
+    jest.clearAllMocks();
+
+    // 4. Train arrives at Destination: time advances to 09:05
+    act(() => {
+      jest.setSystemTime(new Date("2026-07-11T09:05:00Z"));
+      mockTrainData[0].journey_list[0].pass_list[1].actual_data = {
+        arr_actual_time: "09:05",
+      } as any;
+
+      useJourneyStore
+        .getState()
+        .setJourney(
+          "12345",
+          { station_id: "S2", station_ori_name: "Milan" },
+          mockTrainData as any,
+        );
+    });
+
+    rerender({});
+
+    // Journey is completed -> cancel all notifications
+    expect(cancelAllEventNotifications).toHaveBeenCalled();
+
+    jest.useRealTimers();
+  });
 });
