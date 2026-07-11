@@ -9,6 +9,14 @@ jest.mock("@expo-google-fonts/inter", () => ({
   useFonts: () => [mockFontsLoaded, null],
 }));
 
+jest.mock("@/hooks/use-train-polling", () => ({
+  useTrainPolling: jest.fn(),
+}));
+
+jest.mock("@/hooks/use-journey-notifications", () => ({
+  useJourneyNotifications: jest.fn(),
+}));
+
 jest.mock("expo-router", () => {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { View, Text } = require("react-native");

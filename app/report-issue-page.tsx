@@ -10,12 +10,12 @@ import {
   IssueOptionCard,
   ReportHeader,
   SectionTitle,
-  SheetContainer,
-  type SheetHandle,
   issueOptions,
 } from "@/components/report-issue-components";
+import { SlideSheet, type SheetHandle } from "@/components/ui/slide-sheet";
 import { logger } from "@/lib/logger";
 import { useTranslation } from "react-i18next";
+import { scheduleEventNotification } from "@/utils/notifications";
 
 const reportLogger = logger.extend("Report");
 
@@ -23,6 +23,7 @@ export default function ReportIssuePage() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { t } = useTranslation("reportIssue");
+  const { t: tNotif } = useTranslation("notifications");
   const sheetRef = useRef<SheetHandle | null>(null);
   const [selectedIssues, setSelectedIssues] = useState<Set<string>>(
     () => new Set(["other-issue"]),
@@ -59,11 +60,20 @@ export default function ReportIssuePage() {
       details,
     });
     alert(t("reportSubmittedSuccessfully"));
+
+    scheduleEventNotification(
+      "system.feedback",
+      true,
+      Date.now() + 30000,
+      tNotif("system.feedbackPromptTitle"),
+      tNotif("system.feedbackPromptBody"),
+    );
+
     requestClose();
   };
 
   return (
-    <SheetContainer
+    <SlideSheet
       ref={sheetRef}
       bottomInset={insets.bottom}
       onClose={() => router.back()}
@@ -94,7 +104,7 @@ export default function ReportIssuePage() {
 
         <ActionButtons onSubmit={onSubmitReportIssue} onCancel={requestClose} />
       </ScrollView>
-    </SheetContainer>
+    </SlideSheet>
   );
 }
 

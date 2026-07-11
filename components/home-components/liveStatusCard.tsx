@@ -38,13 +38,33 @@ export default function LiveStatusCard({
 
   return (
     <Card style={styles.card}>
+      <View style={{ alignItems: "center", marginBottom: theme.spacing.sm }}>
+        {delayMinutes > 0 && (
+          <View style={styles.delayBadge}>
+            <MaterialIcons
+              name="warning"
+              size={12}
+              color={theme.colors.destructiveForeground}
+            />
+            <Text style={styles.delayText}>
+              + {delayMinutes} {t("minutesDelay")}
+            </Text>
+          </View>
+        )}
+        {delayMinutes <= 0 && (
+          <View
+            style={[styles.delayBadge, { backgroundColor: theme.colors.info }]}
+          >
+            <Text style={styles.onTimeText}>{t("onTime")}</Text>
+          </View>
+        )}
+      </View>
+
       <View style={styles.topRow}>
         <View
           style={{
             flexDirection: "row",
-            alignItems: "center",
             gap: 6,
-            flex: 1,
           }}
         >
           {isCompleted && (
@@ -61,38 +81,8 @@ export default function LiveStatusCard({
           )}
         </View>
 
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 8,
-            flex: 1,
-            justifyContent: "flex-end",
-          }}
-        >
+        <View>
           {!isCompleted && <Text style={styles.label}>{t("destination")}</Text>}
-          {delayMinutes > 0 && (
-            <View style={styles.delayBadge}>
-              <MaterialIcons
-                name="warning"
-                size={12}
-                color={theme.colors.destructiveForeground}
-              />
-              <Text style={styles.delayText}>
-                + {delayMinutes} {t("minutesDelay")}
-              </Text>
-            </View>
-          )}
-          {delayMinutes <= 0 && (
-            <View
-              style={[
-                styles.delayBadge,
-                { backgroundColor: theme.colors.info },
-              ]}
-            >
-              <Text style={styles.onTimeText}>{t("onTime")}</Text>
-            </View>
-          )}
         </View>
       </View>
 
@@ -217,9 +207,8 @@ export default function LiveStatusCard({
 const useStyles = createStyleHook((theme) => ({
   card: {
     backgroundColor: theme.colors.homeLiveStatus,
-    padding: theme.spacing.lg,
-    paddingBottom: theme.spacing.md,
-    paddingTop: theme.spacing.md,
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.sm,
     marginBottom: theme.spacing.md,
   },
   topRow: {

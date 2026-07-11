@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useSettings } from "@/hooks/settings";
+import { useSettingsStore } from "@/store/settingsStore";
 import { useJourneyStore } from "@/store/journeyStore";
 import { useNewsStore } from "@/store/newsStore";
 import { logger } from "@/lib/logger";
@@ -22,7 +22,7 @@ export function useNewsFetcher({
   skip = false,
   extraDependencies = [],
 }: UseNewsFetcherOptions) {
-  const { settings } = useSettings();
+  const enableNewsApi = useSettingsStore((s) => s.settings.enableNewsApi);
   const trainId = useJourneyStore((s) => s.trainId);
   const cacheVersion = useNewsStore((s) => s.cacheVersion);
   const { i18n } = useTranslation();
@@ -35,10 +35,7 @@ export function useNewsFetcher({
   useEffect(() => {
     let isMounted = true;
 
-    if (
-      !settings.enableNewsApi ||
-      process.env.EXPO_PUBLIC_ENABLE_NEWS_API !== "true"
-    ) {
+    if (!enableNewsApi || process.env.EXPO_PUBLIC_ENABLE_NEWS_API !== "true") {
       hookLogger.log(
         "News API is disabled via settings or environment variable.",
       );
@@ -82,7 +79,7 @@ export function useNewsFetcher({
       isMounted = false;
     };
   }, [
-    settings.enableNewsApi,
+    enableNewsApi,
     trainId,
     cacheVersion,
     i18n.language,
@@ -90,6 +87,7 @@ export function useNewsFetcher({
     fetchFunction,
     hookLogger,
     hookName,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     ...extraDependencies,
   ]);
 

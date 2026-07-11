@@ -1,6 +1,7 @@
 import Header from "@/components/header";
 import CustomTabBar from "@/components/tabBar";
 import { useTrainPolling } from "@/hooks/use-train-polling";
+import { useJourneyNotifications } from "@/hooks/use-journey-notifications";
 import { Inter_700Bold, useFonts } from "@expo-google-fonts/inter";
 import { Tabs } from "expo-router";
 import { useTranslation } from "react-i18next";
@@ -13,6 +14,7 @@ export default function TabLayout() {
   const { t } = useTranslation("common");
 
   useTrainPolling();
+  useJourneyNotifications();
 
   if (!fontsLoaded) {
     return (

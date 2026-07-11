@@ -8,6 +8,7 @@ import {
   selectOrigDestData,
   selectPassList,
   selectTrainInfo,
+  selectLiveDelay,
   useJourneyStore,
 } from "@/store/journeyStore";
 import { Redirect } from "expo-router";
@@ -26,6 +27,7 @@ export default function JourneyScreen() {
   const trainInfo = useJourneyStore(selectTrainInfo);
   const passListArray = useJourneyStore(selectPassList);
   const nextStop = useJourneyStore(selectNextStop);
+  const liveDelay = useJourneyStore(selectLiveDelay);
   const { isRefreshing, onRefresh } = useRefreshTrainData();
 
   if (!trainId) return <Redirect href="/login" />;
@@ -54,7 +56,7 @@ export default function JourneyScreen() {
         passListArray={passListArray}
         destinationStation={destinationStation}
         nextStop={nextStop}
-        trainInfo={trainInfo}
+        liveDelay={liveDelay}
       />
     </ScrollView>
   );

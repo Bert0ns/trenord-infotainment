@@ -1,5 +1,5 @@
 import QRScanner from "@/components/ui/qr-scanner";
-import { SettingsProvider } from "@/hooks/settings";
+
 import enLogin from "@/lib/i18n/locales/en/login.json";
 import { act, fireEvent, render } from "@testing-library/react-native";
 import * as expoCamera from "expo-camera";
@@ -55,7 +55,7 @@ describe("QRScanner component", () => {
   });
 
   const renderWithProvider = (component: React.ReactNode) => {
-    return render(<SettingsProvider>{component}</SettingsProvider>);
+    return render(<>{component}</>);
   };
 
   it("renders empty view when permission is null", () => {

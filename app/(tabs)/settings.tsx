@@ -4,7 +4,11 @@ import ClearTrenordCacheButton from "@/components/settings-componenents/clearTre
 import ClearWeatherCacheButton from "@/components/settings-componenents/clearWeatherCacheButton";
 import ClearNewsCacheButton from "@/components/settings-componenents/clearNewsCacheButton";
 import DropDownSelector from "@/components/ui/dropDownSelector";
-import { AppSettings, LanguageCode, useSettings } from "@/hooks/settings";
+import {
+  AppSettings,
+  LanguageCode,
+  useSettingsStore,
+} from "@/store/settingsStore";
 import { useScreenStyles } from "@/hooks/use-screen-styles";
 import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
 import { useJourneyStore } from "@/store/journeyStore";
@@ -12,6 +16,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { getLocales } from "expo-localization";
 import { useRouter } from "expo-router";
 import React from "react";
+import { requestNotificationPermissionsAsync } from "@/utils/notifications";
 import { useTranslation } from "react-i18next";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { logger } from "@/lib/logger";
@@ -26,7 +31,8 @@ export default function SettingsScreen() {
   const theme = useTheme();
   const { t } = useTranslation("settings");
 
-  const { settings, set } = useSettings();
+  const settings = useSettingsStore((s) => s.settings);
+  const set = useSettingsStore((s) => s.setSetting);
   const { trainId, clearJourney } = useJourneyStore();
 
   const languages: Record<LanguageCode, string> = {
@@ -43,6 +49,21 @@ export default function SettingsScreen() {
     uiLogger.log("User requested to end journey. Clearing state...");
     clearJourney();
     router.replace("/login");
+  };
+
+  const handleNotificationToggle = async (
+    key: "journeyProgress" | "delayAlerts" | "weatherAlerts",
+    value: boolean,
+  ) => {
+    if (value) {
+      const hasPermission = await requestNotificationPermissionsAsync();
+      if (!hasPermission) {
+        uiLogger.log(`Permission denied, keeping ${key} disabled`);
+        set(key, false);
+        return;
+      }
+    }
+    set(key, value);
   };
 
   const ThemeOption = ({
@@ -117,19 +138,25 @@ export default function SettingsScreen() {
           label={t("notifications.journeyProgress.title")}
           description={t("notifications.journeyProgress.description")}
           value={settings.journeyProgress}
-          onValueChange={(value) => set("journeyProgress", value)}
+          onValueChange={(value) =>
+            handleNotificationToggle("journeyProgress", value)
+          }
         />
         <SettingSwitch
           label={t("notifications.delayAlerts.title")}
           description={t("notifications.delayAlerts.description")}
           value={settings.delayAlerts}
-          onValueChange={(value) => set("delayAlerts", value)}
+          onValueChange={(value) =>
+            handleNotificationToggle("delayAlerts", value)
+          }
         />
         <SettingSwitch
           label={t("notifications.weatherAlerts.title")}
           description={t("notifications.weatherAlerts.description")}
           value={settings.weatherAlerts}
-          onValueChange={(value) => set("weatherAlerts", value)}
+          onValueChange={(value) =>
+            handleNotificationToggle("weatherAlerts", value)
+          }
         />
       </SectionCard>
 

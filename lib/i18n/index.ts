@@ -6,6 +6,7 @@ import en from "./locales/en";
 import it from "./locales/it";
 
 const deviceLanguage = getLocales()[0].languageTag;
+// eslint-disable-next-line import/no-named-as-default-member
 i18next.use(initReactI18next).init({
   resources: { it, en },
   lng: deviceLanguage,

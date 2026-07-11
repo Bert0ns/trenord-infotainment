@@ -6,7 +6,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "react-native-reanimated";
 
 import VehicleMotionCues from "@/components/motion-cues";
-import { SettingsProvider } from "@/hooks/settings";
+import { useNotificationObserver } from "@/hooks/use-notification-observer";
 
 export const unstable_settings = {
   anchor: "(tabs)",
@@ -17,6 +17,8 @@ export default function RootLayout() {
   const router = useRouter();
   const lastMagnitudeRef = useRef(0);
   const lastShakeAtRef = useRef(0);
+
+  useNotificationObserver();
 
   useEffect(() => {
     if (Platform.OS === "web") {
@@ -62,31 +64,37 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={styles.root}>
-      <SettingsProvider>
-        <VehicleMotionCues />
-        <Stack>
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen name="login" options={{ headerShown: false }} />
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="report-issue-page"
-            options={{
-              presentation: "transparentModal",
-              animation: "none",
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name="news-magazine"
-            options={{
-              presentation: "transparentModal",
-              animation: "none",
-              headerShown: false,
-            }}
-          />
-        </Stack>
-        <StatusBar style="auto" />
-      </SettingsProvider>
+      <VehicleMotionCues />
+      <Stack>
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="login" options={{ headerShown: false }} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="report-issue-page"
+          options={{
+            presentation: "transparentModal",
+            animation: "none",
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="news-magazine"
+          options={{
+            presentation: "transparentModal",
+            animation: "none",
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="notifications-timeline"
+          options={{
+            presentation: "transparentModal",
+            animation: "none",
+            headerShown: false,
+          }}
+        />
+      </Stack>
+      <StatusBar style="auto" />
     </GestureHandlerRootView>
   );
 }

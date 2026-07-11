@@ -1,11 +1,11 @@
 import { renderHook, waitFor } from "@testing-library/react-native";
 import { useWorldNews } from "@/hooks/useWorldNews";
 import { getWorldNews } from "@/lib/api/currentsapi-news/currentsapi-news-service";
-import { useSettings } from "@/hooks/settings";
+import { useSettingsStore } from "@/store/settingsStore";
 import { useJourneyStore } from "@/store/journeyStore";
 
 jest.mock("@/lib/api/currentsapi-news/currentsapi-news-service");
-jest.mock("@/hooks/settings");
+jest.mock("@/store/settingsStore");
 jest.mock("@/store/journeyStore");
 
 // Default translation mock is handled in jest.setup.js
@@ -15,9 +15,12 @@ describe("useWorldNews", () => {
 
   beforeEach(() => {
     process.env.EXPO_PUBLIC_ENABLE_NEWS_API = "true";
-    (useSettings as jest.Mock).mockReturnValue({
-      settings: { enableNewsApi: true },
-    });
+    (useSettingsStore as unknown as jest.Mock).mockImplementation(
+      (selector) => {
+        if (selector) return selector({ settings: { enableNewsApi: true } });
+        return { settings: { enableNewsApi: true } };
+      },
+    );
     (useJourneyStore as unknown as jest.Mock).mockImplementation(
       (selector: any) => {
         // simulate returning a valid trainId
@@ -49,9 +52,12 @@ describe("useWorldNews", () => {
   });
 
   it("should not fetch if settings.enableNewsApi is false", async () => {
-    (useSettings as jest.Mock).mockReturnValue({
-      settings: { enableNewsApi: false },
-    });
+    (useSettingsStore as unknown as jest.Mock).mockImplementation(
+      (selector) => {
+        if (selector) return selector({ settings: { enableNewsApi: false } });
+        return { settings: { enableNewsApi: false } };
+      },
+    );
 
     const { result } = renderHook(() => useWorldNews());
 
