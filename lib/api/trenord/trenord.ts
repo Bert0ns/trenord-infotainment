@@ -97,8 +97,8 @@ async function getAccessToken(): Promise<string> {
     aud: issuer,
     jti: jti,
     requested_audiences: [audience],
-    iat: Math.floor(Date.now() / 1000),
-    exp: Math.floor(Date.now() / 1000) + 300, // Expires in 5 minutes
+    iat: Math.floor(Date.now() / 1000) - 300, // 5 minutes in the past to tolerate device clock skew
+    exp: Math.floor(Date.now() / 1000) + 900, // Expires in 15 minutes
   };
 
   const jwt = KJUR.jws.JWS.sign(
