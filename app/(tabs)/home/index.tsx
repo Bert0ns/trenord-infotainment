@@ -16,6 +16,7 @@ import {
   selectOrigDestData,
   selectPassList,
   selectTrainInfo,
+  selectLiveDelay,
   useJourneyStore,
 } from "@/store/journeyStore";
 import { useWeatherStore } from "@/store/weatherStore";
@@ -46,6 +47,7 @@ export default function HomeScreen() {
   const nextStop = useJourneyStore(selectNextStop);
   const isJourneyCompleted = useJourneyStore(selectIsJourneyCompleted);
   const isAtStation = useJourneyStore(selectIsAtStation);
+  const liveDelay = useJourneyStore(selectLiveDelay);
   const { isRefreshing, onRefresh: onRefreshTrain } = useRefreshTrainData();
   const weather = useWeatherStore((state) => state.weather);
   const { refreshWeather } = useWeatherData();
@@ -112,7 +114,7 @@ export default function HomeScreen() {
         }
         speed={t("na")}
         trainNumber={`${trainInfo.train_category} ${trainId}`}
-        delayMinutes={trainInfo.delay}
+        delayMinutes={liveDelay}
         isFirst={nextStop?.pass_count === 1}
         departureTime={
           isAtStation || nextStop?.pass_count === 1

@@ -69,3 +69,35 @@ export const selectIsAtStation = (state: JourneyStore) => {
     !selectIsJourneyCompleted(state)
   );
 };
+
+export const selectLiveDelay = (state: JourneyStore) => {
+  const trainInfo = selectTrainInfo(state);
+  if (!trainInfo) return 0;
+
+  const baseDelay = trainInfo.delay || 0;
+
+  if (selectIsJourneyCompleted(state)) {
+    return baseDelay;
+  }
+
+  if (selectIsAtStation(state)) {
+    const nextStop = selectNextStop(state);
+    if (nextStop && nextStop.dep_time) {
+      const now = new Date();
+      const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+      const [h, m] = nextStop.dep_time.split(":").map(Number);
+      const scheduledDepMinutes = h * 60 + m;
+
+      let diff = currentMinutes - scheduledDepMinutes;
+      if (diff < -720) diff += 1440;
+      if (diff > 720) diff -= 1440;
+
+      if (diff > baseDelay) {
+        return diff;
+      }
+    }
+  }
+
+  return baseDelay;
+};
