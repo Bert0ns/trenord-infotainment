@@ -20,9 +20,7 @@
     "future": "In programma",
     "past": "Passate",
     "clearAll": "Cancella tutto",
-    "markAllRead": "Segna tutte come lette",
     "noNotifications": "Nessuna notifica recente",
-    "noFuture": "Nessuna notifica in programma",
     "scheduledBody": "Una notifica è programmata per questo orario."
   }
 }

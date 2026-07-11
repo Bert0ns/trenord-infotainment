@@ -18,31 +18,42 @@ export function useNotificationObserver() {
       return;
     }
 
-    const subscription = Notifications.addNotificationReceivedListener(
-      (notification: any) => {
-        const { title, body } = notification.request.content;
-        const timestamp = notification.date || Date.now();
-        const id = notification.request.identifier;
+    const handleNotification = (notification: any) => {
+      const { title, body } = notification.request.content;
+      const timestamp = notification.date || Date.now();
+      const id = notification.request.identifier;
 
-        obsLogger.info(
-          `Received notification in foreground/background: ${title}`,
-        );
+      obsLogger.info(`Received notification: ${title}`);
 
-        useNotificationRegistryStore.getState().addHistoryItem({
-          id,
-          timestamp,
-          title: title || "New Notification",
-          body: body || "",
-        });
+      useNotificationRegistryStore.getState().addHistoryItem({
+        id,
+        timestamp,
+        title: title || "New Notification",
+        body: body || "",
+      });
 
-        useNotificationRegistryStore
-          .getState()
-          .removeScheduledNotificationById(id);
+      useNotificationRegistryStore
+        .getState()
+        .removeScheduledNotificationById(id);
+    };
+
+    const sub1 =
+      Notifications.addNotificationReceivedListener(handleNotification);
+
+    const sub2 = Notifications.addNotificationResponseReceivedListener(
+      (response: any) => handleNotification(response.notification),
+    );
+
+    // Also catch notifications presented if app was terminated and opened
+    Notifications.getPresentedNotificationsAsync().then(
+      (notifications: any[]) => {
+        notifications.forEach(handleNotification);
       },
     );
 
     return () => {
-      subscription.remove();
+      sub1.remove();
+      sub2.remove();
     };
   }, []);
 }

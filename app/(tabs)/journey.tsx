@@ -56,7 +56,6 @@ export default function JourneyScreen() {
         passListArray={passListArray}
         destinationStation={destinationStation}
         nextStop={nextStop}
-        trainInfo={trainInfo}
         liveDelay={liveDelay}
       />
     </ScrollView>

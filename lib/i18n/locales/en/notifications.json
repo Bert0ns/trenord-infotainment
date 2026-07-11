@@ -20,9 +20,7 @@
     "future": "Future",
     "past": "Past",
     "clearAll": "Clear all",
-    "markAllRead": "Mark all read",
     "noNotifications": "No recent notifications",
-    "noFuture": "No scheduled notifications",
     "scheduledBody": "A notification is scheduled for this time."
   }
 }

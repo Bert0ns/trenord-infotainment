@@ -3,13 +3,12 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import TimelineCard from "./timelineCard";
 
-import { PassList, Station, Train } from "@/lib/api/trenord/trenord-types";
+import type { PassList, Station } from "@/lib/api/trenord/trenord-types";
 
 interface JourneyTimelineProps {
   passListArray: PassList[];
   destinationStation: Station | null;
   nextStop: PassList | undefined;
-  trainInfo: Train;
   liveDelay: number;
 }
 
@@ -61,7 +60,6 @@ export default function JourneyTimeline({
   passListArray,
   destinationStation,
   nextStop,
-  trainInfo,
   liveDelay,
 }: JourneyTimelineProps) {
   const destinationIndex = destinationStation

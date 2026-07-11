@@ -42,6 +42,23 @@ describe("notificationRegistryStore", () => {
     });
   });
 
+  it("removeScheduledNotificationById updates the store state correctly", () => {
+    const { addScheduledNotification, removeScheduledNotificationById } =
+      useNotificationRegistryStore.getState();
+    addScheduledNotification("test-event", { id: "test-id", timestamp: 1000 });
+    addScheduledNotification("test-event-2", {
+      id: "test-id-2",
+      timestamp: 2000,
+    });
+
+    removeScheduledNotificationById("test-id");
+    const { scheduledNotifications } = useNotificationRegistryStore.getState();
+
+    expect(scheduledNotifications).toEqual({
+      "test-event-2": { id: "test-id-2", timestamp: 2000 },
+    });
+  });
+
   it("clearAllScheduledNotifications resets the state", () => {
     const { addScheduledNotification, clearAllScheduledNotifications } =
       useNotificationRegistryStore.getState();

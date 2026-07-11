@@ -87,6 +87,8 @@ export const selectLiveDelay = (state: JourneyStore) => {
       const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
       const [h, m] = nextStop.dep_time.split(":").map(Number);
+      if (isNaN(h) || isNaN(m)) return baseDelay;
+
       const scheduledDepMinutes = h * 60 + m;
 
       let diff = currentMinutes - scheduledDepMinutes;

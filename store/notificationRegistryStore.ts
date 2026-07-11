@@ -79,8 +79,11 @@ export const useNotificationRegistryStore = create<NotificationRegistryState>()(
 
       history: [],
       addHistoryItem: (event) => {
-        storeLogger.info(`Adding history item: ${event.title}`);
         set((state) => {
+          if (state.history.some((item) => item.id === event.id)) {
+            return state;
+          }
+          storeLogger.info(`Adding history item: ${event.title}`);
           const newItem: NotificationEvent = { ...event, isRead: false };
           // Keep only the 50 most recent items to avoid memory bloat
           const newHistory = [newItem, ...state.history].slice(0, 50);
