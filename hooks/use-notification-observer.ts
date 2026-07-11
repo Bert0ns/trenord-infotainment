@@ -34,6 +34,10 @@ export function useNotificationObserver() {
           title: title || "New Notification",
           body: body || "",
         });
+
+        useNotificationRegistryStore
+          .getState()
+          .removeScheduledNotificationById(id);
       },
     );
 

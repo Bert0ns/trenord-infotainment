@@ -25,6 +25,7 @@ export interface NotificationRegistryState {
     info: ScheduledNotificationInfo,
   ) => void;
   removeScheduledNotification: (eventKey: string) => void;
+  removeScheduledNotificationById: (id: string) => void;
   clearAllScheduledNotifications: () => void;
 
   // History
@@ -57,6 +58,20 @@ export const useNotificationRegistryStore = create<NotificationRegistryState>()(
           return { scheduledNotifications: newScheduledNotifications };
         });
       },
+      removeScheduledNotificationById: (id) => {
+        storeLogger.info(`Removing scheduled notification by id: ${id}`);
+        set((state) => {
+          const newScheduledNotifications = { ...state.scheduledNotifications };
+          const keyToDelete = Object.keys(newScheduledNotifications).find(
+            (key) => newScheduledNotifications[key].id === id,
+          );
+          if (keyToDelete) {
+            delete newScheduledNotifications[keyToDelete];
+            return { scheduledNotifications: newScheduledNotifications };
+          }
+          return state;
+        });
+      },
       clearAllScheduledNotifications: () => {
         storeLogger.info("Clearing all scheduled notifications");
         set({ scheduledNotifications: {} });
@@ -73,10 +88,15 @@ export const useNotificationRegistryStore = create<NotificationRegistryState>()(
         });
       },
       markAllAsRead: () => {
-        storeLogger.info("Marking all history items as read");
-        set((state) => ({
-          history: state.history.map((item) => ({ ...item, isRead: true })),
-        }));
+        set((state) => {
+          if (!state.history.some((item) => !item.isRead)) {
+            return state;
+          }
+          storeLogger.info("Marking all history items as read");
+          return {
+            history: state.history.map((item) => ({ ...item, isRead: true })),
+          };
+        });
       },
       clearHistory: () => {
         storeLogger.info("Clearing notification history");

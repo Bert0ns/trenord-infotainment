@@ -21,8 +21,9 @@ export default function NotificationsTimeline() {
 
   useEffect(() => {
     // Automatically mark all as read when opening the timeline
+    // and whenever new notifications arrive while the panel is open
     markAllAsRead();
-  }, [markAllAsRead]);
+  }, [markAllAsRead, history]);
 
   const handleClose = () => {
     router.back();
