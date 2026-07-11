@@ -15,6 +15,7 @@ import { Redirect } from "expo-router";
 import { RefreshControl, ScrollView } from "react-native";
 
 import { logger } from "@/lib/logger";
+import { JourneyMap } from "@/components/journey-components/journeyMap";
 
 const uiLogger = logger.extend("UI");
 
@@ -52,6 +53,7 @@ export default function JourneyScreen() {
         />
       }
     >
+      <JourneyMap stations={passListArray} nextStop={nextStop} />
       <JourneyTimeline
         passListArray={passListArray}
         destinationStation={destinationStation}

@@ -1,4 +1,4 @@
-import { fetchTrainData } from "@/lib/api/trenord/trenord";
+import { fetchStationData, fetchTrainData } from "@/lib/api/trenord/trenord";
 import { logger } from "@/lib/logger";
 import { useJourneyStore } from "@/store/journeyStore";
 
@@ -8,6 +8,7 @@ export function useSyncJourney() {
   const trainId = useJourneyStore((s) => s.trainId);
   const destinationStation = useJourneyStore((s) => s.destinationStation);
   const setJourney = useJourneyStore((s) => s.setJourney);
+  const setStations = useJourneyStore((s) => s.setStations);
 
   const syncJourney = async () => {
     if (!trainId || !destinationStation) return false;
@@ -17,6 +18,12 @@ export function useSyncJourney() {
       const newData = await fetchTrainData(trainId);
       if (newData && newData.length > 0) {
         setJourney(trainId, destinationStation, newData);
+        const stationIDs =
+          newData[0].journey_list?.[0]?.pass_list?.map(
+            (stop) => stop.station.station_id,
+          ) || [];
+        const stationData = await fetchStationData(stationIDs);
+        setStations(stationData);
         return true;
       }
     } catch (error: unknown) {

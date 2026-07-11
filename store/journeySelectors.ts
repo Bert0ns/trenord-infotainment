@@ -70,6 +70,8 @@ export const selectIsAtStation = (state: JourneyStore) => {
   );
 };
 
+export const selectStations = (state: JourneyStore) => state.stations;
+
 export const selectLiveDelay = (state: JourneyStore) => {
   const trainInfo = selectTrainInfo(state);
   if (!trainInfo) return 0;

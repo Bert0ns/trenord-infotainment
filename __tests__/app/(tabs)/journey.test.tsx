@@ -1,5 +1,6 @@
 import JourneyScreen from "@/app/(tabs)/journey";
 import { useJourneyStore } from "@/store/journeyStore";
+import { useRailwayPolylines } from "@/lib/api/overpass";
 import { render } from "@testing-library/react-native";
 
 jest.mock("expo-router", () => {
@@ -36,6 +37,15 @@ jest.mock("@/hooks/use-theme-color", () => ({
   }),
 }));
 
+jest.mock("@/lib/api/overpass", () => ({
+  ...jest.requireActual("@/lib/api/overpass"),
+  useRailwayPolylines: jest.fn(),
+}));
+
+jest.mock("@/hooks/use-location", () => ({
+  useLocationPermission: jest.fn(() => true),
+}));
+
 jest.mock("@/store/journeyStore", () => ({
   ...jest.requireActual("@/store/journeyStore"),
   useJourneyStore: jest.fn(),
@@ -55,6 +65,8 @@ describe("JourneyScreen", () => {
   });
 
   it("renders the timeline correctly with train data", () => {
+    (useRailwayPolylines as jest.Mock).mockImplementation(() => []);
+
     (useJourneyStore as unknown as jest.Mock).mockImplementation(
       (selector: any) =>
         selector({
@@ -102,6 +114,23 @@ describe("JourneyScreen", () => {
                   ],
                 },
               ],
+            },
+          ],
+          stations: [
+            {
+              CodiceMIR: "S1",
+              NomeGeoStazioni: "Milano Porta Garibaldi",
+              Location: { coordinates: [9.188, 45.484] },
+            },
+            {
+              CodiceMIR: "S2",
+              NomeGeoStazioni: "Monza",
+              Location: { coordinates: [9.273, 45.583] },
+            },
+            {
+              CodiceMIR: "S3",
+              NomeGeoStazioni: "Bergamo",
+              Location: { coordinates: [9.677, 45.698] },
             },
           ],
         }),

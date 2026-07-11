@@ -1,4 +1,7 @@
-import { TrainInfoResponse } from "@/lib/api/trenord/trenord-types";
+import {
+  StationFull,
+  TrainInfoResponse,
+} from "@/lib/api/trenord/trenord-types";
 import { fetchStationMetadata } from "@/lib/api/trenord/trenord";
 import { logger } from "@/lib/logger";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -19,11 +22,13 @@ export interface JourneyStore {
   destinationMunicipality: string | null;
   isMunicipalityLoading: boolean;
   trainData: TrainInfoResponse | null;
+  stations: StationFull[];
   setJourney: (
     trainId: string,
     destinationStation: Station,
     trainData: TrainInfoResponse,
   ) => void;
+  setStations: (stations: StationFull[]) => void;
   clearJourney: () => void;
 }
 
@@ -35,6 +40,7 @@ export const useJourneyStore = create<JourneyStore>()(
       destinationMunicipality: null,
       isMunicipalityLoading: false,
       trainData: null,
+      stations: [],
       setJourney: (trainId, destinationStation, trainData) => {
         storeLogger.info(
           `Setting journey to train ${trainId} towards ${destinationStation.station_ori_name}`,
@@ -77,15 +83,22 @@ export const useJourneyStore = create<JourneyStore>()(
             }
           });
       },
+      setStations: (stations) => {
+        storeLogger.info(
+          `Setting stations data with ${stations.length} stations`,
+        );
+        set({ stations });
+      },
       clearJourney: () => {
         storeLogger.info("Clearing journey data");
         cancelAllEventNotifications();
         set({
           trainId: null,
           destinationStation: null,
+          trainData: null,
+          stations: [],
           destinationMunicipality: null,
           isMunicipalityLoading: false,
-          trainData: null,
         });
       },
     }),

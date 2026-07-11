@@ -1,5 +1,8 @@
-import { fetchTrainData } from "@/lib/api/trenord/trenord";
-import { TrainInfoResponse } from "@/lib/api/trenord/trenord-types";
+import { fetchStationData, fetchTrainData } from "@/lib/api/trenord/trenord";
+import {
+  StationFull,
+  TrainInfoResponse,
+} from "@/lib/api/trenord/trenord-types";
 import { logger } from "@/lib/logger";
 import { Station, useJourneyStore } from "@/store/journeyStore";
 import { useRouter } from "expo-router";
@@ -16,9 +19,11 @@ export function useLogin() {
   const [isLoading, setIsLoading] = useState(false);
   const [trainData, setTrainData] = useState<TrainInfoResponse | null>(null);
   const [stations, setStations] = useState<Station[]>([]);
+  const [stationsFull, setStationsFull] = useState<StationFull[]>([]);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  const setJourney = useJourneyStore((state) => state.setJourney);
+  const setJourneyStore = useJourneyStore((state) => state.setJourney);
+  const setStationsStore = useJourneyStore((state) => state.setStations);
 
   useEffect(() => {
     // Only clear on initial mount if they arrive here already logged in
@@ -52,6 +57,7 @@ export function useLogin() {
       setTrainData(null);
       setDestination("");
       setStations([]);
+      setStationsFull([]);
     }
   }
 
@@ -87,6 +93,15 @@ export function useLogin() {
       }));
       setStations(parsedStations);
       setTrainData(data);
+      let fetchedStationsFull: StationFull[] = [];
+      try {
+        fetchedStationsFull = await fetchStationData(
+          parsedStations?.map((s: any) => s.station_id).filter(Boolean),
+        );
+        setStationsFull(fetchedStationsFull);
+      } catch (err: any) {
+        loginLogger.error("Failed to fetch station data:", err.message);
+      }
 
       if (presetDestination) {
         const stationExists = parsedStations.some(
@@ -105,7 +120,8 @@ export function useLogin() {
             loginLogger.log(
               `Auto-starting journey! Train: ${codeToSearch}, Destination: ${destStation.station_ori_name}`,
             );
-            setJourney(codeToSearch, destStation, data);
+            setJourneyStore(codeToSearch, destStation, data);
+            setStationsStore(fetchedStationsFull);
             router.replace("/(tabs)/home");
             return;
           }
@@ -142,7 +158,8 @@ export function useLogin() {
       loginLogger.log(
         `Starting journey! Train: ${ticketCode}, Destination: ${destStation.station_ori_name}`,
       );
-      setJourney(ticketCode, destStation, trainData!);
+      setJourneyStore(ticketCode, destStation, trainData!);
+      setStationsStore(stationsFull);
       router.replace("/(tabs)/home");
     }
   }

@@ -197,40 +197,42 @@ export interface ActualData {
   arr_actual_time?: string;
 }
 
-/**
- * Geographic and metadata information for a station from stazioni_v2.
- */
-export interface StationMetadata {
-  /** Unique identifier of the station */
-  id: string;
-  /** Postal code */
+export type StationResponse = StationFull[];
+
+export interface StationFull {
+  _id: string;
+  creatorId: string;
+  createdAt: string;
+  updaterId: string;
+  updatedAt: string;
   Cap: number;
-  /** MIR code */
+  /** Seems to be a unique identifier for a station */
   CodiceMIR: string;
-  /** Municipality (e.g. "Milano") */
   Comune: string;
-  /** List of directions */
   Direttrici: string[];
-  /** Address */
   Indirizzo: string;
-  /** Station name */
+  /** Full Display name for the station (all UPPERCASE) */
   NomeGeoStazioni: string;
-  /** Province (e.g. "MI") */
+  Note: string;
   Prov: string;
-  /** Geographic location information */
-  Location: {
-    type: string;
-    coordinates: number[]; // [longitude, latitude]
-  };
-  /** Region (e.g. "Lombardia") */
-  Regione: string;
-  /** Tariff zone */
-  tariff_zone: string;
-  /** Country */
+  Location: Location;
+  locIdSbme: number;
+  MetaStazione: boolean;
   country: string;
+  tariff_zone: string;
+  __STATE__: string;
+  Regione: string;
+  /** Standard HAFAS codes, usually just one */
+  hafasCodes: string[];
+  soglia: number;
+  ignore_during_search: boolean;
+  is_metro_station: boolean;
+  station_classification: string[];
+  platforms: string[];
 }
 
-/**
- * API response for stazioni_v2 endpoint.
- */
-export type StazioniV2Response = StationMetadata[];
+export interface Location {
+  /** Coordinates in [longitude, latitude] format  */
+  coordinates: number[];
+  type: string;
+}

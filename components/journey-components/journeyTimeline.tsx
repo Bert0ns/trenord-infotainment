@@ -14,7 +14,7 @@ interface JourneyTimelineProps {
 
 // --- Helpers to reduce cognitive complexity ---
 
-function getPassStatus(
+export function getPassStatus(
   pass: PassList,
   nextStop: PassList | undefined,
 ): "future" | "current" | "past" {

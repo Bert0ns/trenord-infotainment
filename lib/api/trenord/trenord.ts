@@ -1,7 +1,16 @@
 import { logger } from "@/lib/logger";
-import { KEYUTIL, KJUR } from "jsrsasign";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  clearCache,
+  getCachedAccessToken,
+  setCachedAccessToken,
+} from "@/store/apiStore";
+import { nowSec } from "@/utils/time";
+import { KJUR, KEYUTIL } from "jsrsasign";
 import { Platform } from "react-native";
-import { TrainInfoResponse, StazioniV2Response } from "./trenord-types";
+import { StationResponse, TrainInfoResponse } from "./trenord-types";
+
+const CACHE_TTL_STATIONS_S = 24 * 60 * 60;
 
 const apiLogger = logger.extend("TrenordAPI");
 
@@ -38,50 +47,26 @@ if (!tokenUrl) throw new Error("Missing EXPO_PUBLIC_TRENORD_TOKEN_URL");
 if (!apiUrl) throw new Error("Missing EXPO_PUBLIC_TRENORD_API_URL");
 if (!jwkRaw) throw new Error("Missing EXPO_PUBLIC_TRENORD_PRIVATE_JWK");
 
-let cachedPrivateKey: any = null;
-let cachedAccessToken: string | null = null;
-let tokenExpirationTime: number = 0;
-
-try {
-  // Eagerly compute the crypto key on app boot so the first login is instant
-  const jwk = JSON.parse(jwkRaw);
-  cachedPrivateKey = KEYUTIL.getKey(jwk);
-} catch (error) {
-  apiLogger.error("Failed to eagerly parse JWK string or generate key", error);
-}
-
-export function clearTrenordApiCache() {
-  cachedPrivateKey = null;
-  cachedAccessToken = null;
-  tokenExpirationTime = 0;
-}
+let cachedPrivateKey: jsrsasign.RSAKey | null = null;
 
 function getPrivateKey() {
   if (cachedPrivateKey) return cachedPrivateKey;
-
-  if (!jwkRaw)
-    throw new Error("Missing EXPO_PUBLIC_TRENORD_PRIVATE_JWK in environment");
   try {
     const jwk = JSON.parse(jwkRaw);
-    cachedPrivateKey = KEYUTIL.getKey(jwk);
+    cachedPrivateKey = KEYUTIL.getKey(jwk) as jsrsasign.RSAKey;
     return cachedPrivateKey;
   } catch (error) {
     apiLogger.error("Failed to parse JWK string or generate key", error);
-    throw new Error("Invalid JWK JSON format");
+    return null;
   }
 }
 
 async function getAccessToken(): Promise<string> {
-  const now = Math.floor(Date.now() / 1000);
-
-  // Reuse token if it's still valid for at least 30 more seconds
-  if (cachedAccessToken && now < tokenExpirationTime - 30) {
-    return cachedAccessToken;
+  const cachedToken = getCachedAccessToken();
+  if (cachedToken) {
+    return cachedToken;
   }
-
-  if (!cachedPrivateKey) {
-    apiLogger.log("Getting private JWK for authentication...");
-  }
+  apiLogger.log("No valid cached access token found, generating a new one...");
   const privateKey = getPrivateKey();
 
   // Generate a random UUID for the JWT ID
@@ -97,8 +82,8 @@ async function getAccessToken(): Promise<string> {
     aud: issuer,
     jti: jti,
     requested_audiences: [audience],
-    iat: Math.floor(Date.now() / 1000) - 300, // 5 minutes in the past to tolerate device clock skew
-    exp: Math.floor(Date.now() / 1000) + 900, // Expires in 15 minutes
+    iat: nowSec() - 300, // 5 minutes in the past to tolerate device clock skew
+    exp: nowSec() + 900, // Expires in 15 minutes
   };
 
   const jwt = KJUR.jws.JWS.sign(
@@ -136,13 +121,16 @@ async function getAccessToken(): Promise<string> {
 
   const tokenData = await tokenResponse.json();
 
-  cachedAccessToken = tokenData.access_token;
-  const expiresIn = tokenData.expires_in || 300;
-  tokenExpirationTime = now + expiresIn;
+  const token = tokenData.access_token;
+  if (!token) {
+    apiLogger.error("Token response did not contain an access_token");
+    throw new Error("Token response did not contain an access_token");
+  }
+  setCachedAccessToken(token, nowSec() + (tokenData.expires_in || 300));
   apiLogger.trace(
-    `Access Token acquired successfully, expires in ${expiresIn} seconds.`,
+    `Access Token acquired successfully, expires in ${tokenData.expires_in || 300} seconds.`,
   );
-  return cachedAccessToken!;
+  return token;
 }
 
 async function authenticatedFetch(url: string, errorPrefix: string) {
@@ -175,9 +163,89 @@ export async function fetchTrainData(
   return response.json();
 }
 
+export async function fetchStationData(
+  stationIDs: string[],
+): Promise<StationResponse> {
+  if (stationIDs.length === 0) return [];
+
+  try {
+    const cachedItem = await AsyncStorage.getItem("stazioni_v2_cache");
+    if (cachedItem) {
+      const parsed = JSON.parse(cachedItem);
+      // Cache valid for 24 hours
+      if (
+        parsed.timestamp &&
+        nowSec() - parsed.timestamp < CACHE_TTL_STATIONS_S
+      ) {
+        apiLogger.trace("Using cached stazioni_v2 data");
+        const filteredData = parsed.data
+          .filter((station: any) => stationIDs.includes(station.CodiceMIR))
+          .sort(
+            (a: any, b: any) =>
+              stationIDs.indexOf(a.CodiceMIR) - stationIDs.indexOf(b.CodiceMIR),
+          );
+        return filteredData;
+      }
+    }
+  } catch (e) {
+    apiLogger.warn("Failed to read station cache", e);
+  }
+
+  const accessToken = await getAccessToken();
+  const url = `${apiUrl}/stazioni_v2`;
+
+  apiLogger.trace(`Fetching data for stations ${stationIDs.join(", ")}...`);
+  const response = await proxiedFetch(url, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    apiLogger.error(`Station fetch failed with status ${response.status}`);
+    throw new Error(`Station API Call failed with status ${response.status}`);
+  }
+
+  apiLogger.trace(
+    `Station data retrieved successfully for stations ${stationIDs.join(", ")}.`,
+  );
+
+  try {
+    const stationData: StationResponse = await response.json();
+
+    try {
+      await AsyncStorage.setItem(
+        "stazioni_v2_cache",
+        JSON.stringify({
+          timestamp: nowSec(),
+          data: stationData,
+        }),
+      );
+    } catch (e) {
+      apiLogger.warn("Failed to save station cache", e);
+    }
+
+    const filteredData = stationData
+      .filter((station) => stationIDs.includes(station.CodiceMIR))
+      .sort(
+        (a, b) =>
+          stationIDs.indexOf(a.CodiceMIR) - stationIDs.indexOf(b.CodiceMIR),
+      );
+    return filteredData;
+  } catch (error) {
+    apiLogger.error("Failed to parse station data JSON:", error);
+    return [];
+  }
+}
+
+export function clearTrenordApiCache() {
+  clearCache();
+}
+
 export async function fetchStationMetadata(
   stationName: string,
-): Promise<StazioniV2Response> {
+): Promise<StationResponse> {
   const url = `${apiUrl}/stazioni_v2?NomeGeoStazioni=${encodeURIComponent(stationName)}`;
   apiLogger.trace(`Fetching metadata for station ${stationName}...`);
   const response = await authenticatedFetch(url, "Station");

@@ -13,7 +13,10 @@
   },
   "loading": "Loading...",
   "loadingTrainData": "Loading or no train data available.",
+  "livePosOn": "LIVE",
+  "livePosOff": "NO GPS",
   "errorBoundary": {
     "somethingWentWrong": "Something went wrong."
-  }
+  },
+  "mapNotAvailableWeb": "Map is not available on the web version."
 }
