@@ -27,12 +27,36 @@ export const selectNextStop = (state: JourneyStore) => {
   const passList = selectPassList(state);
   if (!passList) return undefined;
 
-  const lastDepartedIndex = passList.findLastIndex(
-    (pass: any) => pass.actual_data?.dep_actual_time !== undefined,
+  // Find the last station that has ANY real-time data (arrived or departed)
+  const lastKnownIndex = passList.findLastIndex(
+    (pass: any) =>
+      pass.actual_data?.arr_actual_time !== undefined ||
+      pass.actual_data?.dep_actual_time !== undefined,
   );
 
+  if (lastKnownIndex === -1) {
+    // Train hasn't reached any station yet. Return the first non-cancelled station.
+    return passList.find((pass: any) => pass.cancelled !== true);
+  }
+
+  const lastKnownPass = passList[lastKnownIndex];
+
+  // If the last known station has an arrival time but NO departure time,
+  // AND it is supposed to have a scheduled departure time, it means the train is currently AT this station.
+  // Therefore, this station IS the 'nextStop' (and isAtStation will evaluate to true).
+  const isCurrentlyAtLastKnown =
+    lastKnownPass.actual_data?.arr_actual_time !== undefined &&
+    lastKnownPass.actual_data?.dep_actual_time === undefined &&
+    lastKnownPass.dep_time !== undefined;
+
+  if (isCurrentlyAtLastKnown) {
+    return lastKnownPass;
+  }
+
+  // Otherwise, the train has departed the last known station (or it was just a pass-through).
+  // The 'nextStop' is the next non-cancelled station in the list.
   return passList
-    .slice(lastDepartedIndex + 1)
+    .slice(lastKnownIndex + 1)
     .find((pass: any) => pass.cancelled !== true);
 };
 
