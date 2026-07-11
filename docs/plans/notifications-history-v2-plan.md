@@ -14,27 +14,27 @@ Develop a persistent "Future & Past" in-app notifications timeline panel. This p
 
 ### Phase 1: Foundation (Data Layer & Interception)
 
-- [ ] **Task 1: Extend Notification Store**
+- [x] **Task 1: Extend Notification Store**
   - **Description:** Update `notificationRegistryStore` to support history and unread counts.
   - **Acceptance criteria:**
-    - [ ] Store contains `history: NotificationEvent[]` array.
-    - [ ] Actions added: `addHistoryItem`, `markAllAsRead`, `clearHistory`.
-    - [ ] Unread count is correctly derived from `history`.
+    - [x] Store contains `history: NotificationEvent[]` array.
+    - [x] Actions added: `addHistoryItem`, `markAllAsRead`, `clearHistory`.
+    - [x] Unread count is correctly derived from `history`.
   - **Verification:**
-    - [ ] Tests pass: `pnpm test -- --grep "notificationRegistryStore"`
+    - [x] Tests pass: `pnpm test -- --grep "notificationRegistryStore"`
   - **Dependencies:** None
   - **Files likely touched:**
     - `store/notificationRegistryStore.ts`
     - `__tests__/store/notificationRegistryStore.test.ts`
   - **Estimated scope:** Small
 
-- [ ] **Task 2: Setup OS Notification Listeners**
+- [x] **Task 2: Setup OS Notification Listeners**
   - **Description:** Intercept notifications as they fire from the OS and route them into our Zustand store.
   - **Acceptance criteria:**
-    - [ ] `addNotificationReceivedListener` is mounted in a global context (e.g. `_layout.tsx` or a custom `NotificationObserver` component).
-    - [ ] When a notification fires natively, its payload (title, body, date) is dispatched to `addHistoryItem`.
+    - [x] `addNotificationReceivedListener` is mounted in a global context (e.g. `_layout.tsx` or a custom `NotificationObserver` component).
+    - [x] When a notification fires natively, its payload (title, body, date) is dispatched to `addHistoryItem`.
   - **Verification:**
-    - [ ] Manual check: Using a dev build, fire a test notification and verify the Zustand store logs the new history entry.
+    - [x] Manual check: Using a dev build, fire a test notification and verify the Zustand store logs the new history entry.
   - **Dependencies:** Task 1
   - **Files likely touched:**
     - `app/_layout.tsx`
@@ -42,19 +42,19 @@ Develop a persistent "Future & Past" in-app notifications timeline panel. This p
 
 ### Checkpoint: Foundation
 
-- [ ] Tests pass, builds clean
-- [ ] Captured notifications correctly persist across app restarts when manually tested.
+- [x] Tests pass, builds clean
+- [x] Captured notifications correctly persist across app restarts when manually tested.
 
 ### Phase 2: Core UI (Slider & Bell)
 
-- [ ] **Task 3: Refactor Slide-Sheet Animation Primitive**
+- [x] **Task 3: Refactor Slide-Sheet Animation Primitive**
   - **Description:** Extract the sliding sheet animation logic currently used in the News Magazine and Report Issue pages into a unified, reusable UI primitive.
   - **Acceptance criteria:**
-    - [ ] Create `components/ui/SlideSheet.tsx` (or similar).
-    - [ ] Component accepts `isVisible`, `onClose`, and `children`.
-    - [ ] News Magazine and Report Issue pages are updated to use this new primitive.
+    - [x] Create `components/ui/SlideSheet.tsx` (or similar).
+    - [x] Component accepts `isVisible`, `onClose`, and `children`.
+    - [x] News Magazine and Report Issue pages are updated to use this new primitive.
   - **Verification:**
-    - [ ] Manual check: News and Report pages still open and animate smoothly.
+    - [x] Manual check: News and Report pages still open and animate smoothly.
   - **Dependencies:** None (can be parallelized)
   - **Files likely touched:**
     - `components/ui/SlideSheet.tsx`
@@ -62,30 +62,30 @@ Develop a persistent "Future & Past" in-app notifications timeline panel. This p
     - `app/report-issue-page.tsx`
   - **Estimated scope:** Medium
 
-- [ ] **Task 4: Notification Bell Component**
+- [x] **Task 4: Notification Bell Component**
   - **Description:** Create a reusable UI component that displays a bell icon and an unread badge.
   - **Acceptance criteria:**
-    - [ ] Component subscribes to `notificationRegistryStore` to get the unread count.
-    - [ ] If `unread > 0`, a red dot/badge with the number is visible.
-    - [ ] Placed inside the app's primary `Header`.
+    - [x] Component subscribes to `notificationRegistryStore` to get the unread count.
+    - [x] If `unread > 0`, a red dot/badge with the number is visible.
+    - [x] Placed inside the app's primary `Header`.
   - **Verification:**
-    - [ ] Tests pass for header and bell component.
+    - [x] Tests pass for header and bell component.
   - **Dependencies:** Task 1
   - **Files likely touched:**
     - `components/ui/NotificationBell.tsx`
     - `components/header.tsx`
   - **Estimated scope:** Small
 
-- [ ] **Task 5: Notification Timeline Panel UI**
+- [x] **Task 5: Notification Timeline Panel UI**
   - **Description:** Build the sliding UI to list all captured (past) and scheduled (future) notifications.
   - **Acceptance criteria:**
-    - [ ] Uses the `SlideSheet` component.
-    - [ ] Renders a unified chronological `FlatList` of notifications (merging `history` and `scheduledNotifications`).
-    - [ ] Includes UI to "Mark all as read" and "Clear history".
-    - [ ] Strong visual distinction between "Past" (grayed out/standard) and "Future" (glowing/active) notifications.
+    - [x] Uses the `SlideSheet` component.
+    - [x] Renders a unified chronological `FlatList` of notifications (merging `history` and `scheduledNotifications`).
+    - [x] Includes UI to "Mark all as read" and "Clear history".
+    - [x] Strong visual distinction between "Past" (grayed out/standard) and "Future" (glowing/active) notifications.
   - **Verification:**
-    - [ ] Tests pass for the new component.
-    - [ ] Manual check: Tapping the bell opens the slide sheet, showing past and future events correctly styled.
+    - [x] Tests pass for the new component.
+    - [x] Manual check: Tapping the bell opens the slide sheet, showing past and future events correctly styled.
   - **Dependencies:** Task 3, Task 4
   - **Files likely touched:**
     - `components/notifications/TimelinePanel.tsx` (or similar)
@@ -93,18 +93,18 @@ Develop a persistent "Future & Past" in-app notifications timeline panel. This p
 
 ### Checkpoint: Core Features
 
-- [ ] End-to-end flow works: OS notification fires -> bell badge increments -> tapping bell slides out panel -> user sees timeline.
+- [x] End-to-end flow works: OS notification fires -> bell badge increments -> tapping bell slides out panel -> user sees timeline.
 
 ### Phase 3: Polish
 
-- [ ] **Task 6: Localization & Empty States**
+- [x] **Task 6: Localization & Empty States**
   - **Description:** Ensure the feature supports English and Italian and looks polished when empty.
   - **Acceptance criteria:**
-    - [ ] All static strings ("Clear all", "No recent notifications", "Future", "Past") use `react-i18next`.
-    - [ ] Strings added to `lib/i18n/locales/en/notifications.json` and `/it/notifications.json`.
-    - [ ] Empty state UI is beautiful and centered, encouraging interaction.
+    - [x] All static strings ("Clear all", "No recent notifications", "Future", "Past") use `react-i18next`.
+    - [x] Strings added to `lib/i18n/locales/en/notifications.json` and `/it/notifications.json`.
+    - [x] Empty state UI is beautiful and centered, encouraging interaction.
   - **Verification:**
-    - [ ] Tests pass.
+    - [x] Tests pass.
   - **Dependencies:** Task 5
   - **Files likely touched:**
     - `lib/i18n/locales/en/notifications.json`
@@ -114,8 +114,8 @@ Develop a persistent "Future & Past" in-app notifications timeline panel. This p
 
 ### Checkpoint: Complete
 
-- [ ] All acceptance criteria met
-- [ ] Ready for review
+- [x] All acceptance criteria met
+- [x] Ready for review
 
 ## Risks and Mitigations
 

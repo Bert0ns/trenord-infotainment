@@ -4,6 +4,7 @@ import { Image } from "expo-image";
 import { usePathname, useRouter } from "expo-router";
 import { Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { NotificationBell } from "./ui/NotificationBell";
 
 export default function Header() {
   const insets = useSafeAreaInsets();
@@ -38,7 +39,13 @@ export default function Header() {
           />
           <Text style={styles.headerTitle}>TRENORD</Text>
         </View>
-        <View style={{ width: 50 }}>{/* Placeholder for centering */}</View>
+        <View style={{ width: 50, alignItems: "flex-end" }}>
+          {!isDestinationDetails && (
+            <NotificationBell
+              onPress={() => router.push("/notifications-timeline")}
+            />
+          )}
+        </View>
       </View>
     </View>
   );

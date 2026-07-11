@@ -9,10 +9,7 @@ import {
   useWindowDimensions,
 } from "react-native";
 
-import {
-  SheetContainer,
-  SheetHandle,
-} from "@/components/report-issue-components/sheet-container";
+import { SlideSheet, SheetHandle } from "@/components/ui/slide-sheet";
 import { useJourneyStore } from "@/store/journeyStore";
 import { useNews } from "@/hooks/useNews";
 import { useItalyNews } from "@/hooks/useItalyNews";
@@ -60,7 +57,7 @@ export default function NewsMagazinePage() {
   const uniqueWorldNews = worldNews.filter((n) => !existingIds.has(n.id));
 
   return (
-    <SheetContainer
+    <SlideSheet
       ref={sheetRef}
       bottomInset={24}
       onClose={handleClose}
@@ -120,7 +117,7 @@ export default function NewsMagazinePage() {
           </ScrollView>
         )}
       </View>
-    </SheetContainer>
+    </SlideSheet>
   );
 }
 

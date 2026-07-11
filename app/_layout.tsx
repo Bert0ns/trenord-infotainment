@@ -6,6 +6,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "react-native-reanimated";
 
 import VehicleMotionCues from "@/components/motion-cues";
+import { useNotificationObserver } from "@/hooks/use-notification-observer";
 
 export const unstable_settings = {
   anchor: "(tabs)",
@@ -16,6 +17,8 @@ export default function RootLayout() {
   const router = useRouter();
   const lastMagnitudeRef = useRef(0);
   const lastShakeAtRef = useRef(0);
+
+  useNotificationObserver();
 
   useEffect(() => {
     if (Platform.OS === "web") {
@@ -76,6 +79,14 @@ export default function RootLayout() {
         />
         <Stack.Screen
           name="news-magazine"
+          options={{
+            presentation: "transparentModal",
+            animation: "none",
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="notifications-timeline"
           options={{
             presentation: "transparentModal",
             animation: "none",

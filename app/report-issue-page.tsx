@@ -10,10 +10,9 @@ import {
   IssueOptionCard,
   ReportHeader,
   SectionTitle,
-  SheetContainer,
-  type SheetHandle,
   issueOptions,
 } from "@/components/report-issue-components";
+import { SlideSheet, type SheetHandle } from "@/components/ui/slide-sheet";
 import { logger } from "@/lib/logger";
 import { useTranslation } from "react-i18next";
 import { scheduleEventNotification } from "@/utils/notifications";
@@ -74,7 +73,7 @@ export default function ReportIssuePage() {
   };
 
   return (
-    <SheetContainer
+    <SlideSheet
       ref={sheetRef}
       bottomInset={insets.bottom}
       onClose={() => router.back()}
@@ -105,7 +104,7 @@ export default function ReportIssuePage() {
 
         <ActionButtons onSubmit={onSubmitReportIssue} onCancel={requestClose} />
       </ScrollView>
-    </SheetContainer>
+    </SlideSheet>
   );
 }
 

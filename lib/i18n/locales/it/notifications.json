@@ -12,7 +12,17 @@
     "destinationWeatherBody": "All'arrivo è previsto {{weatherCondition}} con una temperatura di {{temperature}}°C."
   },
   "system": {
-    "feedbackPromptTitle": "Segnalazione Ricevuta",
-    "feedbackPromptBody": "Grazie per la tua segnalazione. La stiamo esaminando per migliorare il tuo viaggio."
+    "feedbackPromptTitle": "Feedback Ricevuto",
+    "feedbackPromptBody": "Grazie per aver segnalato un problema. Lo stiamo esaminando per migliorare il tuo viaggio."
+  },
+  "timeline": {
+    "title": "Cronologia Notifiche",
+    "future": "In programma",
+    "past": "Passate",
+    "clearAll": "Cancella tutto",
+    "markAllRead": "Segna tutte come lette",
+    "noNotifications": "Nessuna notifica recente",
+    "noFuture": "Nessuna notifica in programma",
+    "scheduledBody": "Una notifica è programmata per questo orario."
   }
 }
