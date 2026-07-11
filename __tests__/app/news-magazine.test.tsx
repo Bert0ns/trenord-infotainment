@@ -14,13 +14,12 @@ jest.mock("expo-router", () => ({
   useRouter: () => ({ back: jest.fn() }),
 }));
 
-jest.mock("@/hooks/settings", () => ({
-  useSettings: () => ({
-    settings: {
-      theme: "light",
-      enableNewsApi: true,
-    },
-  }),
+jest.mock("@/store/settingsStore", () => ({
+  useSettingsStore: (selector: any) => {
+    if (selector)
+      return selector({ settings: { theme: "light", enableNewsApi: true } });
+    return { settings: { theme: "light", enableNewsApi: true } };
+  },
 }));
 
 jest.mock("@expo/vector-icons", () => ({

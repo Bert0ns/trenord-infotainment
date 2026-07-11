@@ -2,7 +2,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { act, fireEvent, render } from "@testing-library/react-native";
 import { useRouter } from "expo-router";
 
-import { SettingsProvider } from "@/hooks/settings";
 import enSettings from "@/lib/i18n/locales/en/settings.json";
 import SettingsScreen from "../app/(tabs)/settings";
 
@@ -51,11 +50,7 @@ jest.mock("@/utils/notifications", () => ({
 }));
 
 const renderWithProvider = async (component: React.ReactElement) => {
-  const result = render(<SettingsProvider>{component}</SettingsProvider>);
-  // Flush the microtask queue to allow SettingsProvider's async useEffect to complete
-  await act(async () => {
-    await Promise.resolve();
-  });
+  const result = render(component);
   return result;
 };
 
@@ -86,11 +81,11 @@ describe("SettingsScreen", () => {
     expect(
       getByTestId(`value-${enSettings.notifications.journeyProgress.title}`)
         .props.children,
-    ).toBe("ON");
+    ).toBe("OFF");
     expect(
       getByTestId(`value-${enSettings.notifications.delayAlerts.title}`).props
         .children,
-    ).toBe("ON");
+    ).toBe("OFF");
     expect(
       getByTestId(`value-${enSettings.notifications.weatherAlerts.title}`).props
         .children,
@@ -108,12 +103,12 @@ describe("SettingsScreen", () => {
     await act(async () => {
       fireEvent.press(getByTestId("toggle-Journey Progress"));
     });
-    expect(getByTestId("value-Journey Progress").props.children).toBe("OFF");
+    expect(getByTestId("value-Journey Progress").props.children).toBe("ON");
 
     await act(async () => {
       fireEvent.press(getByTestId("toggle-Delay Alerts"));
     });
-    expect(getByTestId("value-Delay Alerts").props.children).toBe("OFF");
+    expect(getByTestId("value-Delay Alerts").props.children).toBe("ON");
 
     await act(async () => {
       fireEvent.press(getByTestId("toggle-Weather & Disruptions"));

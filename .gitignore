@@ -54,3 +54,5 @@ graphify-out/
 graphify-out/cost.json 
 .agents/rules/graphify.md
 .agents/workflows/graphify.md
+
+build-*

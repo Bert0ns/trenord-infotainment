@@ -1,4 +1,4 @@
-import { useSettings } from "@/hooks/settings";
+import { useSettingsStore } from "@/store/settingsStore";
 import {
   selectIsJourneyCompleted,
   selectNextStop,
@@ -39,7 +39,9 @@ export function useJourneyNotifications() {
   const nextStop = useJourneyStore(selectNextStop);
   const trainInfo = useJourneyStore(selectTrainInfo);
   const passListArray = useJourneyStore(selectPassList);
-  const { settings } = useSettings();
+  const delayAlerts = useSettingsStore((s) => s.settings.delayAlerts);
+  const weatherAlerts = useSettingsStore((s) => s.settings.weatherAlerts);
+  const journeyProgress = useSettingsStore((s) => s.settings.journeyProgress);
   const { t: tNotif } = useTranslation("notifications");
   const { t: tHome } = useTranslation("home");
   const weather = useWeatherStore((s) => s.weather);
@@ -68,7 +70,7 @@ export function useJourneyNotifications() {
 
         scheduleEventNotification(
           "journey.approachingStop",
-          settings.journeyProgress,
+          journeyProgress,
           triggerTimestamp,
           tNotif("journeyProgress.approachingStopTitle"),
           tNotif("journeyProgress.approachingStopBody", {
@@ -84,7 +86,7 @@ export function useJourneyNotifications() {
     isJourneyCompleted,
     nextStop,
     trainInfo?.delay,
-    settings.journeyProgress,
+    journeyProgress,
     tNotif,
   ]);
 
@@ -101,7 +103,8 @@ export function useJourneyNotifications() {
     }
 
     const previousDelay = previousDelayRef.current;
-    if (currentDelay - previousDelay >= 3 && settings.delayAlerts) {
+    if (currentDelay - previousDelay >= 3) {
+      if (!delayAlerts) return;
       scheduleEventNotification(
         "journey.delay",
         true, // Already checked settings in if condition
@@ -111,7 +114,7 @@ export function useJourneyNotifications() {
       );
     }
     previousDelayRef.current = currentDelay;
-  }, [trainId, isJourneyCompleted, trainInfo, settings.delayAlerts, tNotif]);
+  }, [trainId, isJourneyCompleted, trainInfo, delayAlerts, tNotif]);
 
   // 3. Destination Weather Notification
   useEffect(() => {
@@ -145,7 +148,7 @@ export function useJourneyNotifications() {
 
     scheduleEventNotification(
       "journey.destinationWeather",
-      settings.weatherAlerts,
+      weatherAlerts,
       triggerTimestamp,
       tNotif("weatherAlerts.destinationWeatherTitle", {
         stationName: destinationStation.station_ori_name,
@@ -162,7 +165,7 @@ export function useJourneyNotifications() {
     weather,
     trainInfo?.delay,
     passListArray,
-    settings.weatherAlerts,
+    weatherAlerts,
     tNotif,
     tHome,
   ]);

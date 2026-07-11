@@ -18,12 +18,11 @@ const mockSettings = {
   enableNewsApi: false,
 };
 
-jest.mock("@/hooks/settings", () => ({
-  useSettings: () => ({
-    settings: mockSettings,
-    set: jest.fn(),
-    reset: jest.fn(),
-  }),
+jest.mock("@/store/settingsStore", () => ({
+  useSettingsStore: (selector: any) => {
+    if (selector) return selector({ settings: mockSettings });
+    return { settings: mockSettings };
+  },
 }));
 
 jest.mock("@/utils/notifications", () => ({

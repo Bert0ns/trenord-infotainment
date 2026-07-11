@@ -4,7 +4,7 @@ import LiveStatusCard from "@/components/home-components/liveStatusCard";
 import WeatherCard from "@/components/home-components/weatherCard";
 import LoadingScreen from "@/components/loadingScreen";
 import SectionHeader from "@/components/sectionHeader";
-import { useSettings } from "@/hooks/settings";
+import { useSettingsStore } from "@/store/settingsStore";
 import { useRefreshTrainData } from "@/hooks/use-refresh-train-data";
 import { useScreenStyles } from "@/hooks/use-screen-styles";
 import { useTheme } from "@/hooks/use-theme-color";
@@ -56,7 +56,7 @@ export default function HomeScreen() {
     await Promise.all([weatherPromise, trainPromise]);
   }, [refreshWeather, onRefreshTrain]);
 
-  const { settings } = useSettings();
+  const enableNewsApi = useSettingsStore((s) => s.settings.enableNewsApi);
   const { t } = useTranslation("home");
 
   if (!trainId) return <Redirect href="/login" />;
@@ -140,7 +140,7 @@ export default function HomeScreen() {
         route="/home/weatherDetails"
       />
 
-      {settings.enableNewsApi && (
+      {enableNewsApi && (
         <HomeNewsSection
           destinationMunicipality={destinationMunicipality}
           destinationStation={destinationStation}

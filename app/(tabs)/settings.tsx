@@ -4,7 +4,11 @@ import ClearTrenordCacheButton from "@/components/settings-componenents/clearTre
 import ClearWeatherCacheButton from "@/components/settings-componenents/clearWeatherCacheButton";
 import ClearNewsCacheButton from "@/components/settings-componenents/clearNewsCacheButton";
 import DropDownSelector from "@/components/ui/dropDownSelector";
-import { AppSettings, LanguageCode, useSettings } from "@/hooks/settings";
+import {
+  AppSettings,
+  LanguageCode,
+  useSettingsStore,
+} from "@/store/settingsStore";
 import { useScreenStyles } from "@/hooks/use-screen-styles";
 import { createStyleHook, useTheme } from "@/hooks/use-theme-color";
 import { useJourneyStore } from "@/store/journeyStore";
@@ -27,7 +31,8 @@ export default function SettingsScreen() {
   const theme = useTheme();
   const { t } = useTranslation("settings");
 
-  const { settings, set } = useSettings();
+  const settings = useSettingsStore((s) => s.settings);
+  const set = useSettingsStore((s) => s.setSetting);
   const { trainId, clearJourney } = useJourneyStore();
 
   const languages: Record<LanguageCode, string> = {

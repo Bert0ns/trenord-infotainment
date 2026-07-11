@@ -2,7 +2,6 @@ import React from "react";
 import { render } from "@testing-library/react-native";
 import CustomTabBar from "../../components/tabBar";
 import { useJourneyStore } from "../../store/journeyStore";
-import { SettingsProvider } from "../../hooks/settings";
 
 // Mock the BlurView since it requires native modules in Jest
 jest.mock("expo-blur", () => ({
@@ -43,11 +42,7 @@ describe("CustomTabBar", () => {
   it("returns null and completely hides tabs when trainId is null (logged out)", () => {
     useJourneyStore.getState().clearJourney(); // Ensure logged out
 
-    const { queryByTestId } = render(
-      <SettingsProvider>
-        <CustomTabBar {...(mockProps as any)} />
-      </SettingsProvider>,
-    );
+    const { queryByTestId } = render(<CustomTabBar {...(mockProps as any)} />);
 
     expect(queryByTestId("blur-view")).toBeNull();
   });
@@ -56,9 +51,7 @@ describe("CustomTabBar", () => {
     useJourneyStore.setState({ trainId: "12345" }); // Simulate logged in
 
     const { getByTestId, getByText } = render(
-      <SettingsProvider>
-        <CustomTabBar {...(mockProps as any)} />
-      </SettingsProvider>,
+      <CustomTabBar {...(mockProps as any)} />,
     );
 
     // Ensure the container is rendered
@@ -98,9 +91,7 @@ describe("CustomTabBar", () => {
     };
 
     const { getByText } = render(
-      <SettingsProvider>
-        <CustomTabBar {...(allRoutesMockProps as any)} />
-      </SettingsProvider>,
+      <CustomTabBar {...(allRoutesMockProps as any)} />,
     );
 
     // Click on unfocused 'media' tab
